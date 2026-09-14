@@ -127,13 +127,13 @@ public static class GitFixture
             if (layout == "legacy")
             {
                 File.Copy(installerSource, Path.Combine(target, "install.bat"), true);
-                Write(Path.Combine(target, "start.bat"), "@echo off\n");
+                Write(Path.Combine(target, "start.bat"), "@echo off\\n");
             }
             else
             {
                 Directory.CreateDirectory(Path.Combine(target, "bin", "windows"));
                 File.Copy(installerSource, Path.Combine(target, "bin", "windows", "install.bat"), true);
-                Write(Path.Combine(target, "bin", "windows", "start.bat"), "@echo off\n");
+                Write(Path.Combine(target, "bin", "windows", "start.bat"), "@echo off\\n");
             }
             Directory.CreateDirectory(Path.Combine(target, ".git"));
         }
