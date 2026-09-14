@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
 import { openCatalogDatabase } from '../app/catalog/database.mjs';
@@ -38,7 +39,7 @@ function parseArguments(argv) {
 }
 
 const options = parseArguments(process.argv.slice(2));
-const repositoryRoot = resolve(new URL('..', import.meta.url).pathname);
+const repositoryRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const database = openCatalogDatabase({
   databasePath: resolve(options.databasePath),
   mediaRoot: resolve(options.mediaRoot),

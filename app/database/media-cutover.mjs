@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { randomInt, randomUUID } from 'node:crypto';
 import { existsSync, linkSync, lstatSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { basename, dirname, extname, relative, resolve, sep } from 'node:path';
@@ -118,7 +119,7 @@ function reverseMove(move) {
   unlinkSync(move.target);
 }
 
-export function runMediaCutover({ databasePath, mediaRoot, repositoryRoot = resolve(new URL('../..', import.meta.url).pathname), evidenceDirectory = dirname(databasePath), makeId = randomUUID, makeRandomDigits = defaultRandomDigits, readMigrationSql = migrationSql, applyPostMigrations = applyPostCutoverMigrations, reverse = reverseMove } = {}) {
+export function runMediaCutover({ databasePath, mediaRoot, repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url))), evidenceDirectory = dirname(databasePath), makeId = randomUUID, makeRandomDigits = defaultRandomDigits, readMigrationSql = migrationSql, applyPostMigrations = applyPostCutoverMigrations, reverse = reverseMove } = {}) {
   if (typeof databasePath !== 'string' || databasePath.length === 0) throw new TypeError('databasePath is required');
   if (typeof mediaRoot !== 'string' || mediaRoot.length === 0) throw new TypeError('mediaRoot is required');
   const resolvedDatabasePath = resolve(databasePath);

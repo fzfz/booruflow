@@ -2,17 +2,18 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { createServer as createNetServer } from 'node:net';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import { openCatalogDatabase } from '../../app/catalog/database.mjs';
 import { runMediaCutover } from '../../app/database/media-cutover.mjs';
 import { startLocalApplication } from '../../app/server/local-app.mjs';
 import { FAKE_VECTOR_CONFIGURATION, createFakeSemanticModelClient } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
-const CLI_PATH = new URL('../../scripts/imagegen-semantic-query.mjs', import.meta.url).pathname;
-const REPOSITORY_ROOT = resolve(new URL('../..', import.meta.url).pathname);
+const CLI_PATH = fileURLToPath(new URL('../../scripts/imagegen-semantic-query.mjs', import.meta.url));
+const REPOSITORY_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const BASE_MODEL_PATH = '/internal/semantic/base-models';
 const GENERATION_MODEL_PATH = '/internal/semantic/generation-models';
 const CURRENT_CATALOG_PATHS = Object.freeze([

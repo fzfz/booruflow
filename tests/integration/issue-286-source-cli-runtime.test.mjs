@@ -6,6 +6,7 @@ import { createServer as createNetServer } from 'node:net';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import { openCatalogDatabase } from '../../app/catalog/database.mjs';
 import { migrateGenerationResourceVectors } from '../../app/catalog/generation-resource-vector-migration.mjs';
@@ -13,7 +14,7 @@ import { runMediaCutover } from '../../app/database/media-cutover.mjs';
 import { startLocalApplication } from '../../app/server/local-app.mjs';
 import { FAKE_VECTOR_CONFIGURATION, createFakeSemanticModelClient, createFixtureVector } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
-const REPOSITORY_ROOT = resolve(new URL('../..', import.meta.url).pathname);
+const REPOSITORY_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const CATALOG_CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-semantic-query.mjs');
 const SOURCE_CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-comfyui-source-read.mjs');
 const TEMPLATE_CATALOG_PATH = '/internal/semantic/comfyui-templates';

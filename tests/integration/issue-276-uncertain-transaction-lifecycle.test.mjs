@@ -3,13 +3,14 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import { inTransaction, openCatalogDatabase } from '../../app/catalog/database.mjs';
 import { runMediaCutover } from '../../app/database/media-cutover.mjs';
 import { startLocalApplication } from '../../app/server/local-app.mjs';
 import { FAKE_VECTOR_CONFIGURATION, createFakeSemanticModelClient } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
-const REPOSITORY_ROOT = new URL('../..', import.meta.url).pathname;
+const REPOSITORY_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const PUBLIC_PORT = 19982;
 const INTERNAL_PORT = 19983;
 const LORA_WRITE = Object.freeze({

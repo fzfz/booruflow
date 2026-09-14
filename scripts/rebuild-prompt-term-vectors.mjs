@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
 import { openCatalogDatabase } from '../app/catalog/database.mjs';
@@ -8,7 +9,7 @@ const databaseFlag = process.argv.indexOf('--database');
 const reset = process.argv.includes('--reset');
 const mediaRootFlag = process.argv.indexOf('--media-root');
 if (databaseFlag < 0 || typeof process.argv[databaseFlag + 1] !== 'string' || process.argv[databaseFlag + 1].startsWith('--') || mediaRootFlag < 0 || typeof process.argv[mediaRootFlag + 1] !== 'string' || process.argv[mediaRootFlag + 1].startsWith('--')) throw new Error('usage: node scripts/rebuild-prompt-term-vectors.mjs --database <app.sqlite> --media-root <data/media> [--reset]');
-const repositoryRoot = resolve(new URL('..', import.meta.url).pathname);
+const repositoryRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const database = openCatalogDatabase({ databasePath: resolve(process.argv[databaseFlag + 1]), mediaRoot: resolve(process.argv[mediaRootFlag + 1]), repositoryRoot });
 try {
   const configuration = loadVectorModelConfiguration(repositoryRoot);

@@ -1,16 +1,17 @@
 import assert from 'node:assert/strict';
 import { createServer as createNetServer } from 'node:net';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import { openCatalogDatabase } from '../../app/catalog/database.mjs';
 import { runMediaCutover } from '../../app/database/media-cutover.mjs';
 import { startLocalApplication } from '../../app/server/local-app.mjs';
 import { FAKE_VECTOR_CONFIGURATION } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
-const REPOSITORY_ROOT = resolve(new URL('../..', import.meta.url).pathname);
+const REPOSITORY_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const BASE_MODEL_PATH = '/internal/semantic/base-models';
 const GENERATION_MODEL_PATH = '/internal/semantic/generation-models';
 const CATALOG_ERROR = { status: 'error', message: 'Catalog request is invalid.', results: [], page: 1, page_size: 0, total_count: 0 };

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
@@ -107,7 +107,7 @@ async function readMediaFiles(directory, current = directory) {
   for (const entry of entries.sort((left, right) => left.name.localeCompare(right.name))) {
     const path = join(current, entry.name);
     if (entry.isDirectory()) files.push(...await readMediaFiles(directory, path));
-    else if (entry.isFile()) files.push({ path: path.slice(directory.length + 1), bytes: await readFile(path) });
+    else if (entry.isFile()) files.push({ path: relative(directory, path).split(sep).join('/'), bytes: await readFile(path) });
   }
   return files;
 }

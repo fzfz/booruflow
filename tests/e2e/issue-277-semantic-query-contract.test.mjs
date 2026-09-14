@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { promisify } from 'node:util';
 import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import { openCatalogDatabase } from '../../app/catalog/database.mjs';
 import { runMediaCutover } from '../../app/database/media-cutover.mjs';
@@ -12,8 +13,8 @@ import { startLocalApplication } from '../../app/server/local-app.mjs';
 import { FAKE_VECTOR_CONFIGURATION, createFakeSemanticModelClient } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
 const runProcess = promisify(execFile);
-const CLI_PATH = new URL('../../scripts/imagegen-semantic-query.mjs', import.meta.url).pathname;
-const REPOSITORY_ROOT = resolve(new URL('../..', import.meta.url).pathname);
+const CLI_PATH = fileURLToPath(new URL('../../scripts/imagegen-semantic-query.mjs', import.meta.url));
+const REPOSITORY_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const TEST_PORTS = Object.freeze({ public: 19892, internal: 19893 });
 const BASE_MODEL_PATH = '/internal/semantic/base-models';
 const GENERATION_MODEL_PATH = '/internal/semantic/generation-models';

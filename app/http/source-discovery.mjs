@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parseDocument } from 'yaml';
@@ -117,7 +118,7 @@ export function buildSourceDiscovery({ repositoryRoot = undefined, openapiPath =
     sourcePath = source.path;
     if (openapiPath !== undefined && resolve(openapiPath) !== sourcePath) fail(`OpenAPI path must resolve to the repository contract path: ${sourcePath}`);
   } else {
-    sourcePath = resolve(openapiPath ?? resolve(new URL('../..', import.meta.url).pathname, 'schema/api/openapi.yaml'));
+    sourcePath = resolve(openapiPath ?? resolve(fileURLToPath(new URL('../..', import.meta.url)), 'schema/api/openapi.yaml'));
   }
   const root = parseOpenApi(sourcePath);
   return Object.freeze(cloneDiscovery(root, sourceOperations(root)));

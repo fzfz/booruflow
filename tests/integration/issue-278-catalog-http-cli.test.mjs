@@ -5,6 +5,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { promisify } from 'node:util';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 import { openCatalogDatabase } from '../../app/catalog/database.mjs';
@@ -13,7 +14,7 @@ import { startLocalApplication } from '../../app/server/local-app.mjs';
 import { FAKE_VECTOR_CONFIGURATION, createFakeSemanticModelClient } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
 const runProcess = promisify(execFile);
-const REPOSITORY_ROOT = resolve(new URL('../..', import.meta.url).pathname);
+const REPOSITORY_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-semantic-query.mjs');
 const BASE_MODEL_PATH = '/internal/semantic/base-models';
 const GENERATION_MODEL_PATH = '/internal/semantic/generation-models';

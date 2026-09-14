@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { access, readdir } from 'node:fs/promises';
+import { isAbsolute, relative, sep } from 'node:path';
 import { test } from 'node:test';
 
 import { MANAGE_TEST_PORTS, startManageTestApp } from '../../../scripts/start-manage-test-app.mjs';
@@ -38,7 +39,8 @@ test('隔离测试应用在没有模型服务配置时使用 fake 语义适配�
       ...expectedSystemPathNames
     ]) {
       assert.equal(typeof app.paths[pathName], 'string', `缺少公开路径：${pathName}`);
-      assert.ok(app.paths[pathName].startsWith(`${app.root}/`), `${pathName} 必须位于临时根目录内`);
+      const relativePath = relative(app.root, app.paths[pathName]);
+      assert.ok(relativePath && !isAbsolute(relativePath) && relativePath !== '..' && !relativePath.startsWith(`..${sep}`), `${pathName} 必须位于临时根目录内`);
     }
 
     assert.ok(app.environment && typeof app.environment === 'object', '包装器必须公开子进程环境快照');

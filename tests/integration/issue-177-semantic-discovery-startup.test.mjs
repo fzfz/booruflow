@@ -3,12 +3,13 @@ import { copyFile, mkdir, mkdtemp, realpath, readFile, rm, writeFile } from 'nod
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import { resolveSemanticOpenapiPath, startLocalApplication } from '../../app/server/local-app.mjs';
 import { runMediaCutover } from '../../app/database/media-cutover.mjs';
 import { FAKE_VECTOR_CONFIGURATION, createFakeSemanticModelClient } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
-const repositoryRoot = resolve(new URL('../..', import.meta.url).pathname);
+const repositoryRoot = fileURLToPath(new URL('../..', import.meta.url));
 const TEST_PORTS = Object.freeze({ public: 19782, internal: 19783 });
 
 function restoreEnvironment(name, value) {
