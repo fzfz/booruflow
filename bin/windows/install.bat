@@ -111,7 +111,8 @@ if not exist "%BF_CLONE_DESTINATION%\%BF_CLONED_INSTALLER_RELATIVE%" (
 )
 if not exist "%BF_CLONE_DESTINATION%\%BF_START_RELATIVE%" (call :fail "the selected release is missing its Windows start script" & exit /b 1)
 if defined BF_INSTALL_IN_PLACE (
-  fc.exe /B "%BF_INSTALLER_PATH%" "%BF_CLONE_DESTINATION%\%BF_CLONED_INSTALLER_RELATIVE%" >nul 2>nul || (call :fail "the installer differs from the selected tag; download that tag's install.bat or choose another empty installation directory" & exit /b 1)
+  fc.exe /B "%BF_INSTALLER_PATH%" "%BF_CLONE_DESTINATION%\%BF_CLONED_INSTALLER_RELATIVE%" >nul 2>nul
+  if errorlevel 1 goto installer_mismatch
   robocopy.exe "%BF_CLONE_DESTINATION%" "%BF_DESTINATION%" /E /MOVE /R:0 /W:0 >nul
   if errorlevel 8 (call :fail "the temporary clone could not be moved into the installation directory" & exit /b 1)
   set "BF_REMOVE_DOWNLOADED_INSTALLER=1"
@@ -168,10 +169,7 @@ if /I "%BF_CONFIGURATION_STATUS%"=="ready" (
   echo Installation complete, configuration pending. Fill the listed values before starting.
 )
 echo Start with: "%BF_DESTINATION%\%BF_START_RELATIVE%"
-if defined BF_REMOVE_DOWNLOADED_INSTALLER (
-  del /q "%BF_INSTALLER_PATH%" >nul 2>nul || (call :fail "the downloaded root installer could not be removed after installing the nested entrypoint" & exit /b 1)
-  exit /b 0
-)
+if defined BF_REMOVE_DOWNLOADED_INSTALLER goto handoff_installer_cleanup
 exit /b 0
 
 :check_configuration
@@ -222,3 +220,10 @@ exit /b 1
 echo Installation failed: %~1 1>&2
 echo Resolve the reported problem, then run this installer again. 1>&2
 exit /b 1
+
+:installer_mismatch
+call :fail "the installer differs from the selected tag; download that tag's install.bat or choose another empty installation directory"
+exit /b 1
+
+:handoff_installer_cleanup
+"%BF_DESTINATION%\scripts\platform\windows\operations.bat" "installer-cleanup" "%BF_INSTALLER_PATH%"

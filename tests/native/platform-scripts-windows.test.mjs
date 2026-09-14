@@ -121,6 +121,8 @@ public static class GitFixture
                 "NOOBAI_RERANKER_MODEL=\\n");
             Write(Path.Combine(target, "scripts", "runtime-data.mjs"),
                 "import { mkdirSync, writeFileSync } from 'node:fs'; mkdirSync('data/media', { recursive: true }); writeFileSync('data/catalog.sqlite', '');\\n");
+            Directory.CreateDirectory(Path.Combine(target, "scripts", "platform", "windows"));
+            File.Copy(Environment.GetEnvironmentVariable("BF_TEST_OPERATIONS_SOURCE"), Path.Combine(target, "scripts", "platform", "windows", "operations.bat"), true);
             string layout = Environment.GetEnvironmentVariable("BF_TEST_CLONE_LAYOUT");
             string installerSource = Environment.GetEnvironmentVariable("BF_TEST_CLONED_INSTALLER_SOURCE");
             if (String.IsNullOrEmpty(installerSource)) installerSource = Environment.GetEnvironmentVariable("BF_TEST_INSTALLER_SOURCE");
@@ -223,10 +225,28 @@ function installerEnvironment(tools, extra = {}) {
   return {
     BF_TEST_LOG: tools.log,
     BF_TEST_INSTALLER_SOURCE: join(windowsBin, 'install.bat'),
+    BF_TEST_OPERATIONS_SOURCE: join(repositoryRoot, 'scripts/platform/windows/operations.bat'),
     Path: `${tools.bin};${systemPath()}`,
     PATH: `${tools.bin};${systemPath()}`,
     ...extra
   };
+}
+
+function createInstallerCleanupFixture(t, { includeNestedInstaller = true, includeRootInstaller = true } = {}) {
+  const root = mkdtempSync(join(tmpdir(), 'booruflow-win-installer-cleanup-'));
+  const rootInstaller = join(root, 'install.bat');
+  const nestedInstaller = join(root, 'bin/windows/install.bat');
+  const operations = join(root, 'scripts/platform/windows/operations.bat');
+  mkdirSync(join(root, 'bin/windows'), { recursive: true });
+  mkdirSync(join(root, 'scripts/platform/windows'), { recursive: true });
+  copyFileSync(join(repositoryRoot, 'scripts/platform/windows/operations.bat'), operations);
+  if (includeRootInstaller) writeCommand(rootInstaller, '@echo off\n');
+  if (includeNestedInstaller) writeCommand(nestedInstaller, '@echo off\n');
+  t.after(() => {
+    spawnSync('attrib.exe', ['-R', rootInstaller], { windowsHide: true });
+    rmSync(root, { force: true, recursive: true });
+  });
+  return { nestedInstaller, operations, root, rootInstaller };
 }
 
 windowsTest('Windows installer uses startup CWD and initializes an empty runtime', (t) => {
@@ -274,7 +294,7 @@ windowsTest('Windows installer can run from the default directory when it is the
     environment: installerEnvironment(tools),
     input: '\r\n'
   });
-  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.equal(result.stderr, '');
   assert.equal(existsSync(join(cwd, '.git')), true);
   assert.equal(existsSync(downloadedInstaller), false);
@@ -311,8 +331,70 @@ windowsTest('Windows installer rejects an in-place download that differs from th
     }),
     input: '\r\n'
   });
-  assert.equal(result.status, 1);
+  assert.equal(result.status, 1, result.stderr || result.stdout);
   assert.match(result.stderr, /installer differs from the selected tag; download that tag's install\.bat/);
+});
+
+windowsTest('Windows installer cleanup requires the downloaded root installer path', (t) => {
+  const fixture = createInstallerCleanupFixture(t);
+  const result = runBatch(fixture.operations, {
+    args: ['installer-cleanup'],
+    cwd: tmpdir()
+  });
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.match(result.stderr, /cleanup handoff omitted the downloaded root installer path/);
+  assert.equal(existsSync(fixture.rootInstaller), true);
+});
+
+windowsTest('Windows installer cleanup rejects a source outside the application root', (t) => {
+  const fixture = createInstallerCleanupFixture(t);
+  const outsideDirectory = temporaryDirectory(t, 'booruflow-win-installer-outside-');
+  const outside = join(outsideDirectory, 'install.bat');
+  writeCommand(outside, '@echo off\n');
+  const result = runBatch(fixture.operations, {
+    args: ['installer-cleanup', outside],
+    cwd: tmpdir()
+  });
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.match(result.stderr, /cleanup source could not be verified as the Application root's install\.bat/);
+  assert.equal(existsSync(outside), true);
+  assert.equal(existsSync(fixture.rootInstaller), true);
+});
+
+windowsTest('Windows installer cleanup requires the installed nested entrypoint', (t) => {
+  const fixture = createInstallerCleanupFixture(t, { includeNestedInstaller: false });
+  const result = runBatch(fixture.operations, {
+    args: ['installer-cleanup', fixture.rootInstaller],
+    cwd: tmpdir()
+  });
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.match(result.stderr, /installed Windows installer entrypoint is missing/);
+  assert.equal(existsSync(fixture.rootInstaller), true);
+});
+
+windowsTest('Windows installer cleanup reports a missing downloaded root installer', (t) => {
+  const fixture = createInstallerCleanupFixture(t, { includeRootInstaller: false });
+  const result = runBatch(fixture.operations, {
+    args: ['installer-cleanup', fixture.rootInstaller],
+    cwd: tmpdir()
+  });
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.match(result.stderr, /downloaded root installer is already missing/);
+  assert.equal(existsSync(fixture.nestedInstaller), true);
+});
+
+windowsTest('Windows installer cleanup reports a root installer that cannot be deleted', (t) => {
+  const fixture = createInstallerCleanupFixture(t);
+  const readOnly = spawnSync('attrib.exe', ['+R', fixture.rootInstaller], { encoding: 'utf8', windowsHide: true });
+  assert.equal(readOnly.status, 0, readOnly.stderr || readOnly.stdout);
+  const result = runBatch(fixture.operations, {
+    args: ['installer-cleanup', fixture.rootInstaller],
+    cwd: tmpdir()
+  });
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.match(result.stderr, /downloaded root installer could not be removed/);
+  assert.equal(existsSync(fixture.rootInstaller), true);
+  assert.equal(existsSync(fixture.nestedInstaller), true);
 });
 
 windowsTest('Windows installer resolves a relative Unicode path from startup CWD', (t) => {

@@ -13,6 +13,7 @@ set "BF_ARG7=%~8"
 set "BF_ARG8=%~9"
 for %%I in ("%~dp0\..\..\..") do set "BF_ROOT=%%~fI"
 set "BF_RELEASE_CONFIG_PATH=%BF_ROOT%\config\release\release.json"
+if /I "%BF_OPERATION%"=="installer-cleanup" goto installer_cleanup
 call :load_config
 if errorlevel 1 exit /b 1
 
@@ -27,6 +28,40 @@ if /I "%BF_OPERATION%"=="data-export" goto dispatch_data_export
 if /I "%BF_OPERATION%"=="data-pack" goto dispatch_data_pack
 if /I "%BF_OPERATION%"=="data-import" goto dispatch_data_import
 call :fail "an unknown platform operation was provided"
+exit /b 1
+
+:installer_cleanup
+set "BF_INSTALLER_CLEANUP_SOURCE=%BF_ARG1%"
+if not defined BF_INSTALLER_CLEANUP_SOURCE goto installer_cleanup_missing_source
+if not exist "%BF_INSTALLER_CLEANUP_SOURCE%" goto installer_cleanup_source_missing
+if not exist "%BF_ROOT%\bin\windows\install.bat" goto installer_cleanup_nested_missing
+set "BF_INSTALLER_CLEANUP_EXPECTED=%BF_ROOT%\install.bat"
+powershell.exe -NoProfile -Command "$ErrorActionPreference='Stop'; $source=(Get-Item -Force -LiteralPath $env:BF_INSTALLER_CLEANUP_SOURCE).FullName; $expected=(Get-Item -Force -LiteralPath $env:BF_INSTALLER_CLEANUP_EXPECTED).FullName; if(-not $source.Equals($expected,[StringComparison]::OrdinalIgnoreCase)){exit 1}" >nul 2>nul
+if errorlevel 1 goto installer_cleanup_source_outside_root
+del /q "%BF_INSTALLER_CLEANUP_SOURCE%" >nul 2>nul
+if errorlevel 1 goto installer_cleanup_delete_failed
+if exist "%BF_INSTALLER_CLEANUP_SOURCE%" goto installer_cleanup_delete_failed
+exit /b 0
+
+:installer_cleanup_missing_source
+call :installer_cleanup_fail "the cleanup handoff omitted the downloaded root installer path; use the selected release's install.bat with another empty installation directory"
+exit /b 1
+:installer_cleanup_source_missing
+call :installer_cleanup_fail "the downloaded root installer is already missing; confirm bin\windows\install.bat exists before using this installation"
+exit /b 1
+:installer_cleanup_nested_missing
+call :installer_cleanup_fail "the installed Windows installer entrypoint is missing; use the selected release's install.bat with another empty installation directory"
+exit /b 1
+:installer_cleanup_source_outside_root
+call :installer_cleanup_fail "the cleanup source could not be verified as the Application root's install.bat; no file was deleted, so use the selected release's install.bat with another empty installation directory"
+exit /b 1
+:installer_cleanup_delete_failed
+call :installer_cleanup_fail "the downloaded root installer could not be removed; confirm bin\windows\install.bat exists, then manually remove only the Application root's install.bat"
+exit /b 1
+
+:installer_cleanup_fail
+echo Installation failed: %~1 1>&2
+echo Application root: "%BF_ROOT%" 1>&2
 exit /b 1
 
 :dispatch_check
