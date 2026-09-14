@@ -259,7 +259,7 @@ call :port_owned_by "%BF_INTERNAL_PORT%" "%BF_CHILD_PID%"
 if not errorlevel 1 goto start_ready
 :start_health_wait
 if %BF_ELAPSED% GEQ %BF_STARTUP_TIMEOUT% goto start_timeout_shutdown
-timeout /t %BF_POLL_INTERVAL% /nobreak >nul
+powershell.exe -NoProfile -Command "Start-Sleep -Seconds ([int]$env:BF_POLL_INTERVAL)"
 set /a BF_ELAPSED+=BF_POLL_INTERVAL
 goto start_health_loop
 :start_ready
@@ -271,7 +271,7 @@ set /a BF_STOP_ELAPSED=0
 :start_timeout_wait
 call :pid_alive "%BF_CHILD_PID%" || goto start_timeout_stopped
 if %BF_STOP_ELAPSED% GEQ %BF_STOP_TIMEOUT% (call :fail "health check timed out; PID %BF_CHILD_PID% may still own ports %BF_PUBLIC_PORT% and %BF_INTERNAL_PORT%; inspect the application log and retry stop.bat --stop-timeout %BF_STOP_TIMEOUT%" & exit /b 1)
-timeout /t %BF_POLL_INTERVAL% /nobreak >nul
+powershell.exe -NoProfile -Command "Start-Sleep -Seconds ([int]$env:BF_POLL_INTERVAL)"
 set /a BF_STOP_ELAPSED+=BF_POLL_INTERVAL
 goto start_timeout_wait
 :start_timeout_stopped
@@ -304,7 +304,7 @@ set /a BF_ELAPSED=0
 :stop_wait_loop
 call :pid_alive "%BF_RECORDED_PID%" || goto stop_confirm_ports
 if %BF_ELAPSED% GEQ %BF_STOP_TIMEOUT% (call :fail "PID %BF_RECORDED_PID% did not exit; inspect ports %BF_PUBLIC_PORT% and %BF_INTERNAL_PORT% plus the application log, then retry stop.bat --stop-timeout %BF_STOP_TIMEOUT%" & exit /b 1)
-timeout /t %BF_POLL_INTERVAL% /nobreak >nul
+powershell.exe -NoProfile -Command "Start-Sleep -Seconds ([int]$env:BF_POLL_INTERVAL)"
 set /a BF_ELAPSED+=BF_POLL_INTERVAL
 goto stop_wait_loop
 :stop_confirm_ports
@@ -455,7 +455,7 @@ call :port_owned_by "%BF_INTERNAL_PORT%" "%BF_TEMP_PID%"
 if not errorlevel 1 (set "BF_TEMP_HEALTH=1" & goto temporary_shutdown)
 :temporary_health_wait
 if %BF_ELAPSED% GEQ %BF_STARTUP_TIMEOUT% goto temporary_shutdown
-timeout /t %BF_POLL_INTERVAL% /nobreak >nul
+powershell.exe -NoProfile -Command "Start-Sleep -Seconds ([int]$env:BF_POLL_INTERVAL)"
 set /a BF_ELAPSED+=BF_POLL_INTERVAL
 goto temporary_health_loop
 :temporary_shutdown
@@ -464,7 +464,7 @@ set /a BF_STOP_ELAPSED=0
 :temporary_stop_loop
 call :pid_alive "%BF_TEMP_PID%" || goto temporary_stopped
 if %BF_STOP_ELAPSED% GEQ %BF_STOP_TIMEOUT% exit /b 1
-timeout /t %BF_POLL_INTERVAL% /nobreak >nul
+powershell.exe -NoProfile -Command "Start-Sleep -Seconds ([int]$env:BF_POLL_INTERVAL)"
 set /a BF_STOP_ELAPSED+=BF_POLL_INTERVAL
 goto temporary_stop_loop
 :temporary_stopped

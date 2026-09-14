@@ -394,6 +394,7 @@ windowsTest('Windows runtime starts visibly, reports ownership, and stops throug
 
   const started = runBatch(join(fixture.root, 'start.bat'), { cwd: tmpdir(), environment: fixture.environment });
   assert.equal(started.status, 0, started.stderr);
+  assert.doesNotMatch(started.stderr, /Input redirection is not supported/);
   assert.match(started.stdout, new RegExp(`http://127\\.0\\.0\\.1:${publicPort}/`));
   assert.equal(existsSync(join(fixture.root, 'runtime/run/custom.shutdown')), false);
 
@@ -403,6 +404,7 @@ windowsTest('Windows runtime starts visibly, reports ownership, and stops throug
 
   const stopped = runBatch(join(fixture.root, 'stop.bat'), { cwd: tmpdir(), environment: fixture.environment });
   assert.equal(stopped.status, 0, stopped.stderr);
+  assert.doesNotMatch(stopped.stderr, /Input redirection is not supported/);
   assert.equal(existsSync(join(fixture.root, 'runtime/run/app.pid')), false);
   assert.equal(existsSync(join(fixture.root, 'runtime/run/custom.shutdown')), false);
   assert.equal(readFileSync(join(fixture.root, 'runtime/stopped.marker'), 'utf8'), 'normal');
@@ -418,6 +420,7 @@ windowsTest('Windows status rejects a live PID recorded by another installation'
   const second = createRuntimeFixture(t, secondPublic, secondInternal);
   const started = runBatch(join(first.root, 'start.bat'), { cwd: tmpdir(), environment: first.environment });
   assert.equal(started.status, 0, started.stderr);
+  assert.doesNotMatch(started.stderr, /Input redirection is not supported/);
   mkdirSync(join(second.root, 'runtime/run'), { recursive: true });
   copyFileSync(join(first.root, 'runtime/run/app.pid'), join(second.root, 'runtime/run/app.pid'));
   const rejected = runBatch(join(second.root, 'status.bat'), { cwd: tmpdir(), environment: second.environment });
@@ -425,6 +428,7 @@ windowsTest('Windows status rejects a live PID recorded by another installation'
   assert.match(rejected.stderr, /not the application process for this installation root/);
   const stopped = runBatch(join(first.root, 'stop.bat'), { cwd: tmpdir(), environment: first.environment });
   assert.equal(stopped.status, 0, stopped.stderr);
+  assert.doesNotMatch(stopped.stderr, /Input redirection is not supported/);
 });
 
 windowsTest('Windows data paths stay relative to a special-character caller directory', async (t) => {
