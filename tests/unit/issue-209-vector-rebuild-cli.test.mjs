@@ -13,10 +13,10 @@ const repositoryRoot = resolve(import.meta.dirname, '../..');
 const NOW = '2026-08-05T00:00:00.000Z';
 const FIXTURE_VECTOR_JSON = JSON.stringify(createFixtureVector());
 const scripts = Object.freeze([
-  ['work', 'works', 'scripts/rebuild-work-vectors.mjs', 1],
-  ['character', 'characters', 'scripts/rebuild-character-vectors.mjs', 2],
-  ['style', 'styles', 'scripts/rebuild-style-vectors.mjs', 3],
-  ['prompt_term', 'prompt_terms', 'scripts/rebuild-prompt-term-vectors.mjs', 4]
+  ['work', 'works', 'scripts/maintenance/rebuild-work-vectors.mjs', 1],
+  ['character', 'characters', 'scripts/maintenance/rebuild-character-vectors.mjs', 2],
+  ['style', 'styles', 'scripts/maintenance/rebuild-style-vectors.mjs', 3],
+  ['prompt_term', 'prompt_terms', 'scripts/maintenance/rebuild-prompt-term-vectors.mjs', 4]
 ]);
 
 const modelWrapper = (scriptPath, args) => `
@@ -88,7 +88,7 @@ test('all four rebuild CLIs reject missing --database values before opening a da
   for (const [, , scriptPath] of scripts) {
     const result = runCli(scriptPath, []);
     assert.notEqual(result.status, 0, scriptPath);
-    assert.match(result.stderr, /usage: node scripts\/rebuild-/u);
+    assert.match(result.stderr, /usage: node scripts\/maintenance\/rebuild-/u);
   }
 });
 

@@ -15,3 +15,5 @@ BooruFlow 是本机运行的角色、画风、Prompt Tag、模型、LoRA、画�
 - [获取帮助](community/support.md)、[Issue 处理](community/issues.md)、[贡献指南](community/contributing.md)、[PR 规范](community/pull-requests.md)
 - [架构](development/architecture.md)、[界面交互规范](development/interface-guidelines.md)、[测试](development/testing.md)、[机器契约](development/contracts.md)、[Catalog/Source 集成](development/catalog-source.md)、[发布](development/releases.md)
 - [变更记录](CHANGELOG.md)与仓库根目录 [MIT License](../../LICENSE)
+
+- [脚本目录与维护命令](development/scripts.md)

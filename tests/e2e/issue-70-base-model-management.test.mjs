@@ -5,8 +5,8 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { chromium } from 'playwright';
 
-import { startTestApp } from '../../scripts/start-test-app.mjs';
-import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/test-browser-launch-options.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
+import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/testing/test-browser-launch-options.mjs';
 
 const FIXTURE_MEDIA_PATHS = ['images/fixture-model.png', 'images/fixture-lora.png', 'images/fixture-template.png'];
 

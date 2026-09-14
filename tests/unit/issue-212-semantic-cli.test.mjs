@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import { buildSemanticDiscovery } from '../../app/http/semantic-discovery.mjs';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const cliPath = resolve(repositoryRoot, 'scripts/imagegen-semantic-query.mjs');
+const cliPath = resolve(repositoryRoot, 'scripts/catalog/imagegen-semantic-query.mjs');
 const path = '/internal/semantic/generation-models';
 const page = { contract_id: 'imagegen-source-contract', contract_version: 1, kind: 'model', items: [], page: 1, page_size: 20, total_count: 0 };
 

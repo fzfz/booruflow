@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
 
-import { TEST_SUITES } from '../../scripts/run-test-suite.mjs';
+import { TEST_SUITES } from '../../scripts/testing/run-test-suite.mjs';
 
 const repositoryRoot = resolve(new URL('../..', import.meta.url).pathname);
 const packageJson = JSON.parse(readFileSync(resolve(repositoryRoot, 'package.json'), 'utf8'));
@@ -24,7 +24,7 @@ test('测试命令公开 unit → integration → e2e 三层边界并由非阻�
     '契约结构检查', '契约测试', '单元测试', '静态测试边界检查', '集成测试', '端到端测试'
   ]);
   const integrationStep = TEST_SUITES.all.find(({ label }) => label === '集成测试');
-  assert.deepEqual(integrationStep?.args, ['scripts/run-test-layer.mjs', 'tests/integration/', '--test-concurrency=1']);
+  assert.deepEqual(integrationStep?.args, ['scripts/testing/run-test-layer.mjs', 'tests/integration/', '--test-concurrency=1']);
   assert.equal(TEST_SUITES.all.filter(({ label }) => label === '静态测试边界检查').length, 1, 'npm test 必须只执行一次静态测试边界检查');
   for (const name of ['test:contract', 'test:integration', 'test:e2e', 'test']) {
     assert.doesNotMatch(scripts[name], /&&/u, `${name} 不得在前一步失败后阻断后续测试`);

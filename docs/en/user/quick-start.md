@@ -1,5 +1,7 @@
 # Quick start
 
+Root-level commands here apply to published v0.88.0. The current source uses `bin/`; see [Script directories and maintenance commands](../development/scripts.md).
+
 Finish [installation](installation.md) and [configuration](configuration.md), then choose how to begin.
 
 For manual entry, run `start.bat` or `bash start.sh` and open the public address shown by the script. From the management home, create a base model first, then works, characters, and styles. Connect models to a base model and LoRAs to both a base model and a model. Search each page to confirm the record, open its details, and add images.

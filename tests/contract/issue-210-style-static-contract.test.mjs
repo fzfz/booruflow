@@ -15,13 +15,13 @@ const styleRuntimeFiles = Object.freeze([
 const persistentDatabaseOpeners = Object.freeze([
   'app/data-package/database.mjs',
   'app/server/local-app.mjs',
-  'scripts/rebuild-character-vectors.mjs',
-  'scripts/rebuild-artist-prompt-string-vectors.mjs',
-  'scripts/rebuild-generation-lora-vectors.mjs',
-  'scripts/rebuild-prompt-term-vectors.mjs',
-  'scripts/rebuild-style-vectors.mjs',
-  'scripts/rebuild-work-vectors.mjs',
-  'scripts/start-test-app.mjs',
+  'scripts/maintenance/rebuild-character-vectors.mjs',
+  'scripts/maintenance/rebuild-artist-prompt-string-vectors.mjs',
+  'scripts/maintenance/rebuild-generation-lora-vectors.mjs',
+  'scripts/maintenance/rebuild-prompt-term-vectors.mjs',
+  'scripts/maintenance/rebuild-style-vectors.mjs',
+  'scripts/maintenance/rebuild-work-vectors.mjs',
+  'scripts/testing/start-test-app.mjs',
 ]);
 const persistentOpenCall = /\bopenCatalogDatabase\s*\(\s*\{(?<arguments>[^{}]*)\}\s*\)/gu;
 

@@ -49,13 +49,13 @@ jobs:
         run: node --test tests/unit/data-package/import.test.mjs tests/contract/issue-89-production-runtime-data.test.mjs
       - name: Run migration tests
         if: ${{ !cancelled() && runner.os != 'Windows' }}
-        run: node scripts/run-test-layer.mjs tests/migration/
+        run: node scripts/testing/run-test-layer.mjs tests/migration/
       - name: Run native script tests
         if: ${{ !cancelled() }}
-        run: node scripts/run-test-layer.mjs tests/native/
+        run: node scripts/testing/run-test-layer.mjs tests/native/
       - name: Run browser tests
         if: ${{ !cancelled() }}
-        run: node scripts/run-e2e-tests.mjs
+        run: node scripts/testing/run-e2e-tests.mjs
       - name: Install published tag and exercise macOS lifecycle
         if: ${{ !cancelled() && runner.os == 'macOS' && github.ref_type == 'tag' }}
         shell: bash
@@ -63,26 +63,26 @@ jobs:
           set -e
           smoke="$RUNNER_TEMP/安装 smoke"
           mkdir "$smoke"
-          cp install.sh "$smoke/install.sh"
+          cp bin/macos/install.sh "$smoke/install.sh"
           cd "$smoke"
           printf '\n' | bash install.sh --tag "$GITHUB_REF_NAME"
           for name in EMBEDDING RERANKER; do
             sed -i '' "s|^NOOBAI_${name}_BASE_URL=$|NOOBAI_${name}_BASE_URL=http://127.0.0.1:59999/v1|; s|^NOOBAI_${name}_API_KEY=$|NOOBAI_${name}_API_KEY=test|; s|^NOOBAI_${name}_MODEL=$|NOOBAI_${name}_MODEL=test|" .env
           done
-          bash check.sh
-          bash start.sh &
+          bash bin/macos/check.sh
+          bash bin/macos/start.sh &
           launcher=$!
-          trap 'bash stop.sh; wait "$launcher"' EXIT
+          trap 'bash bin/macos/stop.sh; wait "$launcher"' EXIT
           for attempt in {1..30}; do
-            if bash status.sh >/dev/null 2>&1; then break; fi
+            if bash bin/macos/status.sh >/dev/null 2>&1; then break; fi
             if ! kill -0 "$launcher" 2>/dev/null; then break; fi
             sleep 1
           done
-          bash status.sh
-          bash stop.sh
+          bash bin/macos/status.sh
+          bash bin/macos/stop.sh
           wait "$launcher"
           trap - EXIT
-          bash backup.sh
+          bash bin/macos/backup.sh
           test -z "$(git status --porcelain)"
       - name: Install published tag and exercise Windows lifecycle
         if: ${{ !cancelled() && runner.os == 'Windows' && github.ref_type == 'tag' }}
@@ -90,7 +90,7 @@ jobs:
         run: |
           $smoke = Join-Path $env:RUNNER_TEMP '安装 smoke'
           New-Item -ItemType Directory -Path $smoke | Out-Null
-          Copy-Item install.bat (Join-Path $smoke 'install.bat')
+          Copy-Item bin/windows/install.bat (Join-Path $smoke 'install.bat')
           Set-Location $smoke
           '' | & cmd.exe /d /c install.bat --tag $env:GITHUB_REF_NAME
           if ($LASTEXITCODE -ne 0) { throw 'Native installation failed' }
@@ -103,19 +103,19 @@ jobs:
           Set-Content .env $configuration -Encoding utf8NoBOM
           try {
             foreach ($operation in @('check', 'start', 'status')) {
-              & cmd.exe /d /c "$operation.bat"
+              & cmd.exe /d /c "bin\windows\$operation.bat"
               if ($LASTEXITCODE -ne 0) { throw "Native $operation failed" }
             }
           } finally {
-            & cmd.exe /d /c stop.bat
+            & cmd.exe /d /c bin\windows\stop.bat
             if ($LASTEXITCODE -ne 0) { throw 'Native stop failed' }
           }
-          & cmd.exe /d /c backup.bat
+          & cmd.exe /d /c bin\windows\backup.bat
           if ($LASTEXITCODE -ne 0) { throw 'Native backup failed' }
           if (git status --porcelain) { throw 'Installation changed tracked files' }
       - name: Export platform data package
         if: ${{ !cancelled() }}
-        run: node scripts/test-data-exchange.mjs export outputs/exchange
+        run: node scripts/testing/test-data-exchange.mjs export outputs/exchange
       - uses: actions/upload-artifact@v4
         with:
           name: exchange-${{ matrix.os }}
@@ -141,4 +141,4 @@ jobs:
           pattern: exchange-*
           path: outputs/incoming
       - name: Import packages from all three platforms
-        run: node scripts/test-data-exchange.mjs import outputs/incoming
+        run: node scripts/testing/test-data-exchange.mjs import outputs/incoming

@@ -33,6 +33,8 @@ The script displays its starting working directory as the default installation d
 
 After installation, configure the embedding and rerank service URLs, model names and API keys in `.env`. The embedding model must produce **1024 dimensions**. See [configuration](docs/en/user/configuration.md).
 
+Root-level commands here apply to published v0.88.0. The current source uses `bin/`; see [Script directories and maintenance commands](docs/en/development/scripts.md).
+
 Run `start.bat` or `bash start.sh` from the installation directory and open the displayed address. Create a base model in the base-model management page, then add models and styles. To use a data package, import it into an empty database while the app is stopped, then start the app. Follow the [quick start](docs/en/user/quick-start.md).
 
 ## Inside the workspace

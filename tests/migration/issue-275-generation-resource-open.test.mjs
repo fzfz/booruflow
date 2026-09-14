@@ -181,7 +181,7 @@ for (const source of ['lora', 'artist', 'both']) {
         }),
         (error) => error instanceof OfflineGenerationResourceVectorMigrationRequiredError
           && error.name === 'OfflineGenerationResourceVectorMigrationRequiredError'
-          && error.message === 'generation resource vector migration 036 requires the offline migration entry before the application can start'
+          && error.message === 'Database migration 036 is incomplete, so the database predates the supported upgrade range. Upgrade the old deployment to v0.87.0 and migrate an isolated copy, or create a new installation before starting the application.'
       );
       assert035Unchanged(fixture, source);
     } finally {

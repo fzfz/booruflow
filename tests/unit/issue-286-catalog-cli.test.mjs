@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const cliPath = resolve(repositoryRoot, 'scripts/imagegen-semantic-query.mjs');
+const cliPath = resolve(repositoryRoot, 'scripts/catalog/imagegen-semantic-query.mjs');
 const baseModelPath = '/internal/semantic/base-models';
 
 function catalogDiscovery() {

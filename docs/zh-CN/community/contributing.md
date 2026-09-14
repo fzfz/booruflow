@@ -1,6 +1,6 @@
 # 贡献指南
 
-开发工具、版本和平台准备以[安装指南](../user/installation.md)为唯一用户说明。Fork `fzfz/booruflow` 并 clone 自己的 fork 后进入仓库，依次运行 `npm ci` 和 `node scripts/runtime-data.mjs init --root "$PWD"`。`.env` 不存在时复制 `.env.example`，为开发实例选择独立端口，并填写[配置指南](../user/configuration.md)中的六个 Embedding/Reranker 变量；保留已有的 `NOOBAI_COMFYUI_CREDENTIAL_ENCRYPTION_KEY`。macOS 运行 `bash check.sh` 和 `bash start.sh`，Windows 运行 `check.bat` 和 `start.bat`。检查通过且管理首页能打开后停止应用，再创建描述目标的短分支。Windows 初始化命令把 `"$PWD"` 换为仓库绝对路径，例如 `node scripts\runtime-data.mjs init --root "C:\path\to\booruflow"`。
+开发工具、版本和平台准备以[安装指南](../user/installation.md)为唯一用户说明。Fork `fzfz/booruflow` 并 clone 自己的 fork 后进入仓库，依次运行 `npm ci` 和 `node scripts/runtime-data.mjs init --root "$PWD"`。`.env` 不存在时复制 `.env.example`，为开发实例选择独立端口，并填写[配置指南](../user/configuration.md)中的六个 Embedding/Reranker 变量；保留已有的 `NOOBAI_COMFYUI_CREDENTIAL_ENCRYPTION_KEY`。macOS 运行 `bash bin/macos/check.sh` 和 `bash bin/macos/start.sh`，Windows 运行 `bin\windows\check.bat` 和 `bin\windows\start.bat`。检查通过且管理首页能打开后停止应用，再创建描述目标的短分支。Windows 初始化命令把 `"$PWD"` 换为仓库绝对路径，例如 `node scripts\runtime-data.mjs init --root "C:\path\to\booruflow"`。
 
 把每个 PR 限定为一个问题，保留无关文件。小修复可直接提交；接口、数据库、配置合同或产品行为变化先开 Issue 明确目标。修改机器契约时先改唯一来源，再同步实现、测试和文档。新增行为必须测试正常、异常与边界分支。
 

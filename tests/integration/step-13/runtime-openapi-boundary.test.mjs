@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { RUNTIME_OPERATIONS } from '../../../app/http/runtime-operations.mjs';
-import { startTestApp } from '../../../scripts/start-test-app.mjs';
+import { startTestApp } from '../../../scripts/testing/start-test-app.mjs';
 
 const probes = Object.freeze({
   listWorks: { listener: 'public', method: 'GET', path: '/api/works', expectedStatus: 200 },

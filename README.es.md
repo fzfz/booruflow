@@ -33,6 +33,8 @@ El script muestra el directorio de trabajo inicial como destino predeterminado. 
 
 Después, configura en `.env` las URL, los nombres de modelo y las claves API de los servicios de embeddings y rerank. El modelo de embeddings debe producir **1024 dimensiones**. Consulta la [guía de configuración](docs/es/user/configuration.md).
 
+Los comandos de raíz corresponden a v0.88.0 publicada. El código actual usa `bin/`; consulta [Directorios de scripts y mantenimiento](docs/es/development/scripts.md).
+
 Ejecuta `start.bat` o `bash start.sh` desde la carpeta de instalación y abre la dirección indicada. Crea un modelo base en «底模管理» y añade modelos y estilos. Si tienes un paquete de datos, impórtalo en una base vacía con la aplicación detenida y arranca después. Sigue la [guía de inicio](docs/es/user/quick-start.md).
 
 ## El espacio de trabajo

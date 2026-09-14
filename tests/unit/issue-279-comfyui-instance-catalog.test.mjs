@@ -14,7 +14,7 @@ import { SEMANTIC_HANDLER_ROUTE_MANIFEST } from '../../app/http/semantic-handler
 import { ApplicationError, createErrorMapper } from '../../app/security/error-mapping.mjs';
 
 const REPOSITORY_ROOT = resolve(new URL('../..', import.meta.url).pathname);
-const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-semantic-query.mjs');
+const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-semantic-query.mjs');
 const INSTANCE_PATH = '/internal/semantic/comfyui-instances';
 const MEDIA_ORIGIN = 'http://127.0.0.1:19082';
 const NOW = '2026-08-22T00:00:00.000Z';

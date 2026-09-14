@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { chromium } from 'playwright';
 
-import { startTestApp } from '../../scripts/start-test-app.mjs';
-import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/test-browser-launch-options.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
+import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/testing/test-browser-launch-options.mjs';
 import { assertManagementModal, assertManagementModalEscape } from './management-modal-assertions.mjs';
 
 const VIEWPORTS = Object.freeze([

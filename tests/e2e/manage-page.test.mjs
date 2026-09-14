@@ -6,17 +6,17 @@ import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { chromium } from 'playwright';
 
-import { startManageTestApp } from '../../scripts/start-manage-test-app.mjs';
-import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/test-browser-launch-options.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
+import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/testing/test-browser-launch-options.mjs';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const evidenceRoot = join(repositoryRoot, 'tests/e2e/artifacts/step-11/manage');
 
 test('管理页联调执行关闭处理后清理临时目录并退出', async (t) => {
   const probe = spawn(process.execPath, ['--input-type=module', '-e', `
-    import { startManageTestApp } from './scripts/start-manage-test-app.mjs';
+    import { startTestApp } from './scripts/testing/start-test-app.mjs';
     process.on('message', () => process.emit('SIGTERM'));
-    const app = await startManageTestApp();
+    const app = await startTestApp();
     console.log('TEST_ROOT=' + JSON.stringify(app.root));
   `], { cwd: repositoryRoot, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
   const exited = new Promise((resolve) => probe.once('exit', (code, signal) => resolve([code, signal])));
@@ -51,7 +51,7 @@ test('管理页联调执行关闭处理后清理临时目录并退出', async (t
 });
 
 test('管理页浏览器真实查询覆盖搜索、空结果、总数分页和 HTTP 错误', async () => {
-  const app = await startManageTestApp();
+  const app = await startTestApp();
   const browser = await chromium.launch(TEST_BROWSER_LAUNCH_OPTIONS);
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
@@ -100,7 +100,7 @@ test('管理页浏览器真实查询覆盖搜索、空结果、总数分页和 H
 });
 
 test('角色画师管理页首次渲染时直接显示作品、角色与画风现有封面', async () => {
-  const app = await startManageTestApp();
+  const app = await startTestApp();
   const browser = await chromium.launch(TEST_BROWSER_LAUNCH_OPTIONS);
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
@@ -141,7 +141,7 @@ test('角色画师管理页首次渲染时直接显示作品、角色与画风�
 });
 
 test('管理页真实启动联调覆盖三类目录、作品关系、上传、封面和删除', async () => {
-  const app = await startManageTestApp();
+  const app = await startTestApp();
   const browser = await chromium.launch(TEST_BROWSER_LAUNCH_OPTIONS);
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();

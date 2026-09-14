@@ -1,5 +1,7 @@
 # Installation
 
+Root-level commands here apply to published v0.88.0. The current source uses `bin/`; see [Script directories and maintenance commands](../development/scripts.md).
+
 ## Requirements
 
 BooruFlow v0.88.0 provides native scripts targeting Windows x64 and macOS arm64/x64. Installation requires Node.js 24.21.0 or newer, npm 10.9.3 or newer, and Git 2.55.0 or newer. The installer also checks `tar` and the SQLite vector extension; `config/release/release.json` is the source for exact requirements. The Release page lists the platforms actually verified for that release.

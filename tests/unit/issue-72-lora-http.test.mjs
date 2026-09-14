@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { startTestApp } from '../../scripts/start-test-app.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
 
 const LORA_WRITE = Object.freeze({
   base_model_id: 801,

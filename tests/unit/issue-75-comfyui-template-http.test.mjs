@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import { test } from 'node:test';
 import { parseDocument } from 'yaml';
 
-import { startTestApp } from '../../scripts/start-test-app.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
 
 const BASE_MODEL_ID = 801;
 const MODEL_ID = 802;

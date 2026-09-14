@@ -185,8 +185,8 @@ call :read_pid
 if errorlevel 1 exit /b 1
 if defined BF_RECORDED_PID (
   call :pid_alive "%BF_RECORDED_PID%"
-  if not errorlevel 1 (call :assert_application_pid "%BF_RECORDED_PID%" & call :fail "application PID %BF_RECORDED_PID% is still running; run stop.bat first" & exit /b 1)
-  call :fail "stale PID record remains; run stop.bat to reconcile it"
+  if not errorlevel 1 (call :assert_application_pid "%BF_RECORDED_PID%" & call :fail "application PID %BF_RECORDED_PID% is still running; change to the Application root printed below, then run bin\windows\stop.bat" & exit /b 1)
+  call :fail "stale PID record remains; change to the Application root printed below, then run bin\windows\stop.bat"
   exit /b 1
 )
 call :port_is_free "%BF_PUBLIC_PORT%"
@@ -225,7 +225,7 @@ if not defined BF_RECORDED_PID (
   echo %BF_PROJECT_NAME% is stopped. Public URL when started: http://127.0.0.1:%BF_PUBLIC_PORT%/
   exit /b 3
 )
-call :pid_alive "%BF_RECORDED_PID%" || (call :fail "recorded PID %BF_RECORDED_PID% has exited; run stop.bat" & exit /b 1)
+call :pid_alive "%BF_RECORDED_PID%" || (call :fail "recorded PID %BF_RECORDED_PID% has exited; change to the Application root printed below, then run bin\windows\stop.bat" & exit /b 1)
 call :assert_application_pid "%BF_RECORDED_PID%" || exit /b 1
 call :port_owned_by "%BF_PUBLIC_PORT%" "%BF_RECORDED_PID%" || (call :fail "public port is not owned only by PID %BF_RECORDED_PID%" & exit /b 1)
 call :port_owned_by "%BF_INTERNAL_PORT%" "%BF_RECORDED_PID%" || (call :fail "internal port is not owned only by PID %BF_RECORDED_PID%" & exit /b 1)
@@ -233,9 +233,9 @@ echo %BF_PROJECT_NAME% PID %BF_RECORDED_PID% is running. Public URL: http://127.
 exit /b 0
 
 :start
-if defined BF_ARG1 if /I not "%BF_ARG1%"=="--startup-timeout" (call :fail "usage: start.bat [--startup-timeout SECONDS]" & exit /b 1)
+if defined BF_ARG1 if /I not "%BF_ARG1%"=="--startup-timeout" (call :fail "usage from Application root: bin\windows\start.bat [--startup-timeout SECONDS]" & exit /b 1)
 if /I "%BF_ARG1%"=="--startup-timeout" if not defined BF_ARG2 (call :fail "--startup-timeout requires seconds" & exit /b 1)
-if defined BF_ARG3 (call :fail "usage: start.bat [--startup-timeout SECONDS]" & exit /b 1)
+if defined BF_ARG3 (call :fail "usage from Application root: bin\windows\start.bat [--startup-timeout SECONDS]" & exit /b 1)
 if /I "%BF_ARG1%"=="--startup-timeout" set "BF_STARTUP_TIMEOUT=%BF_ARG2%"
 set "BF_TIMEOUT_VALUE=%BF_STARTUP_TIMEOUT%"
 powershell.exe -NoProfile -Command "$v=0; if(-not [int]::TryParse($env:BF_TIMEOUT_VALUE,[ref]$v) -or $v -lt 1){exit 1}" >nul 2>nul
@@ -270,7 +270,7 @@ type nul > "%BF_SHUTDOWN_FILE%" || (call :fail "health check timed out and the n
 set /a BF_STOP_ELAPSED=0
 :start_timeout_wait
 call :pid_alive "%BF_CHILD_PID%" || goto start_timeout_stopped
-if %BF_STOP_ELAPSED% GEQ %BF_STOP_TIMEOUT% (call :fail "health check timed out; PID %BF_CHILD_PID% may still own ports %BF_PUBLIC_PORT% and %BF_INTERNAL_PORT%; inspect the application log and retry stop.bat --stop-timeout %BF_STOP_TIMEOUT%" & exit /b 1)
+if %BF_STOP_ELAPSED% GEQ %BF_STOP_TIMEOUT% (call :fail "health check timed out; PID %BF_CHILD_PID% may still own ports %BF_PUBLIC_PORT% and %BF_INTERNAL_PORT%; inspect the application log, change to the Application root printed below, then retry bin\windows\stop.bat --stop-timeout %BF_STOP_TIMEOUT%" & exit /b 1)
 powershell.exe -NoProfile -Command "Start-Sleep -Seconds ([int]$env:BF_POLL_INTERVAL)"
 set /a BF_STOP_ELAPSED+=BF_POLL_INTERVAL
 goto start_timeout_wait
@@ -281,9 +281,9 @@ call :fail "health check timed out after %BF_STARTUP_TIMEOUT% seconds; the appli
 exit /b 1
 
 :stop
-if defined BF_ARG1 if /I not "%BF_ARG1%"=="--stop-timeout" (call :fail "usage: stop.bat [--stop-timeout SECONDS]" & exit /b 1)
+if defined BF_ARG1 if /I not "%BF_ARG1%"=="--stop-timeout" (call :fail "usage from Application root: bin\windows\stop.bat [--stop-timeout SECONDS]" & exit /b 1)
 if /I "%BF_ARG1%"=="--stop-timeout" if not defined BF_ARG2 (call :fail "--stop-timeout requires seconds" & exit /b 1)
-if defined BF_ARG3 (call :fail "usage: stop.bat [--stop-timeout SECONDS]" & exit /b 1)
+if defined BF_ARG3 (call :fail "usage from Application root: bin\windows\stop.bat [--stop-timeout SECONDS]" & exit /b 1)
 if /I "%BF_ARG1%"=="--stop-timeout" set "BF_STOP_TIMEOUT=%BF_ARG2%"
 set "BF_TIMEOUT_VALUE=%BF_STOP_TIMEOUT%"
 powershell.exe -NoProfile -Command "$v=0; if(-not [int]::TryParse($env:BF_TIMEOUT_VALUE,[ref]$v) -or $v -lt 1){exit 1}" >nul 2>nul
@@ -303,7 +303,7 @@ type nul > "%BF_SHUTDOWN_FILE%" || (call :fail "normal shutdown request could no
 set /a BF_ELAPSED=0
 :stop_wait_loop
 call :pid_alive "%BF_RECORDED_PID%" || goto stop_confirm_ports
-if %BF_ELAPSED% GEQ %BF_STOP_TIMEOUT% (call :fail "PID %BF_RECORDED_PID% did not exit; inspect ports %BF_PUBLIC_PORT% and %BF_INTERNAL_PORT% plus the application log, then retry stop.bat --stop-timeout %BF_STOP_TIMEOUT%" & exit /b 1)
+if %BF_ELAPSED% GEQ %BF_STOP_TIMEOUT% (call :fail "PID %BF_RECORDED_PID% did not exit; inspect ports %BF_PUBLIC_PORT% and %BF_INTERNAL_PORT% plus the application log, change to the Application root printed below, then retry bin\windows\stop.bat --stop-timeout %BF_STOP_TIMEOUT%" & exit /b 1)
 powershell.exe -NoProfile -Command "Start-Sleep -Seconds ([int]$env:BF_POLL_INTERVAL)"
 set /a BF_ELAPSED+=BF_POLL_INTERVAL
 goto stop_wait_loop
@@ -363,9 +363,9 @@ set "BF_BACKUP_METADATA=%BF_BACKUP_VERSION_DIRECTORY%\%BF_BACKUP_NAME%.json"
 exit /b 0
 
 :restore
-if /I not "%BF_ARG1%"=="--backup" (call :fail "usage: restore.bat --backup data/recovery/backup-directory" & exit /b 1)
+if /I not "%BF_ARG1%"=="--backup" (call :fail "usage from Application root: bin\windows\restore.bat --backup data/recovery/backup-directory" & exit /b 1)
 if not defined BF_ARG2 (call :fail "--backup requires a data/recovery directory" & exit /b 1)
-if defined BF_ARG3 (call :fail "usage: restore.bat --backup data/recovery/backup-directory" & exit /b 1)
+if defined BF_ARG3 (call :fail "usage from Application root: bin\windows\restore.bat --backup data/recovery/backup-directory" & exit /b 1)
 set "BF_RESTORE_ARGUMENT=%BF_ARG2%"
 powershell.exe -NoProfile -Command "if($env:BF_RESTORE_ARGUMENT -notmatch '^data/recovery/[A-Za-z0-9][A-Za-z0-9._-]*$'){exit 1}" >nul 2>nul
 if errorlevel 1 (call :fail "--backup must name one direct data/recovery backup directory" & exit /b 1)
@@ -404,9 +404,9 @@ exit /b 0
 
 :update
 set "BF_TARGET=%BF_DEFAULT_TAG%"
-if defined BF_ARG1 if /I not "%BF_ARG1%"=="--tag" (call :fail "usage: update.bat [--tag vX.Y.Z]" & exit /b 1)
+if defined BF_ARG1 if /I not "%BF_ARG1%"=="--tag" (call :fail "usage from Application root: bin\windows\update.bat [--tag vX.Y.Z]" & exit /b 1)
 if /I "%BF_ARG1%"=="--tag" if not defined BF_ARG2 (call :fail "--tag requires vX.Y.Z" & exit /b 1)
-if defined BF_ARG3 (call :fail "usage: update.bat [--tag vX.Y.Z]" & exit /b 1)
+if defined BF_ARG3 (call :fail "usage from Application root: bin\windows\update.bat [--tag vX.Y.Z]" & exit /b 1)
 if /I "%BF_ARG1%"=="--tag" set "BF_TARGET=%BF_ARG2%"
 set "BF_TARGET_CHECK=%BF_TARGET%"
 powershell.exe -NoProfile -Command "if($env:BF_TARGET_CHECK -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$'){exit 1}" >nul 2>nul
@@ -426,16 +426,16 @@ popd
 call :create_backup_with_release || (call :fail "pre-update backup failed" & exit /b 1)
 pushd "%BF_ROOT%"
 git fetch --tags origin && git rev-parse -q --verify "refs/tags/%BF_TARGET%" >nul && git checkout --detach "%BF_TARGET%"
-if errorlevel 1 (popd & call :fail "release checkout failed; run restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
+if errorlevel 1 (popd & call :fail "release checkout failed; change to the Application root printed below, then run bin\windows\restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
 call npm ci
-if errorlevel 1 (popd & call :fail "npm ci failed; run restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
+if errorlevel 1 (popd & call :fail "npm ci failed; change to the Application root printed below, then run bin\windows\restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
 node scripts\runtime-data.mjs migrate --root "%BF_ROOT%"
-if errorlevel 1 (popd & call :fail "database upgrade failed; run restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
+if errorlevel 1 (popd & call :fail "database upgrade failed; change to the Application root printed below, then run bin\windows\restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
 node scripts\runtime-data.mjs check --root "%BF_ROOT%"
-if errorlevel 1 (popd & call :fail "updated runtime check failed; run restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
+if errorlevel 1 (popd & call :fail "updated runtime check failed; change to the Application root printed below, then run bin\windows\restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
 popd
-call :temporary_health || (call :fail "temporary health check failed; run restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
-echo Update to %BF_TARGET% completed. Start with "%BF_ROOT%\start.bat".
+call :temporary_health || (call :fail "temporary health check failed; change to the Application root printed below, then run bin\windows\restore.bat --backup data/recovery/%BF_BACKUP_NAME%" & exit /b 1)
+echo Update to %BF_TARGET% completed. Start with "%BF_ROOT%\bin\windows\start.bat".
 exit /b 0
 
 :temporary_health
@@ -479,10 +479,10 @@ if /I "%BF_ARG1%"=="--output" set "BF_OUTPUT=%BF_ARG2%"
 if /I "%BF_ARG1%"=="--output" if /I "%BF_ARG3%"=="--include-instances" set "BF_INCLUDE=--include-instances"
 if /I "%BF_ARG1%"=="--include-instances" if /I "%BF_ARG2%"=="--output" set "BF_OUTPUT=%BF_ARG3%"
 if /I "%BF_ARG1%"=="--include-instances" if /I "%BF_ARG2%"=="--output" set "BF_INCLUDE=--include-instances"
-if not defined BF_OUTPUT (call :fail "usage: data-export.bat --output DIR [--include-instances]" & exit /b 1)
-if /I "%BF_ARG1%"=="--output" if defined BF_ARG3 if /I not "%BF_ARG3%"=="--include-instances" (call :fail "usage: data-export.bat --output DIR [--include-instances]" & exit /b 1)
-if /I "%BF_ARG1%"=="--output" if defined BF_ARG4 (call :fail "usage: data-export.bat --output DIR [--include-instances]" & exit /b 1)
-if /I "%BF_ARG1%"=="--include-instances" if defined BF_ARG4 (call :fail "usage: data-export.bat --output DIR [--include-instances]" & exit /b 1)
+if not defined BF_OUTPUT (call :fail "usage from Application root: bin\windows\data-export.bat --output DIR [--include-instances]" & exit /b 1)
+if /I "%BF_ARG1%"=="--output" if defined BF_ARG3 if /I not "%BF_ARG3%"=="--include-instances" (call :fail "usage from Application root: bin\windows\data-export.bat --output DIR [--include-instances]" & exit /b 1)
+if /I "%BF_ARG1%"=="--output" if defined BF_ARG4 (call :fail "usage from Application root: bin\windows\data-export.bat --output DIR [--include-instances]" & exit /b 1)
+if /I "%BF_ARG1%"=="--include-instances" if defined BF_ARG4 (call :fail "usage from Application root: bin\windows\data-export.bat --output DIR [--include-instances]" & exit /b 1)
 for %%I in ("%BF_OUTPUT%") do set "BF_OUTPUT=%%~fI"
 call :require_files || exit /b 1
 call :load_ports || exit /b 1
@@ -495,11 +495,11 @@ if not "%BF_RESULT%"=="0" (call :fail "data export failed" & exit /b 1)
 exit /b 0
 
 :data_pack
-if /I not "%BF_ARG1%"=="--input" (call :fail "usage: data-pack.bat --input DIR --output FILE.tar.gz" & exit /b 1)
+if /I not "%BF_ARG1%"=="--input" (call :fail "usage from Application root: bin\windows\data-pack.bat --input DIR --output FILE.tar.gz" & exit /b 1)
 if not defined BF_ARG2 (call :fail "--input requires a directory" & exit /b 1)
-if /I not "%BF_ARG3%"=="--output" (call :fail "usage: data-pack.bat --input DIR --output FILE.tar.gz" & exit /b 1)
+if /I not "%BF_ARG3%"=="--output" (call :fail "usage from Application root: bin\windows\data-pack.bat --input DIR --output FILE.tar.gz" & exit /b 1)
 if not defined BF_ARG4 (call :fail "--output requires a .tar.gz file" & exit /b 1)
-if defined BF_ARG5 (call :fail "usage: data-pack.bat --input DIR --output FILE.tar.gz" & exit /b 1)
+if defined BF_ARG5 (call :fail "usage from Application root: bin\windows\data-pack.bat --input DIR --output FILE.tar.gz" & exit /b 1)
 set "BF_INPUT=%BF_ARG2%"
 set "BF_OUTPUT=%BF_ARG4%"
 for %%I in ("%BF_INPUT%") do set "BF_INPUT=%%~fI"
@@ -561,7 +561,7 @@ set "BF_BATCH="
 if /I "%BF_ARG1%"=="--input" if /I "%BF_ARG3%"=="--check" if not defined BF_ARG4 (set "BF_INPUT=%BF_ARG2%" & set "BF_MODE=check")
 if /I "%BF_ARG1%"=="--input" if /I "%BF_ARG3%"=="--apply" if not defined BF_ARG4 (set "BF_INPUT=%BF_ARG2%" & set "BF_MODE=apply")
 if /I "%BF_ARG1%"=="--recover" if /I "%BF_ARG2%"=="--batch" if not defined BF_ARG4 (set "BF_BATCH=%BF_ARG3%" & set "BF_MODE=recover")
-if not defined BF_MODE (call :fail "usage: data-import.bat --input PATH --check or --apply; or --recover --batch ID" & exit /b 1)
+if not defined BF_MODE (call :fail "usage from Application root: bin\windows\data-import.bat --input PATH --check or --apply; or --recover --batch ID" & exit /b 1)
 if /I not "%BF_MODE%"=="recover" if not defined BF_INPUT (call :fail "--input requires a path" & exit /b 1)
 if /I "%BF_MODE%"=="recover" if not defined BF_BATCH (call :fail "--batch requires an ID" & exit /b 1)
 call :require_files || exit /b 1

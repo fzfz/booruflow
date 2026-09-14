@@ -1,5 +1,7 @@
 # 安装
 
+本文的根目录命令适用于已发布的 v0.88.0；当前源码使用 `bin/`，对应路径见 [脚本目录与维护命令](../development/scripts.md).
+
 ## 要求
 
 BooruFlow v0.88.0 的原生脚本面向 Windows x64 与 macOS arm64/x64。安装需要 Node.js 24.21.0 或更高版本、npm 10.9.3 或更高版本、Git 2.55.0 或更高版本。安装脚本还会检查 `tar` 和 SQLite 向量扩展；准确版本要求以 `config/release/release.json` 为唯一来源。Release 页面列出该版本已经实际验证的平台。

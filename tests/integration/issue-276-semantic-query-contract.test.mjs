@@ -12,7 +12,7 @@ import { runMediaCutover } from '../../app/database/media-cutover.mjs';
 import { startLocalApplication } from '../../app/server/local-app.mjs';
 import { FAKE_VECTOR_CONFIGURATION, createFakeSemanticModelClient } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
-const CLI_PATH = fileURLToPath(new URL('../../scripts/imagegen-semantic-query.mjs', import.meta.url));
+const CLI_PATH = fileURLToPath(new URL('../../scripts/catalog/imagegen-semantic-query.mjs', import.meta.url));
 const REPOSITORY_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const BASE_MODEL_PATH = '/internal/semantic/base-models';
 const GENERATION_MODEL_PATH = '/internal/semantic/generation-models';

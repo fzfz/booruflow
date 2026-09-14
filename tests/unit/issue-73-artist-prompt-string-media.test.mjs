@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 
-import { startTestApp } from '../../scripts/start-test-app.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
 
 const ARTIST_PROMPT_STRING_ID = 805;
 

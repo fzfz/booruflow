@@ -1,5 +1,7 @@
 # Data transfer
 
+Root-level commands here apply to published v0.88.0. The current source uses `bin/`; see [Script directories and maintenance commands](../development/scripts.md).
+
 Stop the application. Export to a new directory and pack it:
 
 ```bash

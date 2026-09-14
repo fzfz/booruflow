@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { startTestApp } from '../../scripts/start-test-app.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
 
 test('应用不需要 Pi 配置即可启动，全部退役 HTTP 路径返回 404', { concurrency: false }, async () => {
   const app = await startTestApp();

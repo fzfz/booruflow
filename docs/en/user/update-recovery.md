@@ -1,5 +1,7 @@
 # Updates and recovery
 
+Root-level commands here apply to published v0.88.0. The current source uses `bin/`; see [Script directories and maintenance commands](../development/scripts.md).
+
 Run status and stop the application. Use `update.bat --tag vX.Y.Z` or `bash update.sh --tag vX.Y.Z` to specify the target release tag. Before writing, the updater checks the Git installation, local changes, version direction, database version, and stopped state. It then creates a backup, fetches and checks out the tag, runs `npm ci`, upgrades the database, and performs a temporary health check. Start the application yourself after success.
 
 Local modifications, downgrade requests, unknown database versions, and non-Git installations stop with a specific remedy. A failed update keeps the backup and identifiable old-version state. Pass the direct backup directory reported by update to `restore.bat --backup data/recovery/<backup-directory>` or `bash restore.sh --backup data/recovery/<backup-directory>`; the argument must name one direct child of `data/recovery/`. Restore replaces the matching code, database, media, and configuration. Run check, start, and verify the version and resources.

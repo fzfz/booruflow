@@ -4,7 +4,7 @@ import { readdir } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { test } from 'node:test';
 
-import { startManageTestApp } from '../../scripts/start-manage-test-app.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
 
 function rawGet(baseUrl, path) {
   const target = new URL(baseUrl);
@@ -19,7 +19,7 @@ function rawGet(baseUrl, path) {
 }
 
 test('真实公共监听器注入运行时配置并直接提供静态媒体', async () => {
-  const app = await startManageTestApp();
+  const app = await startTestApp();
   try {
     const html = await fetch(`${app.baseUrl}/`);
     assert.equal(html.status, 200);

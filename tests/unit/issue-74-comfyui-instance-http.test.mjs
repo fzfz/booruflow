@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { DatabaseSync } from 'node:sqlite';
 import { test } from 'node:test';
 
-import { startTestApp } from '../../scripts/start-test-app.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
 
 const BASIC_USERNAME = 'issue74-basic-user';
 const BASIC_PASSWORD = 'issue74-basic-password';

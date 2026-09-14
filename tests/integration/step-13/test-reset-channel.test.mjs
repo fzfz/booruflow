@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 
 import { openCatalogDatabase } from '../../../app/catalog/database.mjs';
-import { startManageTestApp } from '../../../scripts/start-manage-test-app.mjs';
+import { startTestApp } from '../../../scripts/testing/start-test-app.mjs';
 import { createFixtureVector, FIXTURE_VECTOR_DIMENSION } from '../../fixtures/vector/fake-semantic-model-client.mjs';
 import { upsertVectorEntry } from '../../../app/vector/vector-store.mjs';
 
@@ -20,7 +20,7 @@ async function deleteSeedWork(baseUrl) {
 }
 
 test('共享重置通道独立于业务 API，只在测试模式、回环地址和令牌下开放', async () => {
-  const app = await startManageTestApp({ testMode: true, resetToken });
+  const app = await startTestApp({ testMode: true, resetToken });
   try {
     assert.equal(app.testMode, true);
     assert.match(app.resetUrl, /^http:\/\/127\.0\.0\.1:\d+\/[^/]/u);
@@ -48,7 +48,7 @@ test('共享重置通道独立于业务 API，只在测试模式、回环地址�
 });
 
 test('共享重置恢复数据库和媒体且复用同一个真实应用进程', async () => {
-  const app = await startManageTestApp({ testMode: true, resetToken });
+  const app = await startTestApp({ testMode: true, resetToken });
   const processId = app.processId;
   const marker = join(app.root, 'catalog', 'media', 'should-be-removed.txt');
   try {
@@ -70,7 +70,7 @@ test('共享重置恢复数据库和媒体且复用同一个真实应用进程',
 });
 
 test('共享重置按七字段 Style 的外键依赖清理向量、媒体和画师串引用且可幂等重复执行', async () => {
-  const app = await startManageTestApp({ testMode: true, resetToken });
+  const app = await startTestApp({ testMode: true, resetToken });
   const timestamp = '2026-08-06T00:00:00Z';
   const styleMedia = join(app.paths.media, 'images', 'reset-style.png');
   try {
@@ -120,7 +120,7 @@ test('共享重置按七字段 Style 的外键依赖清理向量、媒体和画�
 test('共享重置失败和清理失败向调用方传播，并保留可核对的临时根状态', async () => {
   let app;
   try {
-    app = await startManageTestApp({ testMode: true, resetToken });
+    app = await startTestApp({ testMode: true, resetToken });
     await assert.rejects(() => app.reset({ failStage: 'reset' }), /reset/u);
     await assert.rejects(() => app.close({ failStage: 'cleanup' }), /cleanup|清理/u);
   } finally {

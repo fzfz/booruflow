@@ -16,14 +16,14 @@ const NOW = '2026-08-21T00:00:00.000Z';
 const scripts = Object.freeze([
   Object.freeze({
     objectKind: 'generation_lora',
-    script: 'scripts/rebuild-generation-lora-vectors.mjs',
+    script: 'scripts/maintenance/rebuild-generation-lora-vectors.mjs',
     validId: 1,
     failureId: 2,
     wrongDimensionId: 3
   }),
   Object.freeze({
     objectKind: 'artist_prompt_string',
-    script: 'scripts/rebuild-artist-prompt-string-vectors.mjs',
+    script: 'scripts/maintenance/rebuild-artist-prompt-string-vectors.mjs',
     validId: 11,
     failureId: 12,
     wrongDimensionId: 13
@@ -233,7 +233,7 @@ for (const definition of scripts) {
       '--unexpected-option'
     ], definition.objectKind);
     assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /usage: node scripts\/rebuild-/u);
+    assert.match(result.stderr, /usage: node scripts\/maintenance\/rebuild-/u);
     assert.deepEqual(readTargetState(fixture, definition.objectKind).entries, [
       { object_id: definition.validId, bytes: FIXTURE_VECTOR_DIMENSION * Float32Array.BYTES_PER_ELEMENT },
       { object_id: definition.failureId, bytes: FIXTURE_VECTOR_DIMENSION * Float32Array.BYTES_PER_ELEMENT },
@@ -246,7 +246,7 @@ test('both generation-resource rebuild CLIs require --database and --media-root 
   for (const definition of scripts) {
     const missingBoth = runCli(definition.script, [], definition.objectKind);
     assert.notEqual(missingBoth.status, 0, definition.script);
-    assert.match(missingBoth.stderr, /usage: node scripts\/rebuild-/u, definition.script);
+    assert.match(missingBoth.stderr, /usage: node scripts\/maintenance\/rebuild-/u, definition.script);
 
     const missingMedia = runCli(definition.script, ['--database', '/tmp/issue-275-missing-media.sqlite'], definition.objectKind);
     assert.notEqual(missingMedia.status, 0, definition.script);

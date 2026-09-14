@@ -1,5 +1,7 @@
 # Operations
 
+Root-level commands here apply to published v0.88.0. The current source uses `bin/`; see [Script directories and maintenance commands](../development/scripts.md).
+
 Installed scripts locate the application from their own path. Run `.bat` files on Windows and `bash name.sh` on macOS.
 
 - `start` checks Node/npm, dependencies, configuration, and ports; starts in a visible terminal; and displays the public URL and log location.

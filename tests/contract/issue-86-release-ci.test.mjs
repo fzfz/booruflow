@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
 const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
-const releaseScript = resolve(repositoryRoot, 'scripts/release-tag.mjs');
+const releaseScript = resolve(repositoryRoot, 'scripts/release/tag.mjs');
 const packageJson = JSON.parse(readFileSync(resolve(repositoryRoot, 'package.json'), 'utf8'));
 
 function git(cwd, args, options = {}) {
@@ -149,8 +149,8 @@ function assertFastCiSteps(source, file, { requireTriggers = true } = {}) {
   }
 }
 
-test('Issue #86 发布标签命令公开 release:tag → scripts/release-tag.mjs 接口', () => {
-  assert.match(packageJson.scripts?.['release:tag'] ?? '', /node\s+scripts\/release-tag\.mjs\b/u);
+test('Issue #86 发布标签命令公开 release:tag → scripts/release/tag.mjs 接口', () => {
+  assert.match(packageJson.scripts?.['release:tag'] ?? '', /node\s+scripts\/release\/tag\.mjs\b/u);
   assert.equal(existsSync(releaseScript), true, '发布脚本必须存在');
 });
 
@@ -215,7 +215,7 @@ test('release CI 仅在 vX.Y.Z 标签运行快速门禁并额外运行现有 E2E
   } else {
     assertFastCiSteps(source, '.github/workflows/release.yml', { requireTriggers: false });
   }
-  assert.match(workflowRunBlocks(source).join('\n'), /node\s+scripts\/run-e2e-tests\.mjs\b/u, 'release CI 必须额外运行 E2E');
+  assert.match(workflowRunBlocks(source).join('\n'), /node\s+scripts\/testing\/run-e2e-tests\.mjs\b/u, 'release CI 必须额外运行 E2E');
   assertNoProductionAccess(source, '.github/workflows/release.yml');
 });
 
@@ -229,5 +229,5 @@ test('fast and release CI credential scans require the same token boundary befor
 });
 
 test('发布标签脚本自身不包含生产目录访问边界', () => {
-  assertNoProductionAccess(readFileSync(releaseScript, 'utf8'), 'scripts/release-tag.mjs');
+  assertNoProductionAccess(readFileSync(releaseScript, 'utf8'), 'scripts/release/tag.mjs');
 });

@@ -1,5 +1,7 @@
 # インストール
 
+本文のルート直下のコマンドは公開済み v0.88.0 用です。現在のソースの `bin/` パスは次を参照してください： [スクリプトの配置と保守コマンド](../development/scripts.md).
+
 BooruFlow v0.88.0 のネイティブスクリプトは Windows x64 と macOS arm64/x64 を対象にします。Node.js 24.21.0 以上、npm 10.9.3 以上、Git 2.55.0 以上が必要です。インストーラーは `tar` と SQLite ベクトル拡張も確認し、正確な要件は `config/release/release.json` を唯一のソースとします。実際に検証された環境は Release ページに記載されます。
 
 [v0.88.0 Release](https://github.com/fzfz/booruflow/releases/tag/v0.88.0) から `install.bat` または `install.sh` を取得します。Windows は `.bat` を実行し、macOS は次を実行します。

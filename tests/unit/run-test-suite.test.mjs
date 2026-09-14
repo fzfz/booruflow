@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { runTestSteps } from '../../scripts/run-test-suite.mjs';
+import { runTestSteps } from '../../scripts/testing/run-test-suite.mjs';
 
 function step(label) {
   return Object.freeze({ label, command: process.execPath, args: Object.freeze([]) });

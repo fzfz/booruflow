@@ -17,6 +17,7 @@ import test from 'node:test';
 import { gzipSync } from 'node:zlib';
 
 const repositoryRoot = resolve(import.meta.dirname, '../..');
+const windowsBin = join(repositoryRoot, 'bin/windows');
 const windowsTest = process.platform === 'win32' ? test : test.skip;
 const commandProcessor = process.env.ComSpec ?? 'cmd.exe';
 
@@ -120,7 +121,20 @@ public static class GitFixture
                 "NOOBAI_RERANKER_MODEL=\\n");
             Write(Path.Combine(target, "scripts", "runtime-data.mjs"),
                 "import { mkdirSync, writeFileSync } from 'node:fs'; mkdirSync('data/media', { recursive: true }); writeFileSync('data/catalog.sqlite', '');\\n");
-            File.Copy(Environment.GetEnvironmentVariable("BF_TEST_INSTALLER_SOURCE"), Path.Combine(target, "install.bat"), true);
+            string layout = Environment.GetEnvironmentVariable("BF_TEST_CLONE_LAYOUT");
+            string installerSource = Environment.GetEnvironmentVariable("BF_TEST_CLONED_INSTALLER_SOURCE");
+            if (String.IsNullOrEmpty(installerSource)) installerSource = Environment.GetEnvironmentVariable("BF_TEST_INSTALLER_SOURCE");
+            if (layout == "legacy")
+            {
+                File.Copy(installerSource, Path.Combine(target, "install.bat"), true);
+                Write(Path.Combine(target, "start.bat"), "@echo off\n");
+            }
+            else
+            {
+                Directory.CreateDirectory(Path.Combine(target, "bin", "windows"));
+                File.Copy(installerSource, Path.Combine(target, "bin", "windows", "install.bat"), true);
+                Write(Path.Combine(target, "bin", "windows", "start.bat"), "@echo off\n");
+            }
             Directory.CreateDirectory(Path.Combine(target, ".git"));
         }
 
@@ -208,7 +222,7 @@ function runBatch(script, { args = [], cwd, environment = {}, input = '' }) {
 function installerEnvironment(tools, extra = {}) {
   return {
     BF_TEST_LOG: tools.log,
-    BF_TEST_INSTALLER_SOURCE: join(repositoryRoot, 'install.bat'),
+    BF_TEST_INSTALLER_SOURCE: join(windowsBin, 'install.bat'),
     Path: `${tools.bin};${systemPath()}`,
     PATH: `${tools.bin};${systemPath()}`,
     ...extra
@@ -219,7 +233,8 @@ windowsTest('Windows installer uses startup CWD and initializes an empty runtime
   const cwd = temporaryDirectory(t, 'booruflow-win-default-');
   const secondCwd = temporaryDirectory(t, 'booruflow-win-second-');
   const tools = createWindowsTools(t);
-  const result = runBatch(join(repositoryRoot, 'install.bat'), {
+  const result = runBatch(join(windowsBin, 'install.bat'), {
+    args: ['--tag', 'v0.89.0'],
     cwd,
     environment: installerEnvironment(tools),
     input: '\r\n'
@@ -232,9 +247,10 @@ windowsTest('Windows installer uses startup CWD and initializes an empty runtime
   const firstKey = readFileSync(join(cwd, '.env'), 'utf8').match(/NOOBAI_COMFYUI_CREDENTIAL_ENCRYPTION_KEY=([0-9a-f]{64})/)?.[1];
   assert.ok(firstKey);
   assert.notEqual(firstKey, '0'.repeat(64));
-  assert.match(readFileSync(tools.log, 'utf8'), /git clone --branch v0\.88\.0 --depth 1/);
+  assert.match(readFileSync(tools.log, 'utf8'), /git clone --branch v0\.89\.0 --depth 1/);
 
-  const second = runBatch(join(repositoryRoot, 'install.bat'), {
+  const second = runBatch(join(windowsBin, 'install.bat'), {
+    args: ['--tag', 'v0.89.0'],
     cwd: secondCwd,
     environment: installerEnvironment(tools),
     input: '\r\n'
@@ -250,9 +266,10 @@ windowsTest('Windows installer uses startup CWD and initializes an empty runtime
 windowsTest('Windows installer can run from the default directory when it is the only existing file', (t) => {
   const cwd = temporaryDirectory(t, 'booruflow-win-downloaded-');
   const downloadedInstaller = join(cwd, 'install.bat');
-  copyFileSync(join(repositoryRoot, 'install.bat'), downloadedInstaller);
+  copyFileSync(join(windowsBin, 'install.bat'), downloadedInstaller);
   const tools = createWindowsTools(t);
   const result = runBatch(downloadedInstaller, {
+    args: ['--tag', 'v0.89.0'],
     cwd,
     environment: installerEnvironment(tools),
     input: '\r\n'
@@ -260,16 +277,50 @@ windowsTest('Windows installer can run from the default directory when it is the
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stderr, '');
   assert.equal(existsSync(join(cwd, '.git')), true);
-  assert.equal(readFileSync(downloadedInstaller, 'utf8'), readFileSync(join(repositoryRoot, 'install.bat'), 'utf8'));
+  assert.equal(existsSync(downloadedInstaller), false);
+  assert.equal(readFileSync(join(cwd, 'bin/windows/install.bat'), 'utf8'), readFileSync(join(windowsBin, 'install.bat'), 'utf8'));
   assert.equal(existsSync(join(cwd, 'data/catalog.sqlite')), true);
+});
+
+windowsTest('current Windows installer rejects a selected release that does not use the bin layout', (t) => {
+  const cwd = temporaryDirectory(t, 'booruflow-win-legacy-caller-');
+  const destination = join(cwd, 'legacy release');
+  const tools = createWindowsTools(t);
+  const result = runBatch(join(windowsBin, 'install.bat'), {
+    args: ['--directory', destination],
+    cwd,
+    environment: installerEnvironment(tools, { BF_TEST_CLONE_LAYOUT: 'legacy' })
+  });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Selected release clone remains at:/);
+  assert.match(result.stderr, /selected release does not use the current Windows bin layout; remove the displayed clone directory, then download the selected tag's published install\.bat attachment/);
+});
+
+windowsTest('Windows installer rejects an in-place download that differs from the selected bin-layout release installer', (t) => {
+  const cwd = temporaryDirectory(t, 'booruflow-win-legacy-mismatch-');
+  const downloadedInstaller = join(cwd, 'install.bat');
+  const mismatchedInstaller = join(temporaryDirectory(t, 'booruflow-win-mismatched-installer-'), 'install.bat');
+  copyFileSync(join(windowsBin, 'install.bat'), downloadedInstaller);
+  writeCommand(mismatchedInstaller, '@echo off\nexit /b 1\n');
+  const tools = createWindowsTools(t);
+  const result = runBatch(downloadedInstaller, {
+    args: ['--tag', 'v0.89.0'],
+    cwd,
+    environment: installerEnvironment(tools, {
+      BF_TEST_CLONED_INSTALLER_SOURCE: mismatchedInstaller
+    }),
+    input: '\r\n'
+  });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /installer differs from the selected tag; download that tag's install\.bat/);
 });
 
 windowsTest('Windows installer resolves a relative Unicode path from startup CWD', (t) => {
   const cwd = temporaryDirectory(t, 'booruflow-win-relative-');
   const tools = createWindowsTools(t);
   const relative = String.raw`应用 A&B (100%)\BooruFlow 安装`;
-  const result = runBatch(join(repositoryRoot, 'install.bat'), {
-    args: ['--directory', relative],
+  const result = runBatch(join(windowsBin, 'install.bat'), {
+    args: ['--directory', relative, '--tag', 'v0.89.0'],
     cwd,
     environment: installerEnvironment(tools)
   });
@@ -282,7 +333,8 @@ windowsTest('Windows installer preserves metacharacters returned by the default 
   const cwd = join(parent, 'default A&B (%PATH%)');
   mkdirSync(cwd);
   const tools = createWindowsTools(t);
-  const result = runBatch(join(repositoryRoot, 'install.bat'), {
+  const result = runBatch(join(windowsBin, 'install.bat'), {
+    args: ['--tag', 'v0.89.0'],
     cwd,
     environment: installerEnvironment(tools),
     input: '\r\n'
@@ -295,7 +347,8 @@ windowsTest('Windows installer preserves metacharacters returned by the default 
 windowsTest('Windows installer reports missing Node after selecting the default directory', (t) => {
   const cwd = temporaryDirectory(t, 'booruflow-win-missing-node-');
   const tools = createWindowsTools(t, { includeNode: false });
-  const result = runBatch(join(repositoryRoot, 'install.bat'), {
+  const result = runBatch(join(windowsBin, 'install.bat'), {
+    args: ['--tag', 'v0.89.0'],
     cwd,
     environment: installerEnvironment(tools),
     input: '\r\n'
@@ -310,7 +363,8 @@ windowsTest('Windows installer reports missing Node after selecting the default 
 windowsTest('Windows installer stops after npm ci fails and skips runtime initialization', (t) => {
   const cwd = temporaryDirectory(t, 'booruflow-win-npm-failure-');
   const tools = createWindowsTools(t);
-  const result = runBatch(join(repositoryRoot, 'install.bat'), {
+  const result = runBatch(join(windowsBin, 'install.bat'), {
+    args: ['--tag', 'v0.89.0'],
     cwd,
     environment: installerEnvironment(tools, { BF_TEST_NPM_STATUS: '23' }),
     input: '\r\n'
@@ -343,14 +397,14 @@ function createRuntimeFixture(t, publicPort, internalPort, fixtureRoot) {
   if (root === undefined) {
     root = temporaryDirectory(t, 'booruflow-win-runtime path-', async () => terminateRuntimeProcess(root));
   }
-  for (const directory of ['config/release', 'scripts/platform/windows', 'scripts', 'node_modules']) {
+  for (const directory of ['bin/windows', 'config/release', 'scripts/platform/windows', 'scripts', 'node_modules']) {
     mkdirSync(join(root, directory), { recursive: true });
   }
   const release = JSON.parse(readFileSync(join(repositoryRoot, 'config/release/release.json'), 'utf8'));
   release.runtime.shutdown_file = 'runtime/run/custom.shutdown';
   writeFileSync(join(root, 'config/release/release.json'), JSON.stringify(release, null, 2));
   copyFileSync(join(repositoryRoot, 'scripts/platform/windows/operations.bat'), join(root, 'scripts/platform/windows/operations.bat'));
-  for (const name of ['check.bat', 'start.bat', 'status.bat', 'stop.bat', 'restore.bat', 'data-pack.bat', 'data-import.bat']) copyFileSync(join(repositoryRoot, name), join(root, name));
+  for (const name of ['check.bat', 'start.bat', 'status.bat', 'stop.bat', 'restore.bat', 'data-pack.bat', 'data-import.bat']) copyFileSync(join(windowsBin, name), join(root, 'bin/windows', name));
   writeFileSync(join(root, 'package.json'), '{}\n');
   writeFileSync(join(root, 'package-lock.json'), '{}\n');
   writeFileSync(join(root, '.env'), `NOOBAI_PUBLIC_PORT=${publicPort}\nNOOBAI_INTERNAL_PORT=${internalPort}\n`);
@@ -392,17 +446,17 @@ windowsTest('Windows runtime starts visibly, reports ownership, and stops throug
   mkdirSync(join(fixture.root, 'runtime/run'), { recursive: true });
   writeFileSync(join(fixture.root, 'runtime/run/custom.shutdown'), 'stale');
 
-  const started = runBatch(join(fixture.root, 'start.bat'), { cwd: tmpdir(), environment: fixture.environment });
+  const started = runBatch(join(fixture.root, 'bin/windows/start.bat'), { cwd: tmpdir(), environment: fixture.environment });
   assert.equal(started.status, 0, started.stderr);
   assert.doesNotMatch(started.stderr, /Input redirection is not supported/);
   assert.match(started.stdout, new RegExp(`http://127\\.0\\.0\\.1:${publicPort}/`));
   assert.equal(existsSync(join(fixture.root, 'runtime/run/custom.shutdown')), false);
 
-  const status = runBatch(join(fixture.root, 'status.bat'), { cwd: tmpdir(), environment: fixture.environment });
+  const status = runBatch(join(fixture.root, 'bin/windows/status.bat'), { cwd: tmpdir(), environment: fixture.environment });
   assert.equal(status.status, 0, status.stderr);
   assert.match(status.stdout, /PID [0-9]+ is running/);
 
-  const stopped = runBatch(join(fixture.root, 'stop.bat'), { cwd: tmpdir(), environment: fixture.environment });
+  const stopped = runBatch(join(fixture.root, 'bin/windows/stop.bat'), { cwd: tmpdir(), environment: fixture.environment });
   assert.equal(stopped.status, 0, stopped.stderr);
   assert.doesNotMatch(stopped.stderr, /Input redirection is not supported/);
   assert.equal(existsSync(join(fixture.root, 'runtime/run/app.pid')), false);
@@ -418,15 +472,15 @@ windowsTest('Windows status rejects a live PID recorded by another installation'
   }
   const first = createRuntimeFixture(t, firstPublic, firstInternal);
   const second = createRuntimeFixture(t, secondPublic, secondInternal);
-  const started = runBatch(join(first.root, 'start.bat'), { cwd: tmpdir(), environment: first.environment });
+  const started = runBatch(join(first.root, 'bin/windows/start.bat'), { cwd: tmpdir(), environment: first.environment });
   assert.equal(started.status, 0, started.stderr);
   assert.doesNotMatch(started.stderr, /Input redirection is not supported/);
   mkdirSync(join(second.root, 'runtime/run'), { recursive: true });
   copyFileSync(join(first.root, 'runtime/run/app.pid'), join(second.root, 'runtime/run/app.pid'));
-  const rejected = runBatch(join(second.root, 'status.bat'), { cwd: tmpdir(), environment: second.environment });
+  const rejected = runBatch(join(second.root, 'bin/windows/status.bat'), { cwd: tmpdir(), environment: second.environment });
   assert.equal(rejected.status, 1);
   assert.match(rejected.stderr, /not the application process for this installation root/);
-  const stopped = runBatch(join(first.root, 'stop.bat'), { cwd: tmpdir(), environment: first.environment });
+  const stopped = runBatch(join(first.root, 'bin/windows/stop.bat'), { cwd: tmpdir(), environment: first.environment });
   assert.equal(stopped.status, 0, stopped.stderr);
   assert.doesNotMatch(stopped.stderr, /Input redirection is not supported/);
 });
@@ -445,7 +499,7 @@ windowsTest('Windows data paths stay relative to a special-character caller dire
   writeFileSync(join(root, relativeInput, 'root.txt'), 'root\n');
   writeFileSync(join(caller, relativeInput, 'caller.txt'), 'caller\n');
   const log = join(parent, 'data-commands.log');
-  const packed = runBatch(join(root, 'data-pack.bat'), {
+  const packed = runBatch(join(root, 'bin/windows/data-pack.bat'), {
     args: ['--input', relativeInput, '--output', 'caller package.tar.gz'],
     cwd: caller,
     environment: { ...fixture.environment, BF_TEST_LOG: log }
@@ -476,7 +530,7 @@ windowsTest('Windows data import rejects duplicate archive paths before applicat
   const archive = join(fixture.root, 'duplicate.tar.gz');
   writeFileSync(archive, gzipSync(readFileSync(rawTar)));
 
-  const rejected = runBatch(join(fixture.root, 'data-import.bat'), {
+  const rejected = runBatch(join(fixture.root, 'bin/windows/data-import.bat'), {
     args: ['--input', archive, '--check'],
     cwd: tmpdir(),
     environment: fixture.environment
@@ -511,7 +565,7 @@ writeFileSync('.env', 'NOOBAI_PUBLIC_PORT=${publicPort}\\nNOOBAI_INTERNAL_PORT=$
   rmSync(join(fixture.root, '.env'));
   rmSync(join(fixture.root, 'node_modules'), { recursive: true });
 
-  const restored = runBatch(join(fixture.root, 'restore.bat'), {
+  const restored = runBatch(join(fixture.root, 'bin/windows/restore.bat'), {
     args: ['--backup', 'data/recovery/fixture-backup'],
     cwd: tmpdir(),
     environment: { ...fixture.environment, BF_TEST_LOG: log }

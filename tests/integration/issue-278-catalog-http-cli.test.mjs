@@ -15,7 +15,7 @@ import { FAKE_VECTOR_CONFIGURATION, createFakeSemanticModelClient } from '../fix
 
 const runProcess = promisify(execFile);
 const REPOSITORY_ROOT = fileURLToPath(new URL('../..', import.meta.url));
-const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-semantic-query.mjs');
+const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-semantic-query.mjs');
 const BASE_MODEL_PATH = '/internal/semantic/base-models';
 const GENERATION_MODEL_PATH = '/internal/semantic/generation-models';
 const LORA_PATH = '/internal/semantic/loras';

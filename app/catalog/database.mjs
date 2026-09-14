@@ -41,7 +41,7 @@ export class CatalogTransactionError extends CatalogDatabaseError {
 
 export class OfflineMediaCutoverRequiredError extends CatalogDatabaseError {
   constructor() {
-    super('offline media cutover is required before the application can start');
+    super('The database predates the supported upgrade range. Upgrade the old deployment to v0.87.0 and migrate an isolated copy, or create a new installation before starting the application.');
     this.name = 'OfflineMediaCutoverRequiredError';
   }
 }

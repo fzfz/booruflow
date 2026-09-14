@@ -33,6 +33,8 @@ BooruFlow 是一个本机运行的文生图资源管理应用。把作品、角�
 
 安装完成后，填写 `.env` 中的向量化与 rerank 服务地址、模型名和 API key。向量化模型须输出 **1024 维**。配置详情见[配置指南](docs/zh-CN/user/configuration.md)。
 
+本文的根目录命令适用于已发布的 v0.88.0；当前源码使用 `bin/`，对应路径见 [脚本目录与维护命令](docs/zh-CN/development/scripts.md).
+
 在安装目录运行 `start.bat` 或 `bash start.sh`，打开终端显示的地址。进入“底模管理”创建底模，再创建模型、画风等资源。已有数据包时，先在停机状态向空库导入成功，再启动应用。完整步骤见[首次使用](docs/zh-CN/user/quick-start.md)。
 
 ## 看看工作台

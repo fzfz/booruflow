@@ -15,3 +15,5 @@ BooruFlow is a local workspace for works, characters, styles, Prompt Tags, model
 - [Support](community/support.md), [issues](community/issues.md), [contributing](community/contributing.md), and [pull requests](community/pull-requests.md)
 - [Architecture](development/architecture.md), [interface guidelines](development/interface-guidelines.md), [testing](development/testing.md), [contracts](development/contracts.md), [Catalog/Source](development/catalog-source.md), and [releases](development/releases.md)
 - [Changelog](CHANGELOG.md) and the repository [MIT License](../../LICENSE)
+
+- [Script directories and maintenance commands](development/scripts.md)

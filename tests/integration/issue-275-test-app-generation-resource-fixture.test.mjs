@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { openCatalogDatabase } from '../../app/catalog/database.mjs';
-import { startTestApp } from '../../scripts/start-test-app.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
 import { createFixtureVector, FIXTURE_VECTOR_DIMENSION } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
 const GENERATION_RESOURCE_KINDS = Object.freeze(['artist_prompt_string', 'generation_lora']);

@@ -88,7 +88,7 @@ export class GenerationResourceVectorMigrationError extends Error {
 
 export class OfflineGenerationResourceVectorMigrationRequiredError extends Error {
   constructor() {
-    super('generation resource vector migration 036 requires the offline migration entry before the application can start');
+    super('Database migration 036 is incomplete, so the database predates the supported upgrade range. Upgrade the old deployment to v0.87.0 and migrate an isolated copy, or create a new installation before starting the application.');
     this.name = 'OfflineGenerationResourceVectorMigrationRequiredError';
     this.code = 'OFFLINE_GENERATION_RESOURCE_VECTOR_MIGRATION_REQUIRED';
     this.phase = 'preflight';

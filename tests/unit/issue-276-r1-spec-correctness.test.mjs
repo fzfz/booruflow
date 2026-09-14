@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import { parseDocument } from 'yaml';
 
 import { inTransaction, openCatalogDatabase } from '../../app/catalog/database.mjs';
-import { main as runSemanticCli, parseArguments } from '../../scripts/imagegen-semantic-query.mjs';
+import { main as runSemanticCli, parseArguments } from '../../scripts/catalog/imagegen-semantic-query.mjs';
 import { createArtistPromptStringSemanticService } from '../../app/vector/artist-prompt-string-semantic.mjs';
 import { createFixtureVector } from '../fixtures/vector/fake-semantic-model-client.mjs';
 import { createGenerationLoraSemanticService } from '../../app/vector/generation-lora-semantic.mjs';

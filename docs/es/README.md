@@ -15,3 +15,5 @@ BooruFlow es un espacio local para gestionar obras, personajes, estilos, Prompt 
 - [Soporte](community/support.md), [Issues](community/issues.md), [contribución](community/contributing.md), [PR](community/pull-requests.md)
 - [Arquitectura](development/architecture.md), [normas de interfaz](development/interface-guidelines.md), [pruebas](development/testing.md), [contratos](development/contracts.md), [Catalog/Source](development/catalog-source.md), [versiones](development/releases.md)
 - [Registro de cambios](CHANGELOG.md) y [licencia MIT](../../LICENSE)
+
+- [Directorios de scripts y mantenimiento](development/scripts.md)

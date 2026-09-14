@@ -5,7 +5,7 @@ import { access } from 'node:fs/promises';
 import { PassThrough } from 'node:stream';
 import { test } from 'node:test';
 
-import { startTestApp } from '../../scripts/start-test-app.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
 
 function createChild({ startup = false } = {}) {
   const child = new EventEmitter();

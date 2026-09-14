@@ -7,8 +7,8 @@ import test from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-semantic-query.mjs');
-const INSTALLER_PATH = resolve(REPOSITORY_ROOT, 'scripts/install-imagegen-semantic-query.mjs');
+const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-semantic-query.mjs');
+const INSTALLER_PATH = resolve(REPOSITORY_ROOT, 'scripts/catalog/install-imagegen-semantic-query.mjs');
 const NETWORK_FORBIDDEN_FIXTURE = resolve(REPOSITORY_ROOT, 'tests/fixtures/issue-180-network-forbidden.mjs');
 
 function runProcess(command, args = [], { cwd, env = {} } = {}) {
@@ -109,7 +109,7 @@ test('Issue #284 manual installer copies both executable standalone CLIs to an e
     assert.equal(status.mode & 0o111, 0o111, name);
     const sourcePath = name === 'catalog'
       ? CLI_PATH
-      : resolve(REPOSITORY_ROOT, 'scripts/imagegen-comfyui-source-read.mjs');
+      : resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-comfyui-source-read.mjs');
     assert.equal(await readFile(destination, 'utf8'), await readFile(sourcePath, 'utf8'), name);
   }
 
@@ -141,7 +141,7 @@ test('Issue #284 npm run cli:install installs and overwrite-updates both CLI fil
   assert.equal(first.stderr, '');
   assert.match(first.stdout, new RegExp(`Installed imagegen-semantic-query to ${destinations.catalog.replaceAll(/[.*+?^${}()|[\]\\]/gu, '\\$&')}\\nInstalled imagegen-comfyui-source-read to ${destinations.source.replaceAll(/[.*+?^${}()|[\]\\]/gu, '\\$&')}\\n$`, 'u'));
   assert.equal(await readFile(destinations.catalog, 'utf8'), await readFile(CLI_PATH, 'utf8'));
-  assert.equal(await readFile(destinations.source, 'utf8'), await readFile(resolve(REPOSITORY_ROOT, 'scripts/imagegen-comfyui-source-read.mjs'), 'utf8'));
+  assert.equal(await readFile(destinations.source, 'utf8'), await readFile(resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-comfyui-source-read.mjs'), 'utf8'));
 
   await Promise.all([
     writeFile(destinations.catalog, '#!/bin/false\nstale catalog content\n', 'utf8'),
@@ -158,7 +158,7 @@ test('Issue #284 npm run cli:install installs and overwrite-updates both CLI fil
   assert.equal(update.stderr, '');
   assert.equal(update.stdout, first.stdout);
   assert.equal(await readFile(destinations.catalog, 'utf8'), await readFile(CLI_PATH, 'utf8'));
-  assert.equal(await readFile(destinations.source, 'utf8'), await readFile(resolve(REPOSITORY_ROOT, 'scripts/imagegen-comfyui-source-read.mjs'), 'utf8'));
+  assert.equal(await readFile(destinations.source, 'utf8'), await readFile(resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-comfyui-source-read.mjs'), 'utf8'));
   assert.equal((await lstat(destinations.catalog)).mode & 0o111, 0o111);
   assert.equal((await lstat(destinations.source)).mode & 0o111, 0o111);
 });
@@ -196,7 +196,7 @@ test('Issue #180 test destination redirection is explicit, absolute, and unavail
 
 test('Issue #180 installer has one manual package entry and no automatic or uninstall trigger', async () => {
   const packageDocument = JSON.parse(await readFile(resolve(REPOSITORY_ROOT, 'package.json'), 'utf8'));
-  assert.equal(packageDocument.scripts['cli:install'], 'node scripts/install-imagegen-semantic-query.mjs');
+  assert.equal(packageDocument.scripts['cli:install'], 'node scripts/catalog/install-imagegen-semantic-query.mjs');
   assert.equal(Object.keys(packageDocument.scripts).some((name) => name.includes('uninstall')), false);
 
   const automaticLifecycleNames = [

@@ -1,5 +1,7 @@
 # Operación
 
+Los comandos de raíz corresponden a v0.88.0 publicada. El código actual usa `bin/`; consulta [Directorios de scripts y mantenimiento](../development/scripts.md).
+
 Los scripts instalados localizan la aplicación desde su propia ruta. Ejecuta `.bat` en Windows y `bash nombre.sh` en macOS.
 
 - `start` comprueba Node/npm, dependencias, configuración y puertos; inicia en terminal visible y muestra URL y logs.

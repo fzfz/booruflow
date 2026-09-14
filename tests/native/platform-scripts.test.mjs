@@ -18,15 +18,20 @@ import { basename, dirname, join, resolve } from 'node:path';
 import test from 'node:test';
 
 const repositoryRoot = resolve(import.meta.dirname, '../..');
-const installer = join(repositoryRoot, 'install.sh');
+const macosBin = join(repositoryRoot, 'bin/macos');
+const windowsBin = join(repositoryRoot, 'bin/windows');
+const installer = join(macosBin, 'install.sh');
 const shellScripts = [
-  'install.sh', 'check.sh', 'start.sh', 'stop.sh', 'status.sh', 'update.sh',
-  'backup.sh', 'restore.sh', 'data-export.sh', 'data-pack.sh', 'data-import.sh',
+  'bin/macos/install.sh', 'bin/macos/check.sh', 'bin/macos/start.sh', 'bin/macos/stop.sh',
+  'bin/macos/status.sh', 'bin/macos/update.sh', 'bin/macos/backup.sh', 'bin/macos/restore.sh',
+  'bin/macos/data-export.sh', 'bin/macos/data-pack.sh', 'bin/macos/data-import.sh',
   'scripts/platform/macos/operations.sh'
 ];
 const batchScripts = [
-  'install.bat', 'check.bat', 'start.bat', 'stop.bat', 'status.bat', 'update.bat',
-  'backup.bat', 'restore.bat', 'data-export.bat', 'data-pack.bat', 'data-import.bat'
+  'bin/windows/install.bat', 'bin/windows/check.bat', 'bin/windows/start.bat',
+  'bin/windows/stop.bat', 'bin/windows/status.bat', 'bin/windows/update.bat',
+  'bin/windows/backup.bat', 'bin/windows/restore.bat', 'bin/windows/data-export.bat',
+  'bin/windows/data-pack.bat', 'bin/windows/data-import.bat'
 ];
 const macTest = process.platform === 'darwin' ? test : test.skip;
 
@@ -79,7 +84,15 @@ NOOBAI_RERANKER_API_KEY=
 NOOBAI_RERANKER_MODEL=
 ENV
   printf '// fixture\n' > "$target/scripts/runtime-data.mjs"
-  cp "$BF_TEST_INSTALLER_SOURCE" "$target/install.sh"
+  installer_source=\${BF_TEST_CLONED_INSTALLER_SOURCE:-$BF_TEST_INSTALLER_SOURCE}
+  if [ "\${BF_TEST_CLONE_LAYOUT:-nested}" = legacy ]; then
+    cp "$installer_source" "$target/install.sh"
+    printf '#!/bin/bash\n' > "$target/start.sh"
+  else
+    mkdir -p "$target/bin/macos"
+    cp "$installer_source" "$target/bin/macos/install.sh"
+    printf '#!/bin/bash\n' > "$target/bin/macos/start.sh"
+  fi
   mkdir -p "$target/.git"
 fi
 exit 0
@@ -90,7 +103,7 @@ printf '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n'
   return { bin, log };
 }
 
-function runInstaller({ cwd, bin, log, input = '', args = [], installerPath = installer }) {
+function runInstaller({ cwd, bin, log, input = '', args = [], installerPath = installer, environment = {} }) {
   return spawnSync('/bin/bash', [installerPath, ...args], {
     cwd,
     encoding: 'utf8',
@@ -99,6 +112,7 @@ function runInstaller({ cwd, bin, log, input = '', args = [], installerPath = in
       ...process.env,
       BF_TEST_LOG: log,
       BF_TEST_INSTALLER_SOURCE: installer,
+      ...environment,
       PATH: `${bin}:/usr/bin:/bin:/usr/sbin:/sbin`
     }
   });
@@ -107,12 +121,13 @@ function runInstaller({ cwd, bin, log, input = '', args = [], installerPath = in
 function createOperationFixture(t, fixtureRoot) {
   const root = fixtureRoot ?? temporaryDirectory(t, 'booruflow-platform path-');
   mkdirSync(join(root, 'scripts/platform/macos'), { recursive: true });
+  mkdirSync(join(root, 'bin/macos'), { recursive: true });
   mkdirSync(join(root, 'config/release'), { recursive: true });
   mkdirSync(join(root, 'scripts'), { recursive: true });
   mkdirSync(join(root, 'node_modules'));
   copyFileSync(join(repositoryRoot, 'scripts/platform/macos/operations.sh'), join(root, 'scripts/platform/macos/operations.sh'));
   copyFileSync(join(repositoryRoot, 'config/release/release.json'), join(root, 'config/release/release.json'));
-  for (const name of ['backup.sh', 'restore.sh', 'start.sh', 'stop.sh', 'data-pack.sh', 'data-import.sh', 'status.sh']) copyFileSync(join(repositoryRoot, name), join(root, name));
+  for (const name of ['backup.sh', 'restore.sh', 'start.sh', 'stop.sh', 'data-pack.sh', 'data-import.sh', 'status.sh']) copyFileSync(join(macosBin, name), join(root, 'bin/macos', name));
   writeFileSync(join(root, 'package.json'), '{}\n');
   writeFileSync(join(root, 'package-lock.json'), '{}\n');
   writeFileSync(join(root, 'scripts/runtime-data.mjs'), '// fixture\n');
@@ -136,7 +151,7 @@ exit "\${BF_TEST_NODE_STATUS:-0}"
 }
 
 function runFixture(fixture, script, args = [], extraEnvironment = {}, cwd = tmpdir()) {
-  return spawnSync('/bin/bash', [join(fixture.root, script), ...args], {
+  return spawnSync('/bin/bash', [join(fixture.root, 'bin/macos', script), ...args], {
     cwd,
     encoding: 'utf8',
     env: {
@@ -186,40 +201,50 @@ test('release configuration is the single source for installer defaults', () => 
   assert.equal(configuration.requirements.git_minimum, '2.55.0');
   assert.equal(configuration.runtime.shutdown_file, 'runtime/run/shutdown.request');
   assert.equal(configuration.runtime.backup_version_directory, 'data/recovery');
+  assert.equal(configuration.release_artifacts.macos_installer, 'install.sh');
+  assert.equal(configuration.release_artifacts.windows_installer, 'install.bat');
   assert.equal(schema.properties.repository_https.const, configuration.repository_https);
-  for (const script of ['install.sh', 'install.bat']) {
-    const contents = readFileSync(join(repositoryRoot, script), 'utf8');
+  for (const script of [join(macosBin, 'install.sh'), join(windowsBin, 'install.bat')]) {
+    const contents = readFileSync(script, 'utf8');
     for (const value of [configuration.repository_https, configuration.default_tag, configuration.requirements.node_minimum, configuration.requirements.npm_minimum, configuration.requirements.git_minimum]) {
       assert.match(contents, new RegExp(value.replaceAll('.', '\\.')));
     }
     assert.match(contents, /tar(?:\.exe)? --version/);
   }
+  for (const script of [...shellScripts.filter((value) => !value.startsWith('scripts/')), ...batchScripts]) {
+    assert.equal(existsSync(join(repositoryRoot, script)), true, script);
+    assert.equal(existsSync(join(repositoryRoot, basename(script))), false, basename(script));
+  }
 });
 
-macTest('all macOS scripts pass Bash 3.2 syntax parsing and root wrappers dispatch by script location', () => {
+macTest('all macOS scripts pass Bash 3.2 syntax parsing and bin wrappers dispatch from the repository root', () => {
   for (const relativePath of shellScripts) {
     const result = spawnSync('/bin/bash', ['-n', join(repositoryRoot, relativePath)], { encoding: 'utf8' });
     assert.equal(result.status, 0, `${relativePath}: ${result.stderr}`);
   }
-  for (const name of shellScripts.filter((value) => dirname(value) === '.')) {
-    if (name === 'install.sh') continue;
+  for (const name of shellScripts.filter((value) => dirname(value) === 'bin/macos')) {
+    if (basename(name) === 'install.sh') continue;
     const contents = readFileSync(join(repositoryRoot, name), 'utf8');
+    assert.match(contents, /BF_ROOT=.*BF_SCRIPT_DIRECTORY\/\.\.\/\.\./);
     assert.match(contents, /scripts\/platform\/macos\/operations\.sh/);
     assert.match(contents, new RegExp(`bf_main '${basename(name, '.sh')}'`));
   }
+  const operations = readFileSync(join(repositoryRoot, 'scripts/platform/macos/operations.sh'), 'utf8');
+  assert.match(operations, /bash \\"\$BF_ROOT\/bin\/macos\/stop\.sh\\"/);
+  assert.match(operations, /bash \\"\$BF_ROOT\/bin\/macos\/restore\.sh\\"/);
 });
 
 macTest('installer uses its startup CWD as the displayed and selected default', (t) => {
   const cwd = temporaryDirectory(t, 'booruflow-default-');
   const tools = createInstallerTools(t);
-  const result = runInstaller({ cwd, ...tools, input: '\n' });
+  const result = runInstaller({ cwd, ...tools, input: '\n', args: ['--tag', 'v0.89.0'] });
   const physicalCwd = realpathSync(cwd);
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, new RegExp(`default installation directory: ${physicalCwd.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
   assert.match(result.stdout, new RegExp(`Final installation directory: ${physicalCwd.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
   assert.equal(existsSync(join(cwd, 'data/media')), true);
   assert.match(readFileSync(join(cwd, '.env'), 'utf8'), /NOOBAI_COMFYUI_CREDENTIAL_ENCRYPTION_KEY=[0-9a-f]{64}/);
-  assert.match(readFileSync(tools.log, 'utf8'), new RegExp(`git <clone> <--branch> <v0\\.88\\.0> <--depth> <1> <https://github\\.com/fzfz/booruflow\\.git> <${physicalCwd.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&')}>`));
+  assert.match(readFileSync(tools.log, 'utf8'), new RegExp(`git <clone> <--branch> <v0\\.89\\.0> <--depth> <1> <https://github\\.com/fzfz/booruflow\\.git> <${physicalCwd.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&')}>`));
 });
 
 macTest('installer can run from the default directory when it is the only existing file', (t) => {
@@ -228,11 +253,48 @@ macTest('installer can run from the default directory when it is the only existi
   copyFileSync(installer, downloadedInstaller);
   chmodSync(downloadedInstaller, 0o755);
   const tools = createInstallerTools(t);
-  const result = runInstaller({ cwd, ...tools, input: '\n', installerPath: downloadedInstaller });
+  const result = runInstaller({ cwd, ...tools, input: '\n', args: ['--tag', 'v0.89.0'], installerPath: downloadedInstaller });
   assert.equal(result.status, 0, result.stderr);
   assert.equal(existsSync(join(cwd, '.git')), true);
-  assert.equal(readFileSync(downloadedInstaller, 'utf8'), readFileSync(installer, 'utf8'));
+  assert.equal(existsSync(downloadedInstaller), false);
+  assert.equal(readFileSync(join(cwd, 'bin/macos/install.sh'), 'utf8'), readFileSync(installer, 'utf8'));
   assert.equal(existsSync(join(cwd, 'data/media')), true);
+});
+
+macTest('current installer rejects a selected release that does not use the macOS bin layout', (t) => {
+  const cwd = temporaryDirectory(t, 'booruflow-legacy-caller-');
+  const destination = join(cwd, 'legacy release');
+  const tools = createInstallerTools(t);
+  const result = runInstaller({
+    cwd,
+    ...tools,
+    args: ['--directory', destination],
+    environment: { BF_TEST_CLONE_LAYOUT: 'legacy' }
+  });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /selected release does not use the current macOS bin layout; remove ".*legacy release", then download v0\.88\.0's published install\.sh attachment/);
+});
+
+macTest('installer rejects an in-place download that differs from the selected bin-layout release installer', (t) => {
+  const cwd = temporaryDirectory(t, 'booruflow-legacy-mismatch-');
+  const downloadedInstaller = join(cwd, 'install.sh');
+  const mismatchedInstaller = join(temporaryDirectory(t, 'booruflow-mismatched-installer-'), 'install.sh');
+  copyFileSync(installer, downloadedInstaller);
+  writeFileSync(mismatchedInstaller, '#!/bin/bash\nexit 1\n');
+  chmodSync(downloadedInstaller, 0o755);
+  const tools = createInstallerTools(t);
+  const result = runInstaller({
+    cwd,
+    ...tools,
+    input: '\n',
+    args: ['--tag', 'v0.89.0'],
+    installerPath: downloadedInstaller,
+    environment: {
+      BF_TEST_CLONED_INSTALLER_SOURCE: mismatchedInstaller
+    }
+  });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /installer differs from v0\.89\.0; download that tag's install\.sh/);
 });
 
 macTest('installer resolves a relative directory with spaces and Chinese from startup CWD', (t) => {
@@ -240,7 +302,7 @@ macTest('installer resolves a relative directory with spaces and Chinese from st
   const tools = createInstallerTools(t);
   const relative = '应用 A&B (100%)/BooruFlow 安装';
   const destination = join(realpathSync(cwd), relative);
-  const result = runInstaller({ cwd, ...tools, args: ['--directory', relative] });
+  const result = runInstaller({ cwd, ...tools, args: ['--directory', relative, '--tag', 'v0.89.0'] });
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, new RegExp(`Final installation directory: ${destination.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
   assert.equal(existsSync(join(destination, 'data/media')), true);
@@ -249,7 +311,7 @@ macTest('installer resolves a relative directory with spaces and Chinese from st
 macTest('installer reports missing Node after displaying and selecting the installation directory', (t) => {
   const cwd = temporaryDirectory(t, 'booruflow-missing-node-');
   const tools = createInstallerTools(t, { includeNode: false });
-  const result = runInstaller({ cwd, ...tools, input: '\n' });
+  const result = runInstaller({ cwd, ...tools, input: '\n', args: ['--tag', 'v0.89.0'] });
   assert.equal(result.status, 1);
   assert.match(result.stdout, /Startup working directory and default installation directory/);
   assert.match(result.stdout, /Final installation directory/);
@@ -261,7 +323,7 @@ macTest('installer reports missing Node after displaying and selecting the insta
 macTest('installer stops after npm ci failure and does not initialize the database', (t) => {
   const cwd = temporaryDirectory(t, 'booruflow-npm-failure-');
   const tools = createInstallerTools(t, { npmStatus: 23 });
-  const result = runInstaller({ cwd, ...tools, input: '\n' });
+  const result = runInstaller({ cwd, ...tools, input: '\n', args: ['--tag', 'v0.89.0'] });
   assert.equal(result.status, 1);
   assert.match(result.stderr, /npm ci failed/);
   const log = readFileSync(tools.log, 'utf8');
@@ -386,7 +448,7 @@ macTest('backup records the exact code tag outside the manifest-protected backup
   assert.equal(git(['init']).status, 0);
   assert.equal(git(['config', 'user.name', 'BooruFlow test']).status, 0);
   assert.equal(git(['config', 'user.email', 'test@booruflow.invalid']).status, 0);
-  assert.equal(git(['add', 'package.json', 'package-lock.json', '.env', 'scripts', 'config', 'backup.sh']).status, 0);
+  assert.equal(git(['add', 'package.json', 'package-lock.json', '.env', 'scripts', 'config', 'bin/macos/backup.sh']).status, 0);
   assert.equal(git(['commit', '-m', 'fixture release']).status, 0);
   assert.equal(git(['tag', 'v0.88.0']).status, 0);
   assert.equal(git(['remote', 'add', 'origin', 'https://github.com/fzfz/booruflow.git']).status, 0);
@@ -470,7 +532,7 @@ setInterval(async () => {
     BOORUFLOW_STARTUP_TIMEOUT_SECONDS: '10',
     PATH: `${fixture.bin}:/usr/bin:/bin:/usr/sbin:/sbin`
   };
-  const started = spawn('/bin/bash', [join(root, 'start.sh')], { cwd: tmpdir(), env: environment, stdio: ['ignore', 'pipe', 'pipe'] });
+  const started = spawn('/bin/bash', [join(root, 'bin/macos/start.sh')], { cwd: tmpdir(), env: environment, stdio: ['ignore', 'pipe', 'pipe'] });
   let startStdout = '';
   let startStderr = '';
   started.stdout.on('data', (chunk) => { startStdout += chunk; });
@@ -479,7 +541,7 @@ setInterval(async () => {
   await waitUntil(() => existsSync(join(root, 'runtime/run/app.pid')));
   let status;
   await waitUntil(() => {
-    status = spawnSync('/bin/bash', [join(root, 'status.sh')], { cwd: tmpdir(), env: environment, encoding: 'utf8' });
+    status = spawnSync('/bin/bash', [join(root, 'bin/macos/status.sh')], { cwd: tmpdir(), env: environment, encoding: 'utf8' });
     return status.status === 0;
   });
   await waitUntil(() => startStdout.includes('is ready at'));
@@ -488,7 +550,7 @@ setInterval(async () => {
   assert.equal(processName.status, 0, processName.stderr);
   assert.match(processName.stdout, /node/);
   assert.match(status.stdout, new RegExp(`PID ${pid} is running`));
-  const stopped = spawnSync('/bin/bash', [join(root, 'stop.sh')], { cwd: tmpdir(), env: environment, encoding: 'utf8', timeout: 15000 });
+  const stopped = spawnSync('/bin/bash', [join(root, 'bin/macos/stop.sh')], { cwd: tmpdir(), env: environment, encoding: 'utf8', timeout: 15000 });
   assert.equal(stopped.status, 0, stopped.stderr);
   const startExit = await new Promise((resolveExit) => started.once('close', resolveExit));
   assert.equal(startExit, 0, `${startStdout}\n${startStderr}`);
@@ -512,9 +574,12 @@ test('Windows entrypoints expose native batch orchestration without JavaScript p
   assert.match(operations, /type nul > "%BF_SHUTDOWN_FILE%"/);
   assert.match(operations, /IndexOf\(\$env:BF_START_SCRIPT/);
   assert.doesNotMatch(operations, /prod-(?:start|stop|status)\.mjs/);
+  assert.match(operations, /change to the Application root printed below, then run bin\\windows\\stop\.bat/);
+  assert.match(operations, /change to the Application root printed below, then run bin\\windows\\restore\.bat/);
   assert.ok(operations.indexOf('git checkout --detach "%BF_RECOVERY_TAG%"') < operations.indexOf('node scripts\\prod-restore.mjs --backup'));
-  for (const relativePath of batchScripts.filter((value) => value !== 'install.bat')) {
+  for (const relativePath of batchScripts.filter((value) => basename(value) !== 'install.bat')) {
     const contents = readFileSync(join(repositoryRoot, relativePath), 'utf8');
+    assert.match(contents, /for %%I in \("%~dp0\.\.\\\.\."\) do set "BF_ROOT=%%~fI"/);
     assert.match(contents, /scripts\\platform\\windows\\operations\.bat/);
     assert.doesNotMatch(contents, /call .*operations\.bat/i);
   }

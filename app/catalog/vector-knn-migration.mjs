@@ -22,7 +22,7 @@ const UNCONFIGURED_MODEL = '__unconfigured__';
 
 export class OfflineVectorKnnMigrationRequiredError extends Error {
   constructor() {
-    super('vector KNN migration 037 requires the offline migration command before the application can start');
+    super('Database migration 037 is incomplete, so the database predates the supported upgrade range. Upgrade the old deployment to v0.87.0 and migrate an isolated copy, or create a new installation before starting the application.');
     this.name = 'OfflineVectorKnnMigrationRequiredError';
     this.code = 'OFFLINE_VECTOR_KNN_MIGRATION_REQUIRED';
     this.phase = 'preflight';

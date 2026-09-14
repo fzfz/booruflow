@@ -1,5 +1,7 @@
 # Inicio rápido
 
+Los comandos de raíz corresponden a v0.88.0 publicada. El código actual usa `bin/`; consulta [Directorios de scripts y mantenimiento](../development/scripts.md).
+
 Completa [instalación](installation.md) y [configuración](configuration.md).
 
 Para crear datos a mano, ejecuta `start.bat` o `bash start.sh`, abre la URL pública y crea primero un modelo base. Añade obras, personajes y estilos; relaciona modelos con su base y LoRA con base y modelo. Busca cada registro, abre sus detalles y añade imágenes.

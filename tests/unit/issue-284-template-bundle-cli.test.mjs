@@ -8,7 +8,7 @@ import { buildSourceDiscovery } from '../../app/http/source-discovery.mjs';
 import { SOURCE_TEMPLATE_BUNDLE_PATH } from '../../app/contracts/source-contract.mjs';
 
 const REPOSITORY_ROOT = resolve(new URL('../..', import.meta.url).pathname);
-const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-comfyui-source-read.mjs');
+const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-comfyui-source-read.mjs');
 const TEMPLATE_ID = '284001';
 
 function templateBundle(overrides = {}) {

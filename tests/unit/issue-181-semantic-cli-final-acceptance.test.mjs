@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { buildSemanticDiscovery } from '../../app/http/semantic-discovery.mjs';
 
 const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-semantic-query.mjs');
+const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-semantic-query.mjs');
 const BASE_MODEL_PATH = '/internal/semantic/base-models';
 const GENERATION_MODEL_PATH = '/internal/semantic/generation-models';
 const PACKAGE_VERSION = JSON.parse(await readFile(resolve(REPOSITORY_ROOT, 'package.json'), 'utf8')).version;

@@ -15,17 +15,17 @@ const CURRENT_VECTOR_RUNTIME_FILES = Object.freeze([
   'app/vector/work-semantic.mjs',
   'app/ingest/manual-ingest.mjs',
   'ingest/manual/run-illustrious-noobai-style-explorer.mjs',
-  'scripts/rebuild-character-vectors.mjs',
-  'scripts/rebuild-prompt-term-vectors.mjs',
-  'scripts/rebuild-style-vectors.mjs',
-  'scripts/rebuild-work-vectors.mjs'
+  'scripts/maintenance/rebuild-character-vectors.mjs',
+  'scripts/maintenance/rebuild-prompt-term-vectors.mjs',
+  'scripts/maintenance/rebuild-style-vectors.mjs',
+  'scripts/maintenance/rebuild-work-vectors.mjs'
 ]);
 
 const VECTOR_REBUILD_SCRIPT_FILES = Object.freeze([
-  'scripts/rebuild-character-vectors.mjs',
-  'scripts/rebuild-prompt-term-vectors.mjs',
-  'scripts/rebuild-style-vectors.mjs',
-  'scripts/rebuild-work-vectors.mjs'
+  'scripts/maintenance/rebuild-character-vectors.mjs',
+  'scripts/maintenance/rebuild-prompt-term-vectors.mjs',
+  'scripts/maintenance/rebuild-style-vectors.mjs',
+  'scripts/maintenance/rebuild-work-vectors.mjs'
 ]);
 
 const FORBIDDEN_VECTOR_LEGACY_TERMS = Object.freeze([

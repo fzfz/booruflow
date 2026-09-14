@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { chromium } from 'playwright';
 
-import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/test-browser-launch-options.mjs';
+import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/testing/test-browser-launch-options.mjs';
 import { MANAGEMENT_NAVIGATION_ITEMS } from '../../app/web/assets/management-navigation-config.mjs';
 
 const webRoot = new URL('../../app/web/', import.meta.url);

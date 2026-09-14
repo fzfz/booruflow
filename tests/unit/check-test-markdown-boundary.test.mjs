@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 
-import { findTestMarkdownBoundaryViolations } from '../../scripts/check-test-markdown-boundary.mjs';
+import { findTestMarkdownBoundaryViolations } from '../../scripts/testing/check-test-markdown-boundary.mjs';
 
 test('测试 Markdown 边界扫描器拦截 Markdown 引用和读取命令', async () => {
   const root = await mkdtemp(join(tmpdir(), 'noobai-test-markdown-boundary-'));

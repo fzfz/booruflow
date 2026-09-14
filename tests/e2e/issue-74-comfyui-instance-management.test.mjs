@@ -3,8 +3,8 @@ import { DatabaseSync } from 'node:sqlite';
 import { test } from 'node:test';
 import { chromium } from 'playwright';
 
-import { startTestApp } from '../../scripts/start-test-app.mjs';
-import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/test-browser-launch-options.mjs';
+import { startTestApp } from '../../scripts/testing/start-test-app.mjs';
+import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/testing/test-browser-launch-options.mjs';
 import { assertManagementModal } from './management-modal-assertions.mjs';
 
 const UI_TIMEOUT = 2_500;

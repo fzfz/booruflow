@@ -15,3 +15,5 @@ BooruFlow は、作品、キャラクター、画風、Prompt Tag、モデル、
 - [サポート](community/support.md)、[Issue](community/issues.md)、[コントリビューション](community/contributing.md)、[PR](community/pull-requests.md)
 - [アーキテクチャ](development/architecture.md)、[インターフェース操作規則](development/interface-guidelines.md)、[テスト](development/testing.md)、[契約](development/contracts.md)、[Catalog/Source](development/catalog-source.md)、[リリース](development/releases.md)
 - [変更履歴](CHANGELOG.md)と [MIT License](../../LICENSE)
+
+- [スクリプトの配置と保守コマンド](development/scripts.md)

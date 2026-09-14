@@ -1,5 +1,7 @@
 # Transferencia de datos
 
+Los comandos de raíz corresponden a v0.88.0 publicada. El código actual usa `bin/`; consulta [Directorios de scripts y mantenimiento](../development/scripts.md).
+
 Detén la aplicación, exporta a un directorio nuevo y empaqueta:
 
 ```bash

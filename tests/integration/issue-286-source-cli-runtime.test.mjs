@@ -15,8 +15,8 @@ import { startLocalApplication } from '../../app/server/local-app.mjs';
 import { FAKE_VECTOR_CONFIGURATION, createFakeSemanticModelClient, createFixtureVector } from '../fixtures/vector/fake-semantic-model-client.mjs';
 
 const REPOSITORY_ROOT = fileURLToPath(new URL('../..', import.meta.url));
-const CATALOG_CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-semantic-query.mjs');
-const SOURCE_CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-comfyui-source-read.mjs');
+const CATALOG_CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-semantic-query.mjs');
+const SOURCE_CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-comfyui-source-read.mjs');
 const TEMPLATE_CATALOG_PATH = '/internal/semantic/comfyui-templates';
 const VECTOR_MIGRATION_SQL_PATH = resolve(REPOSITORY_ROOT, 'schema/database/036-generation-resource-vectors.sql');
 

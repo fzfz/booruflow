@@ -144,11 +144,11 @@ bf_assert_stopped() {
   bf_read_pid || return 1
   if [ -n "$BF_RECORDED_PID" ] && bf_pid_is_alive "$BF_RECORDED_PID"; then
     bf_assert_application_pid "$BF_RECORDED_PID" || return 1
-    bf_fail "application PID $BF_RECORDED_PID is still running; run stop.sh first"
+    bf_fail "application PID $BF_RECORDED_PID is still running; run bash \"$BF_ROOT/bin/macos/stop.sh\" first"
     return 1
   fi
   if [ -n "$BF_RECORDED_PID" ]; then
-    bf_fail "stale PID record remains: $BF_PID_FILE; run stop.sh to reconcile it"
+    bf_fail "stale PID record remains: $BF_PID_FILE; run bash \"$BF_ROOT/bin/macos/stop.sh\" to reconcile it"
     return 1
   fi
   for bf_port in "$BF_PUBLIC_PORT" "$BF_INTERNAL_PORT"; do
@@ -188,7 +188,7 @@ bf_status() {
     return 3
   fi
   if ! bf_pid_is_alive "$BF_RECORDED_PID"; then
-    bf_fail "recorded PID $BF_RECORDED_PID has exited; run stop.sh to remove the stale record"
+    bf_fail "recorded PID $BF_RECORDED_PID has exited; run bash \"$BF_ROOT/bin/macos/stop.sh\" to remove the stale record"
     return 1
   fi
   bf_assert_application_pid "$BF_RECORDED_PID" || return 1
@@ -252,7 +252,7 @@ bf_start() {
       bf_stop_elapsed=$((bf_stop_elapsed + BF_POLL_INTERVAL))
     done
     if bf_pid_is_alive "$BF_CHILD_PID"; then
-      bf_fail "health check timed out after $BF_STARTUP_TIMEOUT seconds; PID $BF_CHILD_PID may still own ports $BF_PUBLIC_PORT and $BF_INTERNAL_PORT; inspect the application log and retry bash stop.sh --stop-timeout $BF_STOP_TIMEOUT"
+      bf_fail "health check timed out after $BF_STARTUP_TIMEOUT seconds; PID $BF_CHILD_PID may still own ports $BF_PUBLIC_PORT and $BF_INTERNAL_PORT; inspect the application log and retry bash \"$BF_ROOT/bin/macos/stop.sh\" --stop-timeout $BF_STOP_TIMEOUT"
       return 1
     fi
     wait "$BF_CHILD_PID" 2>/dev/null
@@ -303,7 +303,7 @@ bf_stop() {
     sleep "$BF_POLL_INTERVAL"
     bf_elapsed=$((bf_elapsed + BF_POLL_INTERVAL))
   done
-  bf_pid_is_alive "$BF_RECORDED_PID" && { bf_fail "PID $BF_RECORDED_PID did not exit; inspect ports $BF_PUBLIC_PORT and $BF_INTERNAL_PORT plus the application log, then retry bash stop.sh --stop-timeout $BF_STOP_TIMEOUT"; return 1; }
+  bf_pid_is_alive "$BF_RECORDED_PID" && { bf_fail "PID $BF_RECORDED_PID did not exit; inspect ports $BF_PUBLIC_PORT and $BF_INTERNAL_PORT plus the application log, then retry bash \"$BF_ROOT/bin/macos/stop.sh\" --stop-timeout $BF_STOP_TIMEOUT"; return 1; }
   for bf_port in "$BF_PUBLIC_PORT" "$BF_INTERNAL_PORT"; do
     bf_port_is_free "$bf_port" || { bf_fail "application exited but configured port $bf_port is still listening"; return 1; }
   done
@@ -336,7 +336,7 @@ bf_create_backup_with_release() {
 }
 
 bf_restore() {
-  [ "$#" -eq 2 ] && [ "$1" = '--backup' ] || { bf_fail 'usage: restore.sh --backup data/recovery/<backup-directory>'; return 1; }
+  [ "$#" -eq 2 ] && [ "$1" = '--backup' ] || { bf_fail "usage: bash \"$BF_ROOT/bin/macos/restore.sh\" --backup data/recovery/<backup-directory>"; return 1; }
   printf '%s\n' "$2" | grep -Eq '^data/recovery/[A-Za-z0-9][A-Za-z0-9._-]*$' || { bf_fail '--backup must name one direct data/recovery backup directory'; return 1; }
   bf_restore_name=${2##*/}
   [ -d "$BF_ROOT/$2" ] && [ ! -L "$BF_ROOT/$2" ] || { bf_fail "backup directory is missing: $BF_ROOT/$2"; return 1; }
@@ -402,12 +402,12 @@ bf_update() {
   bf_create_backup_with_release || { bf_fail 'pre-update backup failed'; return 1; }
   printf '%s\n' "$BF_BACKUP_OUTPUT"
   bf_backup_name=$BF_BACKUP_NAME
-  (cd "$BF_ROOT" && git fetch --tags origin && git rev-parse -q --verify "refs/tags/$bf_target" >/dev/null && git checkout --detach "$bf_target") || { bf_fail "target release $bf_target could not be fetched and checked out; restore with bash restore.sh --backup data/recovery/$bf_backup_name"; return 1; }
-  (cd "$BF_ROOT" && npm ci) || { bf_fail "npm ci failed; restore with bash restore.sh --backup data/recovery/$bf_backup_name"; return 1; }
-  (cd "$BF_ROOT" && node scripts/runtime-data.mjs migrate --root "$BF_ROOT") || { bf_fail "database upgrade failed; restore with bash restore.sh --backup data/recovery/$bf_backup_name"; return 1; }
-  bf_runtime_check || { bf_fail "updated database check failed; restore with bash restore.sh --backup data/recovery/$bf_backup_name"; return 1; }
-  bf_temporary_health_check || { printf 'Restore with: bash "%s/restore.sh" --backup data/recovery/%s\n' "$BF_ROOT" "$bf_backup_name" >&2; return 1; }
-  printf 'Update to %s completed. Start with: bash "%s/start.sh"\n' "$bf_target" "$BF_ROOT"
+  (cd "$BF_ROOT" && git fetch --tags origin && git rev-parse -q --verify "refs/tags/$bf_target" >/dev/null && git checkout --detach "$bf_target") || { bf_fail "target release $bf_target could not be fetched and checked out; restore with bash \"$BF_ROOT/bin/macos/restore.sh\" --backup data/recovery/$bf_backup_name"; return 1; }
+  (cd "$BF_ROOT" && npm ci) || { bf_fail "npm ci failed; restore with bash \"$BF_ROOT/bin/macos/restore.sh\" --backup data/recovery/$bf_backup_name"; return 1; }
+  (cd "$BF_ROOT" && node scripts/runtime-data.mjs migrate --root "$BF_ROOT") || { bf_fail "database upgrade failed; restore with bash \"$BF_ROOT/bin/macos/restore.sh\" --backup data/recovery/$bf_backup_name"; return 1; }
+  bf_runtime_check || { bf_fail "updated database check failed; restore with bash \"$BF_ROOT/bin/macos/restore.sh\" --backup data/recovery/$bf_backup_name"; return 1; }
+  bf_temporary_health_check || { printf 'Restore with: bash "%s/bin/macos/restore.sh" --backup data/recovery/%s\n' "$BF_ROOT" "$bf_backup_name" >&2; return 1; }
+  printf 'Update to %s completed. Start with: bash "%s/bin/macos/start.sh"\n' "$bf_target" "$BF_ROOT"
 }
 
 bf_data_export() {
@@ -415,7 +415,7 @@ bf_data_export() {
   while [ "$#" -gt 0 ]; do
     case "$1" in --output) [ "$#" -ge 2 ] || { bf_fail '--output requires a directory'; return 1; }; bf_output=$2; shift 2 ;; --include-instances) bf_include='--include-instances'; shift ;; *) bf_fail "unknown data-export argument: $1"; return 1 ;; esac
   done
-  [ -n "$bf_output" ] || { bf_fail 'usage: data-export.sh --output DIR [--include-instances]'; return 1; }
+  [ -n "$bf_output" ] || { bf_fail "usage: bash \"$BF_ROOT/bin/macos/data-export.sh\" --output DIR [--include-instances]"; return 1; }
   bf_output=$(bf_absolute_caller_path "$bf_output")
   bf_require_application_files || return 1; bf_load_ports || return 1; bf_assert_stopped || return 1
   if [ -n "$bf_include" ]; then (cd "$BF_ROOT" && node scripts/runtime-data.mjs data-export --root "$BF_ROOT" --output "$bf_output" --include-instances); else (cd "$BF_ROOT" && node scripts/runtime-data.mjs data-export --root "$BF_ROOT" --output "$bf_output"); fi
@@ -426,7 +426,7 @@ bf_data_pack() {
   while [ "$#" -gt 0 ]; do
     case "$1" in --input) [ "$#" -ge 2 ] || { bf_fail '--input requires a directory'; return 1; }; bf_input=$2; shift 2 ;; --output) [ "$#" -ge 2 ] || { bf_fail '--output requires a .tar.gz file'; return 1; }; bf_output=$2; shift 2 ;; *) bf_fail "unknown data-pack argument: $1"; return 1 ;; esac
   done
-  [ -d "$bf_input" ] && [ -n "$bf_output" ] || { bf_fail 'usage: data-pack.sh --input DIR --output FILE.tar.gz'; return 1; }
+  [ -d "$bf_input" ] && [ -n "$bf_output" ] || { bf_fail "usage: bash \"$BF_ROOT/bin/macos/data-pack.sh\" --input DIR --output FILE.tar.gz"; return 1; }
   bf_input=$(bf_absolute_caller_path "$bf_input")
   bf_output=$(bf_absolute_caller_path "$bf_output")
   [ -d "$bf_input" ] || { bf_fail "input directory does not exist: $bf_input"; return 1; }
@@ -482,11 +482,11 @@ bf_data_import() {
   done
   bf_require_application_files || return 1; bf_load_ports || return 1; bf_assert_stopped || return 1
   if [ "$bf_mode" = recover ]; then
-    [ -n "$bf_batch" ] && [ -z "$bf_input" ] || { bf_fail 'usage: data-import.sh --recover --batch ID'; return 1; }
+    [ -n "$bf_batch" ] && [ -z "$bf_input" ] || { bf_fail "usage: bash \"$BF_ROOT/bin/macos/data-import.sh\" --recover --batch ID"; return 1; }
     (cd "$BF_ROOT" && node scripts/runtime-data.mjs data-recover --root "$BF_ROOT" --batch "$bf_batch") || { bf_fail "data import batch recovery failed: $bf_batch"; return 1; }
     return 0
   fi
-  [ -n "$bf_input" ] && { [ "$bf_mode" = check ] || [ "$bf_mode" = apply ]; } || { bf_fail 'usage: data-import.sh --input PATH --check|--apply'; return 1; }
+  [ -n "$bf_input" ] && { [ "$bf_mode" = check ] || [ "$bf_mode" = apply ]; } || { bf_fail "usage: bash \"$BF_ROOT/bin/macos/data-import.sh\" --input PATH --check|--apply"; return 1; }
   bf_input=$(bf_absolute_caller_path "$bf_input")
   BF_IMPORT_DIRECTORY=''
   if [ -d "$bf_input" ] && [ ! -L "$bf_input" ]; then BF_IMPORT_DIRECTORY=$bf_input; else bf_archive_input "$bf_input" || return 1; fi

@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { basename, dirname, resolve } from 'node:path';
 import { MEDIA_CUTOVER_VERSION } from './media-cutover-contract.mjs';
+import { runMediaCutover } from './media-cutover.mjs';
 import { STYLE_SCHEMA_MIGRATION_VERSION } from './style-schema-migration.mjs';
 
 export class MigrationBaselineError extends Error {
@@ -45,13 +46,15 @@ function runSqlite(sqliteCommand, databasePath, input, commandArguments = []) {
 
 function runOfflineMediaCutover(migrationDirectory, databasePath) {
   const repositoryRoot = resolve(migrationDirectory, '../..');
-  const result = spawnSync(process.execPath, [
-    resolve(repositoryRoot, 'scripts/run-media-cutover.mjs'),
-    '--database', databasePath,
-    '--media-root', resolve(dirname(databasePath), 'media')
-  ], { encoding: 'utf8' });
-  if (result.error) fail(`offline media cutover command is unavailable: ${result.error.message}`);
-  if (result.status !== 0) fail(`offline media cutover command failed: ${result.stderr.trim() || result.stdout.trim()}`);
+  try {
+    runMediaCutover({
+      databasePath,
+      mediaRoot: resolve(dirname(databasePath), 'media'),
+      repositoryRoot
+    });
+  } catch (error) {
+    fail(`offline media cutover failed: ${error.message}`);
+  }
 }
 
 export function applyMigrationsToEmptyDatabase({ migrationDirectory, databasePath, sqliteCommand = 'sqlite3' }) {

@@ -7,7 +7,7 @@ import test from 'node:test';
 import { buildSourceDiscovery } from '../../app/http/source-discovery.mjs';
 
 const REPOSITORY_ROOT = resolve(new URL('../..', import.meta.url).pathname);
-const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/imagegen-comfyui-source-read.mjs');
+const CLI_PATH = resolve(REPOSITORY_ROOT, 'scripts/catalog/imagegen-comfyui-source-read.mjs');
 
 function instanceSource(overrides = {}) {
   return {

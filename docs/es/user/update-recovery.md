@@ -1,5 +1,7 @@
 # Actualización y recuperación
 
+Los comandos de raíz corresponden a v0.88.0 publicada. El código actual usa `bin/`; consulta [Directorios de scripts y mantenimiento](../development/scripts.md).
+
 Consulta status, detén y ejecuta `update.bat --tag vX.Y.Z` o `bash update.sh --tag vX.Y.Z` para indicar la etiqueta de destino. Antes de escribir comprueba Git, cambios locales, dirección de versión, versión de base y parada. Luego crea backup, obtiene etiqueta, hace checkout, `npm ci`, migración y health check temporal. El usuario inicia después del éxito.
 
 Los cambios locales, una degradación, una versión desconocida de la base o una instalación sin Git detienen la actualización con una solución concreta. Un fallo conserva el respaldo y la identidad anterior. Pasa el directorio directo mostrado por update a `restore.bat --backup data/recovery/<backup-directory>` o `bash restore.sh --backup data/recovery/<backup-directory>`; el argumento debe ser un único hijo directo de `data/recovery/`. La recuperación restaura el código, la base, los medios y la configuración correspondientes. Después ejecuta la comprobación, inicia y verifica la versión y los recursos.

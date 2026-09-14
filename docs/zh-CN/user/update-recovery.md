@@ -1,5 +1,7 @@
 # 更新与恢复
 
+本文的根目录命令适用于已发布的 v0.88.0；当前源码使用 `bin/`，对应路径见 [脚本目录与维护命令](../development/scripts.md).
+
 先运行状态脚本并停止应用，再运行 `update.bat --tag vX.Y.Z` 或 `bash update.sh --tag vX.Y.Z` 指定目标发布标签。更新脚本会检查 Git 安装、本地修改、版本方向、数据库版本和停机状态；通过后依次备份、获取标签、检出代码、运行 `npm ci`、升级数据库并执行临时健康检查。成功后由你运行启动脚本。
 
 本地修改、降级请求、未知数据库版本或非 Git 安装会在写入前停止，并显示处理方法。更新失败时保留备份和可识别的旧版本状态。把更新输出中的直接备份目录传给 `restore.bat --backup data/recovery/<backup-directory>` 或 `bash restore.sh --backup data/recovery/<backup-directory>`；参数必须是 `data/recovery/` 下的一层目录名。恢复会还原匹配的代码、数据库、媒体和配置。恢复完成后运行检查，再启动并确认版本与资源。

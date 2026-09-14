@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 
-import { findStaticBoundaryViolations } from '../../scripts/check-static-test-boundaries.mjs';
+import { findStaticBoundaryViolations } from '../../scripts/testing/check-static-test-boundaries.mjs';
 
 async function fixture() {
   const root = await mkdtemp(join(tmpdir(), 'noobai-static-test-boundaries-'));
