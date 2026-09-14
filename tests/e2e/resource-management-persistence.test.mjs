@@ -141,6 +141,7 @@ test('v0.2 发布验收：画师串管理页码分页显示第二页记录', { c
     ({ browser, context } = await openManagementPage(app, '/manage/artist-prompt-strings'));
     const page = context.pages()[0];
     const list = await artistList(page);
+    await list.locator('.manage-card').first().waitFor({ state: 'visible', timeout: UI_TIMEOUT });
     assert.equal(await list.locator('.manage-card').count(), 16);
     const pagination = page.getByRole('navigation', { name: '画师串分页' });
     assert.match(await pagination.textContent(), /共 21 项 \/ 2 页/u);
@@ -168,6 +169,7 @@ test('v0.2 发布验收：ComfyUI 模板管理页码分页显示第二页记录'
     ({ browser, context } = await openManagementPage(app, '/manage/comfyui-templates'));
     const page = context.pages()[0];
     const list = await templateList(page);
+    await list.locator('.manage-card').first().waitFor({ state: 'visible', timeout: UI_TIMEOUT });
     assert.equal(await list.locator('.manage-card').count(), 16);
     const pagination = page.getByRole('navigation', { name: 'ComfyUI 模板分页' });
     assert.match(await pagination.textContent(), /共 21 项 \/ 2 页/u);

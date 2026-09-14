@@ -86,7 +86,7 @@ if not exist "%BF_DESTINATION%\" (call :fail "the installation path exists and i
 if exist "%BF_DESTINATION%\.git\" if exist "%BF_DESTINATION%\package.json" (call :fail "an existing installation was found; run its update.bat script" & exit /b 1)
 set "BF_INSTALLER_CHECK_DESTINATION=%BF_DESTINATION%"
 set "BF_INSTALLER_CHECK_SOURCE=%BF_INSTALLER_PATH%"
-powershell.exe -NoProfile -Command "$items=@(Get-ChildItem -Force -LiteralPath $env:BF_INSTALLER_CHECK_DESTINATION); if($items.Count -eq 0){exit 0}; if($items.Count -eq 1 -and -not $items[0].PSIsContainer -and $items[0].FullName.Equals($env:BF_INSTALLER_CHECK_SOURCE,[StringComparison]::OrdinalIgnoreCase)){exit 10}; exit 1" >nul 2>nul
+powershell.exe -NoProfile -Command "$ErrorActionPreference='Stop'; $source=(Get-Item -Force -LiteralPath $env:BF_INSTALLER_CHECK_SOURCE).FullName; $items=@(Get-ChildItem -Force -LiteralPath $env:BF_INSTALLER_CHECK_DESTINATION); if($items.Count -eq 0){exit 0}; if($items.Count -eq 1 -and -not $items[0].PSIsContainer -and $items[0].FullName.Equals($source,[StringComparison]::OrdinalIgnoreCase)){exit 10}; exit 1" >nul 2>nul
 set "BF_INSTALLER_CHECK_RESULT=%ERRORLEVEL%"
 if "%BF_INSTALLER_CHECK_RESULT%"=="10" set "BF_INSTALL_IN_PLACE=1"
 if not "%BF_INSTALLER_CHECK_RESULT%"=="0" if not "%BF_INSTALLER_CHECK_RESULT%"=="10" (call :fail "the installation directory contains files other than this installer" & exit /b 1)

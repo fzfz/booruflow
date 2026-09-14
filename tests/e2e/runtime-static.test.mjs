@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { request } from 'node:http';
 import { readdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { test } from 'node:test';
 
 import { startManageTestApp } from '../../scripts/start-manage-test-app.mjs';
@@ -30,7 +30,7 @@ test('真实公共监听器注入运行时配置并直接提供静态媒体', as
 
     const [relativeFileName] = (await readdir(join(app.paths.media, 'images'), { recursive: true })).filter((entry) => entry.endsWith('.png'));
     assert.ok(relativeFileName);
-    const mediaPath = `/media/images/${relativeFileName.split('/').map(encodeURIComponent).join('/')}`;
+    const mediaPath = `/media/images/${relativeFileName.split(sep).map(encodeURIComponent).join('/')}`;
     const media = await fetch(`${app.baseUrl}${mediaPath}`);
     assert.equal(media.status, 200);
     assert.equal(media.headers.get('content-type'), 'image/png');
