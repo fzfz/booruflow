@@ -70,10 +70,17 @@ jobs:
             sed -i '' "s|^NOOBAI_${name}_BASE_URL=$|NOOBAI_${name}_BASE_URL=http://127.0.0.1:59999/v1|; s|^NOOBAI_${name}_API_KEY=$|NOOBAI_${name}_API_KEY=test|; s|^NOOBAI_${name}_MODEL=$|NOOBAI_${name}_MODEL=test|" .env
           done
           bash check.sh
-          trap 'bash stop.sh' EXIT
-          bash start.sh
+          bash start.sh &
+          launcher=$!
+          trap 'bash stop.sh; wait "$launcher"' EXIT
+          for attempt in {1..30}; do
+            if bash status.sh >/dev/null 2>&1; then break; fi
+            if ! kill -0 "$launcher" 2>/dev/null; then break; fi
+            sleep 1
+          done
           bash status.sh
           bash stop.sh
+          wait "$launcher"
           trap - EXIT
           bash backup.sh
           test -z "$(git status --porcelain)"
