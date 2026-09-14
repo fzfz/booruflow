@@ -11,11 +11,12 @@ const root=resolve(import.meta.dirname,'../../..');
 const environment={NOOBAI_EMBEDDING_BASE_URL:'http://example.test/v1',NOOBAI_EMBEDDING_API_KEY:'test',NOOBAI_EMBEDDING_MODEL:'test-1024',NOOBAI_RERANKER_BASE_URL:'http://example.test/v1',NOOBAI_RERANKER_API_KEY:'test',NOOBAI_RERANKER_MODEL:'test-rerank'};
 function setup(t) {
  const dir=mkdtempSync(join(tmpdir(),'booruflow-test-')),source=openCatalogDatabase({includeBuiltinComfyuiCatalog:false}),database=openCatalogDatabase({includeBuiltinComfyuiCatalog:false});
- t.after(()=>{source.close();database.close();rmSync(dir,{recursive:true,force:true});});
+ const connections=[source,database];
+ t.after(()=>{for(const connection of connections)connection.close();rmSync(dir,{recursive:true,force:true});});
  const mediaRoot=join(dir,'target-media'),srcMedia=join(dir,'source-media'),input=join(dir,'packet');mkdirSync(srcMedia);mkdirSync(mediaRoot);
  source.exec(`INSERT INTO works(id,name,name_normalized,created_at,updated_at) VALUES(1,'Example','example','2026-09-14T00:00:00Z','2026-09-14T00:00:00Z');`);
  const options={database,repositoryRoot:root,environment,input,mediaRoot,journalRoot:join(dir,'batches'),modelClient:{embed:async rows=>rows.map(()=>Array(1024).fill(0.01))}};
- return {source,database,dir,mediaRoot,srcMedia,input,options,export:()=>exportPackage({database:source,mediaRoot:srcMedia,output:input})};
+ return {source,database,connections,dir,mediaRoot,srcMedia,input,options,export:()=>exportPackage({database:source,mediaRoot:srcMedia,output:input})};
 }
 test('empty import creates business records, vector and KNN; repeated import errors',async t=>{
  const f=setup(t);f.export();assert.equal(checkImport(f.options).records.works,1);
@@ -69,7 +70,7 @@ test('invalid cover values fail packet checks without normalization',t=>{
 test('recovery waits for database writers before deciding whether media is committed',t=>{
  const f=setup(t),databasePath=join(f.dir,'recover.sqlite');initializeDatabase(databasePath);
  const first=openExistingCatalogDatabase({databasePath}),second=openExistingCatalogDatabase({databasePath});
- t.after(()=>{first.close();second.close();});second.exec('PRAGMA busy_timeout=0');
+ f.connections.push(first,second);second.exec('PRAGMA busy_timeout=0');
  const batch='12345678-1234-1234-1234-123456789abc',stage=join(f.options.journalRoot,batch);mkdirSync(stage,{recursive:true});
  const staged=join(stage,'one.png'),target=join(f.mediaRoot,'one.png');writeFileSync(staged,'image');linkSync(staged,target);
  const {ino,dev}=lstatSync(staged);writeFileSync(join(f.options.journalRoot,`${batch}.json`),JSON.stringify({id:batch,files:[{path:'one.png',ino,dev}]}));
@@ -115,7 +116,7 @@ test('all six semantic resource kinds are indexed with original IDs and relation
 test('export keeps a single snapshot across concurrent table updates',t=>{
  const f=setup(t),path=join(f.dir,'snapshot.sqlite');initializeDatabase(path);
  const source=openExistingCatalogDatabase({databasePath:path}),writer=openExistingCatalogDatabase({databasePath:path});
- t.after(()=>{source.close();writer.close();});
+ f.connections.push(source,writer);
  source.exec("PRAGMA journal_mode=WAL; INSERT INTO works(id,name,name_normalized,created_at,updated_at) VALUES(1,'Before','before','2026-09-14T00:00:00Z','2026-09-14T00:00:00Z'); INSERT INTO characters(id,work_id,name,name_normalized,prompt_text,created_at,updated_at) VALUES(1,1,'Before','before','before','2026-09-14T00:00:00Z','2026-09-14T00:00:00Z');");
  const wrapped={exec:sql=>source.exec(sql),prepare(sql){const statement=source.prepare(sql);if(sql==='SELECT * FROM "works"')return {all(){const rows=statement.all();writer.exec("BEGIN; UPDATE works SET name='After'; UPDATE characters SET name='After'; COMMIT;");return rows;}};return statement;}};
  exportPackage({database:wrapped,mediaRoot:f.srcMedia,output:f.input});

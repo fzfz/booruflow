@@ -12,8 +12,8 @@ import {
   writeFileSync
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { test } from 'node:test';
 
 const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
@@ -33,10 +33,30 @@ function hash(value) {
   return createHash('sha256').update(value).digest('hex');
 }
 
-function fixtureRoot(t) {
+function fixtureRoot(t, beforeRemove = () => {}) {
   const root = mkdtempSync(join(tmpdir(), 'noobai-issue89-runtime-data-'));
-  t.after(() => rmSync(root, { recursive: true, force: true }));
+  t.after(async () => {
+    try {
+      await beforeRemove();
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
   return root;
+}
+
+function cliRelativePath(root, target) {
+  return relative(root, target).split(sep).join('/');
+}
+
+async function terminateChild(child) {
+  if (child.exitCode !== null || child.signalCode !== null) return;
+  const exited = new Promise((resolvePromise, rejectPromise) => {
+    child.once('exit', resolvePromise);
+    child.once('error', rejectPromise);
+  });
+  child.kill('SIGTERM');
+  await exited;
 }
 
 function writeFile(root, path, value) {
@@ -118,7 +138,7 @@ function backupNames(dataRoot) {
 
 async function runtimeSnapshotModule() {
   assert.equal(existsSync(runtimeDataModule), true, 'Issue #89 must provide the reusable production runtime-data module');
-  return import(runtimeDataModule);
+  return import(pathToFileURL(runtimeDataModule).href);
 }
 
 test('Issue #89 exposes only prod:backup and prod:restore as production data commands', () => {
@@ -128,7 +148,7 @@ test('Issue #89 exposes only prod:backup and prod:restore as production data com
 
 test('prod:backup runner passes configured production roots and listener configuration to the injected backup implementation', async (t) => {
   const root = fixtureRoot(t);
-  const { runProductionBackup } = await import(backupCommandModule);
+  const { runProductionBackup } = await import(pathToFileURL(backupCommandModule).href);
   const calls = [];
   const output = [];
   const runtimeConfiguration = { listeners: { public: { port: 46211 }, internal: { port: 46212 } } };
@@ -157,22 +177,22 @@ test('prod:backup runner passes configured production roots and listener configu
 });
 
 test('prod:backup creates the complete verified runtime set through the runner without production sockets', async (t) => {
-  const root = fixtureRoot(t);
-  const dataRoot = resolve(root, 'data');
-  writeRuntimeData(dataRoot, 'source', BACKUP_RUNTIME_FILES.filter((path) => path !== 'app.sqlite'));
-  let database = writeRuntimeDatabase(dataRoot, 'source');
-  t.after(() => {
+  let database = null;
+  const root = fixtureRoot(t, () => {
     if (database !== null) {
       database.close();
       database = null;
     }
   });
+  const dataRoot = resolve(root, 'data');
+  writeRuntimeData(dataRoot, 'source', BACKUP_RUNTIME_FILES.filter((path) => path !== 'app.sqlite'));
+  database = writeRuntimeDatabase(dataRoot, 'source');
   assert.equal(existsSync(resolve(dataRoot, 'app.sqlite-wal')), true, 'the fixture must keep an uncheckpointed SQLite WAL before backup');
   assert.equal(existsSync(resolve(dataRoot, 'app.sqlite-shm')), true, 'the fixture must keep the SQLite shared-memory file while the WAL connection is open');
   writeFile(dataRoot, 'recovery/manual-keep/sentinel.txt', 'must remain and must not be backed up\n');
   writeFile(root, 'runtime/credentials/sentinel.txt', 'credential material must remain outside runtime backup\n');
 
-  const { runProductionBackup } = await import(backupCommandModule);
+  const { runProductionBackup } = await import(pathToFileURL(backupCommandModule).href);
   const runtimeData = await runtimeSnapshotModule();
   writeFile(root,'.env','NOOBAI_COMFYUI_CREDENTIAL_ENCRYPTION_KEY=fixture-key\n');
   writeFile(root,'config/defaults.json','{}');
@@ -240,11 +260,11 @@ test('prod:restore requires --backup and restores only the verified runtime set 
 
   const outsideBackupRoot = resolve(root, 'untrusted-backup');
   createManifestDirectory(outsideBackupRoot, backupValues);
-  const outside = runProductionCommand('prod:restore', root, ['--backup', relative(root, outsideBackupRoot)]);
+  const outside = runProductionCommand('prod:restore', root, ['--backup', cliRelativePath(root, outsideBackupRoot)]);
   assertRejected(outside, 'restore must reject a backup directory outside data/recovery');
   assertRuntimeSnapshot(dataRoot, targetBefore);
 
-  const result = runProductionCommand('prod:restore', root, ['--backup', join('data', 'recovery', '2026-08-02T12-00-00Z')]);
+  const result = runProductionCommand('prod:restore', root, ['--backup', cliRelativePath(root, backupRoot)]);
   assert.equal(result.status, 0, result.stderr);
   assertRuntimeSnapshot(dataRoot, backupValues);
   assert.equal(readFile(dataRoot, 'unmanaged/sentinel.txt').toString('utf8'), 'not runtime data\n', 'restore must not overwrite data outside the defined runtime set');
@@ -256,19 +276,19 @@ test('prod:restore requires --backup and restores only the verified runtime set 
 });
 
 test('prod:restore refuses an active production PID before it changes temporary fixture data', (t) => {
-  const root = fixtureRoot(t);
+  let child = null;
+  const root = fixtureRoot(t, async () => {
+    if (child !== null) await terminateChild(child);
+  });
   const dataRoot = resolve(root, 'data');
   writeRuntimeData(dataRoot, 'backup');
   const backupRoot = createBackup(dataRoot, '2026-08-02T12-01-00Z');
   writeRuntimeData(dataRoot, 'target');
   const before = runtimeSnapshot(dataRoot);
-  const child = spawn(process.execPath, ['--input-type=module', '--eval', 'setInterval(() => {}, 1000)'], { cwd: root, stdio: 'ignore' });
-  t.after(() => {
-    if (!child.killed) child.kill('SIGTERM');
-  });
+  child = spawn(process.execPath, ['--input-type=module', '--eval', 'setInterval(() => {}, 1000)'], { cwd: root, stdio: 'ignore' });
   writeFile(root, 'runtime/run/app.pid', `${child.pid}\n`);
 
-  const result = runProductionCommand('prod:restore', root, ['--backup', relative(root, backupRoot)]);
+  const result = runProductionCommand('prod:restore', root, ['--backup', cliRelativePath(root, backupRoot)]);
   assertRejected(result, 'restore while the production application PID is alive must fail');
   assertRuntimeSnapshot(dataRoot, before);
 });
@@ -329,7 +349,7 @@ test('prod:restore verifies every manifest path and hash before overwriting temp
     const backupRoot = scenario.prepare(root, dataRoot);
     writeRuntimeData(dataRoot, `target:${scenario.name}`);
     const before = runtimeSnapshot(dataRoot);
-    const result = runProductionCommand('prod:restore', root, ['--backup', relative(root, backupRoot)]);
+    const result = runProductionCommand('prod:restore', root, ['--backup', cliRelativePath(root, backupRoot)]);
     assertRejected(result, `${scenario.name} must be rejected`);
     assertRuntimeSnapshot(dataRoot, before);
     if (scenario.name === 'path-traversal') {
@@ -348,7 +368,7 @@ test('prod:restore rejects a backup that omits a required fixed runtime file bef
   writeRuntimeData(dataRoot, 'target');
   const before = runtimeSnapshot(dataRoot);
 
-  const result = runProductionCommand('prod:restore', root, ['--backup', relative(root, backupRoot)]);
+  const result = runProductionCommand('prod:restore', root, ['--backup', cliRelativePath(root, backupRoot)]);
   assertRejected(result, 'restore must reject a backup missing the required app.sqlite runtime file');
   assertRuntimeSnapshot(dataRoot, before);
 });
