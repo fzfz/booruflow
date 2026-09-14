@@ -12,26 +12,39 @@ import { TEST_BROWSER_LAUNCH_OPTIONS } from '../../scripts/test-browser-launch-o
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const evidenceRoot = join(repositoryRoot, 'tests/e2e/artifacts/step-11/manage');
 
-test('管理页联调收到终止信号后清理临时目录并退出', async () => {
+test('管理页联调执行关闭处理后清理临时目录并退出', async (t) => {
   const probe = spawn(process.execPath, ['--input-type=module', '-e', `
     import { startManageTestApp } from './scripts/start-manage-test-app.mjs';
+    process.on('message', () => process.emit('SIGTERM'));
     const app = await startManageTestApp();
-    console.log(app.root);
-  `], { cwd: repositoryRoot, stdio: ['ignore', 'pipe', 'pipe'] });
+    console.log('TEST_ROOT=' + JSON.stringify(app.root));
+  `], { cwd: repositoryRoot, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
+  const exited = new Promise((resolve) => probe.once('exit', (code, signal) => resolve([code, signal])));
+  const requestClose = () => {
+    if (process.platform === 'win32') probe.send('close');
+    else probe.kill('SIGTERM');
+  };
+  t.after(async () => {
+    if (probe.exitCode === null && probe.signalCode === null) requestClose();
+    await exited;
+  });
   let output = '';
-  const rootReady = new Promise((resolve, reject) => {
+  const root = await new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(`等待联调信号探针超时：${output}`)), 10_000);
     probe.stdout.on('data', (chunk) => {
       output += chunk.toString();
-      const root = output.match(/(?:\/var\/folders|\/tmp\/)[^\n]*noobai-manage-e2e-[^\n]*/u);
-      if (root) { clearTimeout(timer); resolve(root[0]); }
+      const line = output.split('\n').find((value) => value.startsWith('TEST_ROOT='));
+      if (line && output.endsWith('\n')) {
+        clearTimeout(timer);
+        resolve(JSON.parse(line.slice('TEST_ROOT='.length)));
+      }
     });
     probe.stderr.on('data', (chunk) => { output += chunk.toString(); });
-    probe.once('error', reject);
+    probe.once('error', (error) => { clearTimeout(timer); reject(error); });
+    probe.once('exit', () => { clearTimeout(timer); reject(new Error(`联调探针提前退出：${output}`)); });
   });
-  const root = await rootReady;
-  probe.kill('SIGTERM');
-  const [code, signal] = await new Promise((resolve) => probe.once('exit', (exitCode, exitSignal) => resolve([exitCode, exitSignal])));
+  requestClose();
+  const [code, signal] = await exited;
   assert.equal(signal, null);
   assert.equal(code, 143);
   await assert.rejects(access(root), /ENOENT/u);

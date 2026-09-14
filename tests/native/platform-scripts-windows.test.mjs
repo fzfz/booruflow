@@ -20,10 +20,36 @@ const repositoryRoot = resolve(import.meta.dirname, '../..');
 const windowsTest = process.platform === 'win32' ? test : test.skip;
 const commandProcessor = process.env.ComSpec ?? 'cmd.exe';
 
-function temporaryDirectory(t, prefix) {
+function temporaryDirectory(t, prefix, beforeRemove = () => {}) {
   const directory = mkdtempSync(join(tmpdir(), prefix));
-  t.after(() => rmSync(directory, { force: true, recursive: true }));
+  t.after(async () => {
+    await beforeRemove();
+    rmSync(directory, { force: true, recursive: true });
+  });
   return directory;
+}
+
+function pidIsAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    if (error?.code === 'ESRCH') return false;
+    throw error;
+  }
+}
+
+async function terminateRuntimeProcess(root) {
+  const pidPath = join(root, 'runtime/run/app.pid');
+  if (!existsSync(pidPath)) return;
+  const pid = Number(readFileSync(pidPath, 'utf8').trim());
+  if (!Number.isSafeInteger(pid) || pid < 1 || !pidIsAlive(pid)) return;
+  process.kill(pid, 'SIGTERM');
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    if (!pidIsAlive(pid)) return;
+    await new Promise((resolveWait) => setTimeout(resolveWait, 50));
+  }
+  throw new Error(`test application PID ${pid} did not exit before fixture cleanup`);
 }
 
 function writeCommand(path, contents) {
@@ -39,6 +65,87 @@ function exposeNode(bin) {
   }
 }
 
+function exposeGit(bin) {
+  const source = join(bin, 'git-fixture.cs');
+  const output = join(bin, 'git.exe');
+  writeFileSync(source, `
+using System;
+using System.IO;
+using System.Text;
+
+public static class GitFixture
+{
+    private static readonly Encoding Utf8 = new UTF8Encoding(false);
+
+    private static void Write(string path, string contents)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(path));
+        File.WriteAllText(path, contents, Utf8);
+    }
+
+    public static int Main(string[] args)
+    {
+        string log = Environment.GetEnvironmentVariable("BF_TEST_LOG");
+        if (!String.IsNullOrEmpty(log))
+        {
+            File.AppendAllText(log, "git " + String.Join(" ", args) + "\\n", Utf8);
+        }
+
+        if (args.Length > 0 && args[0] == "--version")
+        {
+            Console.WriteLine("git version 2.55.0");
+            return 0;
+        }
+
+        if (args.Length > 0 && args[0] == "ls-remote")
+        {
+            Console.WriteLine("0123456789012345678901234567890123456789\\trefs/tags/v0.88.0");
+            return 0;
+        }
+
+        if (args.Length > 0 && args[0] == "clone")
+        {
+            string target = args[args.Length - 1];
+            Directory.CreateDirectory(Path.Combine(target, "scripts"));
+            Write(Path.Combine(target, "package.json"), "{}\\n");
+            Write(Path.Combine(target, "package-lock.json"), "{}\\n");
+            Write(Path.Combine(target, ".env.example"),
+                "NOOBAI_PUBLIC_PORT=18082\\n" +
+                "NOOBAI_INTERNAL_PORT=18083\\n" +
+                "NOOBAI_EMBEDDING_BASE_URL=\\n" +
+                "NOOBAI_EMBEDDING_API_KEY=\\n" +
+                "NOOBAI_EMBEDDING_MODEL=\\n" +
+                "NOOBAI_RERANKER_BASE_URL=\\n" +
+                "NOOBAI_RERANKER_API_KEY=\\n" +
+                "NOOBAI_RERANKER_MODEL=\\n");
+            Write(Path.Combine(target, "scripts", "runtime-data.mjs"),
+                "import { mkdirSync, writeFileSync } from 'node:fs'; mkdirSync('data/media', { recursive: true }); writeFileSync('data/catalog.sqlite', '');\\n");
+            File.Copy(Environment.GetEnvironmentVariable("BF_TEST_INSTALLER_SOURCE"), Path.Combine(target, "install.bat"), true);
+            Directory.CreateDirectory(Path.Combine(target, ".git"));
+        }
+
+        return 0;
+    }
+}
+`, 'utf8');
+  const windows = process.env.SystemRoot ?? String.raw`C:\Windows`;
+  const powershell = join(windows, 'System32/WindowsPowerShell/v1.0/powershell.exe');
+  const compiled = spawnSync(powershell, [
+    '-NoProfile',
+    '-Command',
+    "$ErrorActionPreference='Stop'; Add-Type -TypeDefinition ([IO.File]::ReadAllText($env:BF_TEST_GIT_SOURCE)) -Language CSharp -OutputAssembly $env:BF_TEST_GIT_OUTPUT -OutputType ConsoleApplication"
+  ], {
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      BF_TEST_GIT_OUTPUT: output,
+      BF_TEST_GIT_SOURCE: source
+    },
+    windowsHide: true
+  });
+  assert.equal(compiled.status, 0, compiled.stderr || compiled.stdout);
+}
+
 function systemPath() {
   const windows = process.env.SystemRoot ?? String.raw`C:\Windows`;
   return [String.raw`${windows}\System32`, String.raw`${windows}\System32\WindowsPowerShell\v1.0`].join(';');
@@ -50,36 +157,7 @@ function createWindowsTools(t, { includeNode = true } = {}) {
   const log = join(toolsRoot, 'commands.log');
   mkdirSync(bin);
   if (includeNode) exposeNode(bin);
-  writeFileSync(join(bin, 'git-fixture.mjs'), `
-import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-const args = process.argv.slice(2);
-appendFileSync(process.env.BF_TEST_LOG, 'git ' + args.map((value) => '<' + value + '>').join(' ') + '\\n');
-if (args[0] === '--version') { console.log('git version 2.55.0'); process.exit(0); }
-if (args[0] === 'ls-remote') { console.log('0123456789012345678901234567890123456789\\trefs/tags/v0.88.0'); process.exit(0); }
-if (args[0] === 'clone') {
-  const target = args.at(-1);
-  mkdirSync(join(target, 'scripts'), { recursive: true });
-  writeFileSync(join(target, 'package.json'), '{}\\n');
-  writeFileSync(join(target, 'package-lock.json'), '{}\\n');
-  writeFileSync(join(target, '.env.example'), [
-    'NOOBAI_PUBLIC_PORT=18082',
-    'NOOBAI_INTERNAL_PORT=18083',
-    'NOOBAI_EMBEDDING_BASE_URL=',
-    'NOOBAI_EMBEDDING_API_KEY=',
-    'NOOBAI_EMBEDDING_MODEL=',
-    'NOOBAI_RERANKER_BASE_URL=',
-    'NOOBAI_RERANKER_API_KEY=',
-    'NOOBAI_RERANKER_MODEL=',
-    ''
-  ].join('\\n'));
-  writeFileSync(join(target, 'scripts/runtime-data.mjs'), \
-    "import { mkdirSync, writeFileSync } from 'node:fs'; mkdirSync('data/media', { recursive: true }); writeFileSync('data/catalog.sqlite', '');\\n");
-  writeFileSync(join(target, 'install.bat'), readFileSync(process.env.BF_TEST_INSTALLER_SOURCE));
-  mkdirSync(join(target, '.git'));
-}
-`);
-  writeCommand(join(bin, 'git.cmd'), '@"%~dp0node.exe" "%~dp0git-fixture.mjs" %*\n');
+  exposeGit(bin);
   writeCommand(join(bin, 'npm.cmd'), `@echo off
 if "%~1"=="--version" (
   echo 10.9.3
@@ -94,14 +172,37 @@ exit /b 0
 }
 
 function runBatch(script, { args = [], cwd, environment = {}, input = '' }) {
-  return spawnSync(commandProcessor, ['/d', '/c', script, ...args], {
-    cwd,
-    encoding: 'utf8',
-    env: { ...process.env, ...environment },
-    input,
-    timeout: 30000,
-    windowsHide: true
+  const launcherRoot = mkdtempSync(join(tmpdir(), 'booruflow-win-launch-'));
+  const launcher = join(launcherRoot, 'run.bat');
+  const launcherEnvironment = {
+    ...process.env,
+    ...environment,
+    BF_TEST_CWD: cwd,
+    BF_TEST_SCRIPT: script
+  };
+  const forwardedArguments = args.map((value, index) => {
+    const name = `BF_TEST_ARG_${index}`;
+    launcherEnvironment[name] = value;
+    return `"%${name}%"`;
   });
+  writeCommand(launcher, [
+    '@echo off',
+    'cd /d "%BF_TEST_CWD%" || exit /b 1',
+    `"%BF_TEST_SCRIPT%"${forwardedArguments.length > 0 ? ` ${forwardedArguments.join(' ')}` : ''}`,
+    ''
+  ].join('\n'));
+  try {
+    return spawnSync(commandProcessor, ['/d', '/c', 'run.bat'], {
+      cwd: launcherRoot,
+      encoding: 'utf8',
+      env: launcherEnvironment,
+      input,
+      timeout: 30000,
+      windowsHide: true
+    });
+  } finally {
+    rmSync(launcherRoot, { force: true, recursive: true });
+  }
 }
 
 function installerEnvironment(tools, extra = {}) {
@@ -131,7 +232,7 @@ windowsTest('Windows installer uses startup CWD and initializes an empty runtime
   const firstKey = readFileSync(join(cwd, '.env'), 'utf8').match(/NOOBAI_COMFYUI_CREDENTIAL_ENCRYPTION_KEY=([0-9a-f]{64})/)?.[1];
   assert.ok(firstKey);
   assert.notEqual(firstKey, '0'.repeat(64));
-  assert.match(readFileSync(tools.log, 'utf8'), /git <clone> <--branch> <v0\.88\.0> <--depth> <1>/);
+  assert.match(readFileSync(tools.log, 'utf8'), /git clone --branch v0\.88\.0 --depth 1/);
 
   const second = runBatch(join(repositoryRoot, 'install.bat'), {
     cwd: secondCwd,
@@ -238,7 +339,10 @@ async function availablePortPair() {
 }
 
 function createRuntimeFixture(t, publicPort, internalPort, fixtureRoot) {
-  const root = fixtureRoot ?? temporaryDirectory(t, 'booruflow-win-runtime path-');
+  let root = fixtureRoot;
+  if (root === undefined) {
+    root = temporaryDirectory(t, 'booruflow-win-runtime path-', async () => terminateRuntimeProcess(root));
+  }
   for (const directory of ['config/release', 'scripts/platform/windows', 'scripts', 'node_modules']) {
     mkdirSync(join(root, directory), { recursive: true });
   }
@@ -276,7 +380,7 @@ const timer = setInterval(async () => {
   const bin = join(root, 'test-bin');
   mkdirSync(bin);
   exposeNode(bin);
-  writeCommand(join(bin, 'git.cmd'), '@echo off\nif "%~1"=="--version" echo git version 2.55.0\nexit /b 0\n');
+  exposeGit(bin);
   writeCommand(join(bin, 'npm.cmd'), '@echo off\nif "%~1"=="--version" echo 10.9.3\nexit /b 0\n');
   const path = `${bin};${systemPath()}`;
   return { root, environment: { Path: path, PATH: path } };
@@ -287,13 +391,6 @@ windowsTest('Windows runtime starts visibly, reports ownership, and stops throug
   const fixture = createRuntimeFixture(t, publicPort, internalPort);
   mkdirSync(join(fixture.root, 'runtime/run'), { recursive: true });
   writeFileSync(join(fixture.root, 'runtime/run/custom.shutdown'), 'stale');
-  t.after(() => {
-    const pidPath = join(fixture.root, 'runtime/run/app.pid');
-    if (existsSync(pidPath)) {
-      const pid = Number(readFileSync(pidPath, 'utf8').trim());
-      try { process.kill(pid); } catch {}
-    }
-  });
 
   const started = runBatch(join(fixture.root, 'start.bat'), { cwd: tmpdir(), environment: fixture.environment });
   assert.equal(started.status, 0, started.stderr);
@@ -319,12 +416,6 @@ windowsTest('Windows status rejects a live PID recorded by another installation'
   }
   const first = createRuntimeFixture(t, firstPublic, firstInternal);
   const second = createRuntimeFixture(t, secondPublic, secondInternal);
-  t.after(() => {
-    const pidPath = join(first.root, 'runtime/run/app.pid');
-    if (existsSync(pidPath)) {
-      try { process.kill(Number(readFileSync(pidPath, 'utf8').trim())); } catch {}
-    }
-  });
   const started = runBatch(join(first.root, 'start.bat'), { cwd: tmpdir(), environment: first.environment });
   assert.equal(started.status, 0, started.stderr);
   mkdirSync(join(second.root, 'runtime/run'), { recursive: true });
@@ -404,10 +495,6 @@ windowsTest('Windows restore selects backup code and dependencies before restori
     tag: 'v0.88.0',
     repository_https: 'https://github.com/fzfz/booruflow.git'
   }, null, 2));
-  writeCommand(join(fixture.root, 'test-bin/git.cmd'), `@echo off
->>"%BF_TEST_LOG%" echo git %*
-exit /b 0
-`);
   writeCommand(join(fixture.root, 'test-bin/npm.cmd'), `@echo off
 >>"%BF_TEST_LOG%" echo npm %*
 exit /b 0
