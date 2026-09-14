@@ -1,0 +1,11 @@
+# Configuración
+
+Los valores predeterminados están en `config/defaults.json` y `config/vector/models.json`; `.env` los sustituye por entorno y los argumentos ajustables del script tienen prioridad. El orden es argumentos, variables de entorno y configuración estructurada.
+
+El instalador de la plataforma crea `.env` en la instalación con una clave `NOOBAI_COMFYUI_CREDENTIAL_ENCRYPTION_KEY` única. Edita ese `.env` y conserva la clave existente. Copia `.env.example` a `.env` únicamente al preparar el código fuente cuando `.env` no exista. `NOOBAI_PUBLIC_PORT` vale `18082` y el listener público usa actualmente `0.0.0.0`. `NOOBAI_INTERNAL_PORT` vale `18083` y Catalog/Source solo escucha en `127.0.0.1`. Elige puertos libres. `NOOBAI_LOG_LEVEL`, `NOOBAI_LOG_DIRECTORY`, `NOOBAI_LOG_MAX_FILE_BYTES` y `NOOBAI_LOG_MAX_ARCHIVES` controlan el nivel, el directorio relativo a `data/`, el tamaño y los archivos conservados.
+
+La búsqueda semántica y la importación exigen `NOOBAI_EMBEDDING_BASE_URL`, `NOOBAI_EMBEDDING_API_KEY`, `NOOBAI_EMBEDDING_MODEL`, `NOOBAI_RERANKER_BASE_URL`, `NOOBAI_RERANKER_API_KEY` y `NOOBAI_RERANKER_MODEL`. Los dos servicios pueden usar URL y credenciales distintas.
+
+El cliente elimina las barras finales de cada `BASE_URL` y añade `/embeddings` o `/rerank`. Ambas llamadas son `POST` JSON con `Content-Type: application/json`, `Authorization: Bearer <API_KEY>` y el `request_timeout_ms` de `config/vector/models.json`. El cuerpo de Embedding es `{"model":"<EMBEDDING_MODEL>","input":["..."]}`. La respuesta debe contener un array `data` con un elemento por entrada; cada elemento contiene un `index` entero continuo desde 0 y un array numérico `embedding` de 1.024 dimensiones. El cuerpo de Reranker es `{"model":"<RERANKER_MODEL>","query":"...","documents":["..."]}`. La respuesta debe contener un array `results` con un elemento por candidato; cada elemento contiene un `index` entero único dentro del rango y un `relevance_score` numérico finito. La aplicación acepta este protocolo implementado.
+
+Conserva las credenciales reales en el `.env` de la instalación a la que pertenecen. Tras editar, detén y reinicia, y ejecuta `check.bat` o `bash check.sh`. La comprobación correcta y las direcciones previstas en el estado confirman el cambio.

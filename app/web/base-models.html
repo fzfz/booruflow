@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>底模管理 · 管理</title>
+  <link rel="stylesheet" href="/app/web/assets/management.css">
+</head>
+<body data-page="base-models">
+  <a class="skip-link" href="#generation-resource-content">跳到主要内容</a>
+  <main id="generation-resource-content" class="manage-shell">
+    <nav id="management-navigation" class="management-navigation" data-management-page-id="base-model-management" data-management-initial-focus="#base-model-search" aria-label="管理菜单"></nav>
+    <section class="generation-model-section list-view">
+    <header class="resource-section-heading page-heading">
+      <div class="page-heading-copy"><h1>底模管理</h1><p>维护文生图底模名称和资源关系。</p></div>
+      <button type="button" class="accent-button" data-action="open-create">新增底模</button>
+    </header>
+    <form id="base-model-filter-form" class="manage-toolbar" aria-label="底模筛选">
+      <label>关键词<input id="base-model-search" type="search" placeholder="搜索底模名称" autocomplete="off"></label>
+      <div class="filter-actions"><button type="submit" class="accent-button">搜索</button><button type="button" class="secondary-button" data-action="reset-filters">重置</button></div>
+    </form>
+    <p id="base-model-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入底模……</p>
+    <p id="base-model-error" class="state-line error" role="alert" hidden></p>
+    <section id="base-model-list" class="manage-list" aria-label="文生图底模列表"></section>
+    <nav id="base-model-pagination" class="manage-pagination" aria-label="文生图底模分页"></nav>
+    </section>
+  </main>
+
+  <dialog id="base-model-editor" class="manage-dialog editor-dialog" aria-labelledby="base-model-editor-title">
+    <div class="dialog-heading"><div><h2 id="base-model-editor-title">新增底模</h2><p id="base-model-editor-subtitle" class="editor-subtitle"></p></div><button type="button" class="icon-button" data-action="close-editor" aria-label="关闭编辑弹窗">×</button></div>
+    <div class="detail-body editor-dialog-body"><form id="base-model-form"><label>名称<input id="base-model-name" name="name" required autocomplete="off"></label><p id="base-model-form-error" class="state-line error" role="alert" hidden></p></form><aside id="base-model-record-panel" class="editor-record-panel" aria-label="底模记录信息" hidden><div class="record-placeholder" aria-hidden="true">底模</div><dl id="base-model-record-meta" class="record-meta"></dl></aside></div>
+    <div class="dialog-actions editor-dialog-actions"><button id="base-model-editor-delete" type="button" class="danger-button" data-action="open-delete" hidden>删除</button><button id="base-model-editor-submit" type="submit" form="base-model-form" class="accent-button">创建底模</button></div>
+  </dialog>
+
+  <dialog id="base-model-delete" class="manage-dialog confirm-dialog" aria-labelledby="base-model-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="base-model-delete-title">确认删除底模</h2></div><button type="button" class="icon-button" data-action="close-delete" aria-label="取消删除">×</button></div>
+    <p id="base-model-delete-target"></p>
+    <section><h3>级联删除</h3><ul id="base-model-cascade-list"></ul></section>
+    <section><h3>解除关联但保留</h3><ul id="base-model-retained-list"></ul></section>
+    <p id="base-model-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-delete">取消</button><button type="button" class="danger-button" data-action="confirm-delete">确认删除</button></div>
+  </dialog>
+  <!-- NOOBAI_RUNTIME_CONFIG -->
+  <script src="/app/web/assets/runtime.js"></script>
+  <script src="/app/web/assets/http-client.js"></script>
+  <script src="/app/web/assets/pagination.js"></script>
+  <script type="module" src="/app/web/assets/management-navigation.js"></script>
+  <script type="module" src="/app/web/assets/base-model-management.js"></script>
+</body>
+</html>

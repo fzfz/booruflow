@@ -1,0 +1,7 @@
+{
+  "identity": {"kind": "style", "source_id": "style-1", "parent_identity": "root", "normalized_name": "胶片"},
+  "image_results": [
+    {"owner_identity": {"kind": "style", "source_id": "style-1", "parent_identity": "root", "normalized_name": "胶片"}, "source_url": "https://source.example/images/a.jpg", "sort_order": 0},
+    {"owner_identity": {"kind": "style", "source_id": "style-1", "parent_identity": "root", "normalized_name": "胶片"}, "source_url": "https://source.example/images/a.jpg", "sort_order": 1}
+  ]
+}

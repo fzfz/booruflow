@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "displayText": {
+      "type": "string",
+      "pattern": "^(?![\\s\\S]*[\\r\\n])\\S(?:[\\s\\S]*\\S)?$"
+    },
+    "repeatedPrompt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["first", "second"],
+      "properties": {
+        "first": {
+          "$ref": "#/$defs/displayText"
+        },
+        "second": {
+          "$ref": "#/$defs/displayText"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "data_directory": "data",
+  "listeners": {
+    "public": {
+      "host": "0.0.0.0",
+      "port": 18082
+    },
+    "internal": {
+      "host": "127.0.0.1",
+      "port": 18083
+    }
+  },
+  "runtime": {
+    "config_version": "v0.11",
+    "api_public_prefix": "/api",
+    "media_public_prefix": "/media"
+  },
+  "comfyui": {
+    "credential_encryption_key": "local-development-key-replace-before-production"
+  },
+  "generation_resources": {
+    "file_format_suggestions": [
+      "safetensors",
+      "ckpt",
+      "pt",
+      "pth",
+      "bin",
+      "gguf",
+      "onnx",
+      "dduf",
+      "diffusers",
+      "other"
+    ],
+    "precision_or_quantization_suggestions": [
+      "none",
+      "fp16",
+      "bf16",
+      "fp8",
+      "int8",
+      "int4",
+      "nf4",
+      "other"
+    ]
+  },
+  "http_request_timeout_ms": 15000,
+  "internal_api_timeout_ms": 60000,
+  "logging": {
+    "level": "debug",
+    "directory": "diagnostics",
+    "max_file_bytes": 10485760,
+    "max_archives": 5
+  },
+  "uploads": {
+    "max_file_bytes": 10485760,
+    "max_files_per_request": 10,
+    "allowed_media_types": [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ]
+  },
+  "crawler": {
+    "allowed_source_origins": [
+      "https://2x.nz",
+      "https://api-ai.acofork.com"
+    ]
+  }
+}

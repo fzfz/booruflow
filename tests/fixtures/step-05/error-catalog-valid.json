@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "errors": {
+    "VALIDATION_ERROR": {
+      "http_status": 422,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operationIds": ["checkContract"]
+    }
+  }
+}

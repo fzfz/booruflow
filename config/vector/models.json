@@ -1,0 +1,17 @@
+{
+  "embedding": {
+    "base_url": "$NOOBAI_EMBEDDING_BASE_URL",
+    "api_key": "$NOOBAI_EMBEDDING_API_KEY",
+    "model": "$NOOBAI_EMBEDDING_MODEL"
+  },
+  "reranker": {
+    "base_url": "$NOOBAI_RERANKER_BASE_URL",
+    "api_key": "$NOOBAI_RERANKER_API_KEY",
+    "model": "$NOOBAI_RERANKER_MODEL"
+  },
+  "request_timeout_ms": 300000,
+  "embedding_batch_size": 64,
+  "embedding_batch_concurrency": 2,
+  "reranker_candidate_limit": 32,
+  "reranker_min_relevance_score": 0.03
+}

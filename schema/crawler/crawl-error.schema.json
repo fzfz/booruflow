@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crawl-error.schema.json",
+  "title": "采集错误",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["occurred_at", "stage", "scope", "code", "message", "request_may_retry"],
+  "properties": {
+    "occurred_at": {
+      "$ref": "common.schema.json#/$defs/utcTimestamp"
+    },
+    "stage": {
+      "type": "string",
+      "enum": ["discover_catalog", "fetch_details", "download_images", "persist", "report"]
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["item", "image", "task"]
+    },
+    "code": {
+      "$ref": "common.schema.json#/$defs/errorCode"
+    },
+    "message": {
+      "$ref": "common.schema.json#/$defs/nonEmptyText"
+    },
+    "identity": {
+      "$ref": "common.schema.json#/$defs/identity"
+    },
+    "image_source_url": { "$ref": "common.schema.json#/$defs/sourceUrl" },
+    "http_status": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 599
+    },
+    "request_may_retry": {
+      "type": "boolean"
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "html_path": { "$ref": "common.schema.json#/$defs/rawEvidencePath" },
+        "visible_text_path": { "$ref": "common.schema.json#/$defs/rawEvidencePath" },
+        "structure_diff_ref": { "type": "string", "pattern": "^data/raw/[A-Za-z0-9._/-]+$" },
+        "response_headers_path": { "$ref": "common.schema.json#/$defs/rawEvidencePath" }
+      },
+      "minProperties": 1
+    },
+    "extensions": {
+      "$ref": "common.schema.json#/$defs/extensions"
+    }
+  },
+  "description": "request_may_retry 只用于采集器单个 HTTP 请求的内部重试；耗尽后才计对象失败，与聊天发送无关。",
+  "allOf": [
+    {
+      "if": { "properties": { "scope": { "const": "item" } }, "required": ["scope"] },
+      "then": { "required": ["identity"] }
+    },
+    {
+      "if": { "properties": { "scope": { "const": "image" } }, "required": ["scope"] },
+      "then": { "required": ["identity", "image_source_url"] }
+    },
+    {
+      "if": { "properties": { "code": { "enum": ["HTTP_403", "HTTP_429", "CAPTCHA_DETECTED", "AUTH_EXPIRED", "STRUCTURE_CHANGED", "HIDDEN_CONTENT", "CONTROL_CHARACTER", "SCRIPT_CONTENT", "PAGE_INSTRUCTION", "ENCODED_CONTENT", "PERSIST_FAILED"] } }, "required": ["code"] },
+      "then": { "required": ["evidence"] }
+    },
+    {
+      "if": { "properties": { "code": { "const": "STRUCTURE_CHANGED" } }, "required": ["code"] },
+      "then": { "properties": { "evidence": { "anyOf": [{"required": ["html_path", "visible_text_path"]}, {"required": ["structure_diff_ref"]}] } } }
+    }
+  ]
+}

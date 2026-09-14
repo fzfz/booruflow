@@ -1,0 +1,58 @@
+# macOS
+.DS_Store
+
+# Editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Per-environment runtime variables
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Node / frontend dependencies
+node_modules/
+dist/
+build/
+coverage/
+
+# Temporary files
+tmp/
+temp/
+
+# Generated local JSONL logs
+*.jsonl
+
+# Local vector retrieval credentials
+config/vector/auth.json
+
+# Per-environment runtime material
+runtime/
+
+# Per-installation data, backups and exchange packages
+data/
+backups/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.pid
+*.tar.gz
+*.zip
+# Local development records
+plans/
+outputs/
+
+# Generated test and Python artifacts
+tests/e2e/artifacts/
+__pycache__/
+*.pyc
+/task_plan.md
+/findings.md
+/progress.md
+/skills/

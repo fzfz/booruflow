@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "简体中文 · 排错与提问"
+    url: "https://github.com/fzfz/booruflow/blob/main/docs/zh-CN/user/troubleshooting.md"
+    about: "提交前完成中文自查并阅读求助流程。"
+  - name: "English · Troubleshooting and support"
+    url: "https://github.com/fzfz/booruflow/blob/main/docs/en/user/troubleshooting.md"
+    about: "Complete the English checks before opening an issue."
+  - name: "日本語 · トラブルシューティング"
+    url: "https://github.com/fzfz/booruflow/blob/main/docs/ja/user/troubleshooting.md"
+    about: "Issue 作成前に日本語の確認手順を実行してください。"
+  - name: "Español · Solución de problemas"
+    url: "https://github.com/fzfz/booruflow/blob/main/docs/es/user/troubleshooting.md"
+    about: "Realiza las comprobaciones antes de abrir un Issue."

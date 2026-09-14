@@ -1,0 +1,1074 @@
+{
+  "records": [
+    {
+      "source_id": 1,
+      "identity": {
+        "base_model_name": "anima",
+        "model_file_name": "anima_aesthetic-v1.1.safetensors",
+        "model_file_format": "safetensors",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "your_anima_lora.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 2,
+      "identity": {
+        "base_model_name": "anima",
+        "model_file_name": "anima_aestheticV11.safetensors",
+        "model_file_format": "safetensors",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "anima-turbo-lora-v0.2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1,
+      "description_update": "LoRA 特点：\n- 提高生成稳定性、人体结构和风格一致性。\n- 与基础模型相比，细节表现和艺术家风格遵循可能略弱。",
+      "usage_update": "触发词：未记录\n权重资料：\n- 默认模型权重：1；作者说明可降至约 0.7 以增加生成多样性\n其他用法：\n- 建议 CFG 1、8–12 步。\n- Euler 采样器可产生较中性、较平涂的结果；ER-SDE 可能产生过强噪声。\n- 结果质量不理想时可移除质量词，并在提示词中加入 anime coloring。"
+    },
+    {
+      "source_id": 3,
+      "identity": {
+        "base_model_name": "anima",
+        "model_file_name": "anima_baseV10.safetensors",
+        "model_file_format": "safetensors",
+        "model_precision_or_quantization": "other",
+        "model_version": null,
+        "lora_file_name": "anima-highres-aesthetic-boost.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 4,
+      "identity": {
+        "base_model_name": "anima",
+        "model_file_name": "anima_baseV10.safetensors",
+        "model_file_format": "safetensors",
+        "model_precision_or_quantization": "other",
+        "model_version": null,
+        "lora_file_name": "anima-turbo-lora-v0.2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1,
+      "description_update": "LoRA 特点：\n- 提高生成稳定性、人体结构和风格一致性。\n- 与基础模型相比，细节表现和艺术家风格遵循可能略弱。",
+      "usage_update": "触发词：未记录\n权重资料：\n- 默认模型权重：1；作者说明可降至约 0.7 以增加生成多样性\n其他用法：\n- 建议 CFG 1、8–12 步。\n- Euler 采样器可产生较中性、较平涂的结果；ER-SDE 可能产生过强噪声。\n- 结果质量不理想时可移除质量词，并在提示词中加入 anime coloring。"
+    },
+    {
+      "source_id": 5,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "krea2_turbo_bf16.safetensors",
+        "model_file_format": "safetensors",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_identity_edit_v1_2_编辑模型.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1,
+      "description_update": "LoRA 特点：\n- 用于保持人物身份的指令式图像编辑，支持人物重构、局部编辑、换脸或替换、扩图、局部重绘、试穿、人物移除和全图重绘。\n- v1.2 增加角色参考表、眼睛或人物替换、更高保真度和高分辨率处理能力。",
+      "usage_update": "触发词：未记录\n权重资料：\n- 模型权重：推荐 1；ref_boost 建议在 2–6 之间尝试\n其他用法：\n- 必须配合 ComfyUI-Krea2Edit 节点包使用。\n- Turbo 模型建议使用 8–12 步和 CFG 1.0；Raw 模型的大范围删除任务建议使用 20 步和 CFG 3.0。\n- 双图编辑时图 1 是场景，图 2 是人物。"
+    },
+    {
+      "source_id": 6,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_fp8.safetensors",
+        "model_file_format": "safetensors",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-亚洲asianMix_v1-bf16.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "asian woman"
+      ],
+      "weight": 1,
+      "usage_update": "触发词：asian woman\n权重资料：\n- 默认模型权重：1；推荐权重：未记录\n其他用法：\n- 作者推荐 er_sde 采样器、simple/sgm_uniform/beta 调度器和 8–12 步。"
+    },
+    {
+      "source_id": 7,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-亚洲asianMix_v1-bf16.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "asian woman"
+      ],
+      "weight": 0.8,
+      "usage_update": "触发词：asian woman\n权重资料：\n- 模型权重：工作流实测 0.8；推荐权重：未记录\n其他用法：\n- 作者推荐 er_sde 采样器、simple/sgm_uniform/beta 调度器和 8–12 步。"
+    },
+    {
+      "source_id": 8,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-红redcraft2KREA2RedMix_2Krea2Edition_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-亚洲asianMix_v1-bf16.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "asian woman"
+      ],
+      "weight": 1,
+      "usage_update": "触发词：asian woman\n权重资料：\n- 默认模型权重：1；推荐权重：未记录\n其他用法：\n- 作者推荐 er_sde 采样器、simple/sgm_uniform/beta 调度器和 8–12 步。"
+    },
+    {
+      "source_id": 9,
+      "identity": {
+        "base_model_name": "wai",
+        "model_file_name": "waiIllustriousSDXL_v170.safetensors",
+        "model_file_format": "safetensors",
+        "model_precision_or_quantization": "other",
+        "model_version": null,
+        "lora_file_name": "ILXL_Realism_Slider_V.1.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 10,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-更好的动漫BetterAnimeStyle_Krea2_v1.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "A high-quality anime screencap"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 11,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-25D动漫Semi_Real_Anime_V2_NSW.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "semireal"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 12,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-奇幻现实FantasyRealism.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "f4nt4sy"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 13,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-MISSILE228风格_c1-st5000.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "MISSILE228 style"
+      ],
+      "weight": 1,
+      "usage_update": "触发词：MISSILE228 style\n权重资料：\n- 模型权重范围：0.8～1；默认模型权重：1；推荐权重：未记录\n其他用法：采样器、步数和 CFG 未记录。"
+    },
+    {
+      "source_id": 14,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_雨雾玻璃朦胧质感rainywindow.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "rainy window style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 15,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-动漫umina_krea2_v1.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 16,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-炭笔素描.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "炭笔素描"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 17,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-2D动漫Anime_Flat_V20_nnegret.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "线条动漫，平涂"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 18,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-动漫角色融合Anime Character Fusion.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 19,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-漫画书Comic Book V2T2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "A cinematic illustration"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 20,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_单色水墨画风darkbrush.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "monochrome ink wash style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 21,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-25D动漫Semi_Real_Anime_V1_nnegret.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "semireal"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 22,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_肌理质感抽象流体neondrip.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "textured abstract style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 23,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_童趣写意手绘速写kidsdrawing.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "naive expressive sketch style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 24,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_单色点刻版画dotmatrix.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "monochrome stippling style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 25,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_梦幻柔光动态模糊sunsetblur.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "ethereal motion blur style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 26,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-asia_cosplay_krea_2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "realistic",
+        "photography",
+        "cosplay photo",
+        "movie stills"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 27,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-2D动漫Anime_Flat_V10_nnegret.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "线条动漫，平涂"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 28,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_复古塔罗牌插画vintagetarot.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "vintage tarot style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 29,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-Nikki_Style_Anime_NSW.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "Nikke style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 30,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_紫调复古旧动漫retroanime.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "purple retro anime style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 31,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-动漫yukan-style.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "yukan style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 32,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-朋克现实CYPERPUNK_KREA_2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 33,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-漫画风格ogipote-ep63.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "Ogipote style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 34,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_装饰艺术柔和水彩softwatercolor.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "art deco watercolor style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 35,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-绘画美学风格painterly render style.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "Painterly render style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 36,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-漫画白鲸记风格_NSW.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "moby_d1ck"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 37,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-gpt anime render.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "gpt anime render style"
+      ],
+      "weight": 1
+    },
+    {
+      "source_id": 38,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_darkbrush.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 39,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-realism_engine_v2_轻量.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 40,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-KREA2turboNSW.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1.7
+    },
+    {
+      "source_id": 41,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-snofs_v1.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 42,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-snofs_v1_轻量.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 43,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-NSW+.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 44,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-MysticXXX_v2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 45,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-MysticXXX_v2_轻量.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 46,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-realism-V2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 0.8
+    },
+    {
+      "source_id": 47,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-realism_engine_v2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 48,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-nud3.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 49,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-BBW型thickness.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "thicc"
+      ],
+      "weight": 0.9
+    },
+    {
+      "source_id": 50,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-滑块-湿度wetness_krea2_loraholic.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 51,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-腰T比pawg_krea2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 52,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-亚洲Turbo_asianMix_v0.7_Lora.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [
+        "asian woman"
+      ],
+      "weight": 1,
+      "usage_update": "触发词：asian woman\n权重资料：\n- 默认模型权重：1；推荐权重：未记录\n其他用法：\n- 作者推荐 er_sde 采样器、simple/sgm_uniform/beta 调度器和 8–12 步。"
+    },
+    {
+      "source_id": 53,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-滑块-细节Detailer-KREA2.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 3
+    },
+    {
+      "source_id": 54,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-滑块-胸尺寸breast_size_krea2_loraholic.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 55,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-滑块-肤色skintone_krea2_loraholic.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 0.5
+    },
+    {
+      "source_id": 56,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "krea2_identity_edit_v1_2_编辑模型.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1,
+      "description_update": "LoRA 特点：\n- 支持 likeness、换脸、重绘、扩图、试穿和人物移除。\n- v1.2 增加角色参考表、眼睛或人物替换、更高保真度和高分辨率处理能力。",
+      "usage_update": "触发词：未记录\n权重资料：\n- 模型权重：推荐 1；ref_boost 建议在 2–6 之间尝试\n其他用法：\n- 必须配合 ComfyUI-Krea2Edit 节点包使用。\n- Turbo 模型建议使用 8–12 步和 CFG 1.0；Raw 模型的大范围删除任务建议使用 20 步和 CFG 3.0。\n- 双图编辑时图 1 是场景，图 2 是人物。"
+    },
+    {
+      "source_id": 57,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-足美学Barphot_K2_V1.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 58,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-滑块-细节PornMaster_Detail_Slider_Krea2_V1.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1,
+      "description_update": "LoRA 特点：\n- 对权重变化响应敏锐的细节和风格滑块。\n- 正权重增大时可能趋向写实，负权重增大时可能趋向动漫。",
+      "usage_update": "触发词：未记录\n权重资料：\n- 模型权重范围：-1.5～1；默认模型权重：1\n- 负权重增大时可能趋向动漫，正权重增大时可能趋向写实\n其他用法：未记录"
+    },
+    {
+      "source_id": 59,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-nice_body.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 60,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-滑块-锐化图像PornMaster_Sharpen_portrait_slider_Krea2_V1.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 61,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-单双眼皮monolid_krea2_loraholic.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    },
+    {
+      "source_id": 62,
+      "identity": {
+        "base_model_name": "krea2",
+        "model_file_name": "Krea2-MuseByStable_v15Turbo_GGUF_Q4.gguf",
+        "model_file_format": "gguf",
+        "model_precision_or_quantization": "none",
+        "model_version": null,
+        "lora_file_name": "Krea2-滑块-年龄age_krea2_loraholic.safetensors",
+        "lora_file_format": "safetensors",
+        "lora_precision_or_quantization": "none",
+        "lora_version": null
+      },
+      "trigger_words": [],
+      "weight": 1
+    }
+  ]
+}

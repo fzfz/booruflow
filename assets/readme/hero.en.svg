@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="280" viewBox="0 0 1200 280" role="img" aria-labelledby="title desc">
+<title id="title">BooruFlow</title><desc id="desc">Your local image-generation resource library. Works → Characters; Base models → Models → LoRAs; Styles · Prompts · ComfyUI templates.</desc>
+<rect width="1200" height="280" rx="12" fill="#f2f1eb"/>
+<g font-family="Segoe UI, PingFang SC, Noto Sans CJK JP, sans-serif" fill="#1d292f">
+<text x="56" y="108" font-size="68" font-weight="700">BooruFlow</text>
+<text x="58" y="162" font-size="27">Your local image-generation resource library</text>
+<text x="58" y="225" font-size="18" fill="#68787d">LOCAL CATALOG / v0.88.0</text>
+<path d="M730 52v176" stroke="#d18b43" stroke-width="2"/>
+<text x="770" y="88" font-size="20">Works → Characters</text>
+<text x="770" y="149" font-size="20">Base models → Models → LoRAs</text>
+<text x="770" y="210" font-size="20">Styles · Prompts · ComfyUI templates</text>
+</g></svg>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>模型管理 · 管理</title>
+  <link rel="stylesheet" href="/app/web/assets/management.css">
+</head>
+<body data-page="models">
+  <a class="skip-link" href="#generation-resource-content">跳到主要内容</a>
+  <main id="generation-resource-content" class="manage-shell">
+    <nav id="management-navigation" class="management-navigation" data-management-page-id="model-management" data-management-initial-focus="#model-search" aria-label="管理菜单"></nav>
+    <div class="generation-model-section list-view">
+      <header class="resource-section-heading page-heading">
+        <div class="page-heading-copy"><h1 id="generation-model-heading">模型管理</h1><p>维护模型文件、来源、说明和资源图片。</p></div>
+        <button type="button" class="accent-button" data-action="open-model-create">新增模型</button>
+      </header>
+      <form id="model-filter-form" class="manage-toolbar" aria-label="模型筛选">
+        <label>关键词<input id="model-search" type="search" placeholder="搜索文件名、作者、版本、描述、使用说明、Skill 名称" autocomplete="off"></label>
+        <label>底模<select id="model-filter-base-model"><option value="">全部底模</option></select></label>
+        <label>文件格式<div class="editable-combobox"><input id="model-filter-file-format" role="combobox" aria-expanded="false" aria-controls="model-filter-file-format-listbox" aria-autocomplete="list" autocomplete="off" placeholder="全部格式"><div id="model-filter-file-format-listbox" class="editable-combobox-listbox" role="listbox" hidden></div></div></label>
+        <label>精度或量化<div class="editable-combobox"><input id="model-filter-precision" role="combobox" aria-expanded="false" aria-controls="model-filter-precision-listbox" aria-autocomplete="list" autocomplete="off" placeholder="全部精度"><div id="model-filter-precision-listbox" class="editable-combobox-listbox" role="listbox" hidden></div></div></label>
+        <div class="filter-actions"><button type="submit" class="accent-button">搜索</button><button type="button" class="secondary-button" data-action="reset-filters">重置</button></div>
+      </form>
+      <p id="model-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入模型……</p>
+      <p id="model-error" class="state-line error" role="alert" hidden></p>
+      <section id="model-list" class="manage-list" aria-label="文生图模型列表"></section>
+      <nav id="model-pagination" class="manage-pagination" aria-label="文生图模型分页"></nav>
+    </div>
+  </main>
+
+  <dialog id="model-editor" class="manage-dialog model-editor" aria-labelledby="model-editor-title">
+    <div class="dialog-heading"><div><h2 id="model-editor-title">新增模型</h2><p id="model-editor-subtitle" class="editor-subtitle"></p></div><button type="button" class="icon-button" data-action="close-model-editor" aria-label="关闭编辑弹窗">×</button></div>
+    <div class="detail-body">
+      <form id="model-form">
+        <div class="model-form-grid">
+          <label>底模<select name="base_model_id" required><option value="">请选择底模</option></select></label>
+          <label>文件名<input name="file_name" required autocomplete="off"></label>
+          <label>文件格式<div class="editable-combobox"><input id="model-file-format" name="file_format" role="combobox" aria-expanded="false" aria-controls="model-file-format-listbox" aria-autocomplete="list" required autocomplete="off"><div id="model-file-format-listbox" class="editable-combobox-listbox" role="listbox" hidden></div></div></label>
+          <label>精度或量化<div class="editable-combobox"><input id="model-precision" name="precision_or_quantization" role="combobox" aria-expanded="false" aria-controls="model-precision-listbox" aria-autocomplete="list" required autocomplete="off"><div id="model-precision-listbox" class="editable-combobox-listbox" role="listbox" hidden></div></div></label>
+          <label>作者<input name="author" autocomplete="off"></label>
+          <label>版本<input name="version" autocomplete="off"></label>
+          <label>发布链接<input name="release_url" type="url" autocomplete="url"></label>
+          <label>发布日期<input name="published_at" type="date"></label>
+          <label>关联 Skill 名称<input name="skill_name" autocomplete="off"></label>
+        </div>
+        <label>描述<textarea name="description" required rows="3"></textarea></label>
+        <label>使用说明<textarea name="usage" required rows="3"></textarea></label>
+        <p id="model-editor-error" class="state-line error" role="alert" hidden></p>
+      </form>
+      <section id="model-media-section" class="model-media-section" hidden aria-labelledby="model-media-heading">
+        <h3 id="model-media-heading">资源图片</h3>
+        <input id="model-cover-upload" type="file" accept="image/jpeg,image/png,image/webp" hidden><input id="model-image-upload" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+        <div class="editor-media-actions"><button type="button" class="secondary-button" data-action="choose-model-cover">更换封面</button><button type="button" class="secondary-button" data-action="open-model-image-manager">管理图片</button></div>
+        <p id="model-media-status" class="state-line" aria-live="polite"></p>
+        <div id="model-image-list" class="editor-media-summary"></div>
+      </section>
+    </div>
+    <div class="dialog-actions editor-dialog-actions"><button id="model-editor-delete" type="button" class="danger-button" data-action="open-model-delete" hidden>删除</button><button id="model-editor-submit" type="submit" form="model-form" class="accent-button">创建模型</button></div>
+  </dialog>
+
+  <dialog id="model-delete" class="manage-dialog confirm-dialog" aria-labelledby="model-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="model-delete-title">确认删除模型</h2></div><button type="button" class="icon-button" data-action="close-model-delete" aria-label="关闭模型删除预览">×</button></div>
+    <p id="model-delete-target"></p>
+    <section><h3>级联删除</h3><ul id="model-cascade-list"></ul></section>
+    <section><h3>解除关联但保留</h3><ul id="model-retained-list"></ul></section>
+    <p id="model-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-model-delete">取消</button><button type="button" class="danger-button" data-action="confirm-model-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="model-image-delete" class="manage-dialog confirm-dialog" aria-labelledby="model-image-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">删除资源图片</p><h2 id="model-image-delete-title">确认删除图片</h2></div><button type="button" class="icon-button" data-action="close-model-image-delete" aria-label="取消删除图片">×</button></div>
+    <p id="model-image-delete-target"></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-model-image-delete">取消</button><button type="button" class="danger-button" data-action="confirm-model-image-delete">确认删除</button></div>
+  </dialog>
+  <dialog id="model-image-manager" class="manage-dialog image-manager-dialog" aria-labelledby="model-image-manager-title">
+    <div class="dialog-heading"><div><p class="eyebrow">模型图片</p><h2 id="model-image-manager-title">管理模型图片</h2></div><div class="image-manager-heading-actions"><button type="button" class="secondary-button" data-action="choose-model-images">添加图片</button><button type="button" class="accent-button" data-action="close-model-image-manager">完成</button></div></div>
+    <div id="model-image-manager-grid" class="image-manager-grid"></div>
+    <footer class="image-manager-footer"><p id="model-image-manager-range" class="state-line"></p><div class="image-manager-pagination"><button type="button" class="secondary-button" data-action="previous-model-image-group" aria-label="显示前 3 张图片">← 前 3 张</button><button type="button" class="secondary-button" data-action="next-model-image-group" aria-label="显示后 3 张图片">后 3 张 →</button></div></footer>
+  </dialog>
+  <dialog id="model-image-preview" class="manage-dialog image-preview-dialog" aria-labelledby="model-image-preview-title">
+    <div class="dialog-heading"><div><h2 id="model-image-preview-title">查看原图</h2><p id="model-image-preview-count" class="state-line"></p></div><button type="button" class="icon-button" data-action="close-model-image-preview" aria-label="关闭原图预览">×</button></div>
+    <div class="image-preview-stage"><button type="button" class="image-preview-arrow" data-action="previous-model-preview" aria-label="显示上一张图">←</button><img id="model-image-preview-image" alt="模型资源原图"><button type="button" class="image-preview-arrow" data-action="next-model-preview" aria-label="显示下一张图">→</button></div>
+  </dialog>
+  <!-- NOOBAI_RUNTIME_CONFIG -->
+  <script src="/app/web/assets/runtime.js"></script>
+  <script src="/app/web/assets/http-client.js"></script>
+  <script src="/app/web/assets/pagination.js"></script>
+  <script type="module" src="/app/web/assets/management-navigation.js"></script>
+  <script type="module" src="/app/web/assets/model-management.js"></script>
+</body>
+</html>

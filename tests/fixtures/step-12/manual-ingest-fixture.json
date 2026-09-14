@@ -1,0 +1,35 @@
+{
+  "source_config": {
+    "schema_version": 1,
+    "source_name": "fixed-local-source",
+    "source_base_url": "https://source.example"
+  },
+  "catalog": [
+    {
+      "identity": {"kind": "work", "source_id": "work-1", "parent_identity": "root", "normalized_name": "雨夜书店"},
+      "source_url": "https://source.example/works/1", "name": "雨夜书店", "category_name": "现代", "source_version": "fixed-1", "source_updated_at": "2026-07-27T00:00:00Z", "discovered_at": "2026-07-27T00:00:00Z"
+    },
+    {
+      "identity": {"kind": "character", "source_id": "character-1", "parent_work_identity": {"kind": "work", "source_id": "work-1", "parent_identity": "root", "normalized_name": "雨夜书店"}, "normalized_name": "店主"},
+      "source_url": "https://source.example/characters/1", "name": "店主", "source_version": "fixed-1", "source_updated_at": "2026-07-27T00:00:00Z", "discovered_at": "2026-07-27T00:00:00Z"
+    },
+    {
+      "identity": {"kind": "style", "base_model_id": 12001, "source_id": "style-1", "parent_identity": "root", "normalized_name": "暖墨"},
+      "source_url": "https://source.example/styles/1", "name": "暖墨", "category_name": null, "source_version": "fixed-1", "source_updated_at": "2026-07-27T00:00:00Z", "discovered_at": "2026-07-27T00:00:00Z"
+    }
+  ],
+  "details": [
+    {
+      "identity": {"kind": "work", "source_id": "work-1", "parent_identity": "root", "normalized_name": "雨夜书店"},
+      "source_url": "https://source.example/works/1", "name": "雨夜书店", "aliases": ["雨夜旧书店"], "category_name": "现代", "source_version": "fixed-1", "source_updated_at": "2026-07-27T00:00:00Z", "fetched_at": "2026-07-27T00:00:00Z"
+    },
+    {
+      "identity": {"kind": "character", "source_id": "character-1", "parent_work_identity": {"kind": "work", "source_id": "work-1", "parent_identity": "root", "normalized_name": "雨夜书店"}, "normalized_name": "店主"},
+      "source_url": "https://source.example/characters/1", "name": "店主", "aliases": ["书店店主"], "prompt_text": "warm light, ink archive", "source_version": "fixed-1", "source_updated_at": "2026-07-27T00:00:00Z", "image_results": [{"owner_identity": {"kind": "character", "source_id": "character-1", "parent_work_identity": {"kind": "work", "source_id": "work-1", "parent_identity": "root", "normalized_name": "雨夜书店"}, "normalized_name": "店主"}, "source_url": null, "sort_order": 0, "status": "skipped", "reason": "test fixture has no image bytes"}], "fetched_at": "2026-07-27T00:00:00Z"
+    },
+    {
+      "identity": {"kind": "style", "base_model_id": 12001, "source_id": "style-1", "parent_identity": "root", "normalized_name": "暖墨"},
+      "source_url": "https://source.example/styles/1", "name": "暖墨", "aliases": ["暖色墨线"], "base_model_id": 12001, "prompt_text": "warm ink illustration", "style_description": null, "image_results": [{"owner_identity": {"kind": "style", "base_model_id": 12001, "source_id": "style-1", "parent_identity": "root", "normalized_name": "暖墨"}, "source_url": null, "sort_order": 0, "status": "skipped", "reason": "test fixture has no image bytes"}], "fetched_at": "2026-07-27T00:00:00Z"
+    }
+  ]
+}

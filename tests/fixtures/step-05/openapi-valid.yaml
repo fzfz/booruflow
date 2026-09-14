@@ -1,0 +1,14 @@
+openapi: 3.1.0
+paths:
+  /api/check/{check_id}:
+    parameters: [{$ref: '#/components/parameters/CheckId'}]
+    get: {operationId: checkContract, responses: {'200': {$ref: '#/components/responses/Ok'}, '422': {$ref: '#/components/responses/E422'}}}
+components:
+  parameters:
+    CheckId: {name: check_id, in: path, required: true, schema: {type: integer}}
+  schemas:
+    E422: {allOf: [{$ref: '#/components/schemas/ErrorBase'}, {properties: {error: {properties: {code: {const: VALIDATION_ERROR}}}}}]}
+    ErrorBase: {type: object}
+  responses:
+    Ok: {description: ok}
+    E422: {description: validation, content: {application/json: {schema: {$ref: '#/components/schemas/E422'}}}}

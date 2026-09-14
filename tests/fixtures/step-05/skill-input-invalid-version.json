@@ -1,0 +1,12 @@
+{
+  "kind": "noobai_user_prompt",
+  "version": "2.0.0",
+  "request_id": "local-fixture-1",
+  "base_model_name": "WAI",
+  "user_text": "雨夜旧书店",
+  "ui_explicit": {
+    "selection_snapshot_version": "1.0.0",
+    "source": "ui_explicit",
+    "selections": []
+  }
+}

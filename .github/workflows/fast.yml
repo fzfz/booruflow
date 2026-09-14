@@ -1,0 +1,84 @@
+name: Platform checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.21.0
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Check whitespace
+        shell: bash
+        run: |
+          git diff --check "$(git hash-object -t tree /dev/null)" HEAD
+      - name: Scan tracked files for credential leaks
+        shell: bash
+        run: |
+          if git grep -nEI '(^|[^[:alnum:]_])(sk-[A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9_-]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16})'; then # credential leak scan
+            echo 'credential leak detected'
+            exit 1
+          fi
+      - name: Check test boundaries
+        run: npm run check:test-markdown
+      - name: Run contract tests
+        if: runner.os != 'Windows'
+        run: npm run test:contract
+      - name: Run unit tests
+        if: runner.os != 'Windows'
+        run: npm run test:unit
+      - name: Run integration tests
+        run: npm run test:integration
+      - name: Check Windows database and data transfer
+        if: runner.os == 'Windows'
+        run: node --test tests/unit/data-package/import.test.mjs tests/contract/issue-89-production-runtime-data.test.mjs
+      - name: Run migration tests
+        if: runner.os != 'Windows'
+        run: node scripts/run-test-layer.mjs tests/migration/
+      - name: Run native script tests
+        run: node scripts/run-test-layer.mjs tests/native/
+      - name: Run browser tests
+        run: node scripts/run-e2e-tests.mjs
+      - name: Export platform data package
+        run: node scripts/test-data-exchange.mjs export outputs/exchange
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exchange-${{ matrix.os }}
+          path: outputs/exchange/
+          if-no-files-found: error
+          retention-days: 7
+  interchange:
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.21.0
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: exchange-*
+          path: outputs/incoming
+      - name: Import packages from all three platforms
+        run: node scripts/test-data-exchange.mjs import outputs/incoming

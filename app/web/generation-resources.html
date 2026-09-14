@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>文生图资源 · 管理</title>
+  <link rel="stylesheet" href="/app/web/assets/app.css">
+  <link rel="stylesheet" href="/app/web/assets/management-modal.css">
+</head>
+<body data-page="generation-resources">
+  <a class="skip-link" href="#generation-resource-content">跳到主要内容</a>
+  <main id="generation-resource-content" class="manage-shell">
+    <header class="topbar">
+      <div><p class="eyebrow">文生图资源维护</p><h1>文生图底模与模型</h1></div>
+      <div class="manage-actions"><a class="text-button" href="/">返回首页</a></div>
+    </header>
+    <section class="manage-toolbar" aria-label="底模筛选">
+      <label>搜索<input id="base-model-search" type="search" placeholder="按底模名称搜索" autocomplete="off"></label>
+      <button type="button" class="accent-button" data-action="open-create">新增底模</button>
+    </section>
+    <p id="base-model-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入底模……</p>
+    <p id="base-model-error" class="state-line error" role="alert" hidden></p>
+    <section id="base-model-list" class="manage-list" aria-label="文生图底模列表"></section>
+    <nav id="base-model-pagination" class="manage-pagination" aria-label="文生图底模分页"></nav>
+
+    <div class="generation-model-section">
+      <header class="resource-section-heading">
+        <div><p class="eyebrow">文生图模型</p><h2 id="generation-model-heading">文生图模型列表</h2></div>
+        <button type="button" class="accent-button" data-action="open-model-create">新增模型</button>
+      </header>
+      <div class="manage-toolbar" aria-label="模型筛选">
+        <label>搜索<input id="model-search" type="search" placeholder="按模型文件名搜索" autocomplete="off"></label>
+      </div>
+      <p id="model-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入模型……</p>
+      <p id="model-error" class="state-line error" role="alert" hidden></p>
+      <section id="model-list" class="manage-list" aria-label="文生图模型列表"></section>
+      <nav id="model-pagination" class="manage-pagination" aria-label="文生图模型分页"></nav>
+    </div>
+
+    <div class="generation-model-section">
+      <header class="resource-section-heading">
+        <div><p class="eyebrow">文生图 LoRA</p><h2 id="generation-lora-heading">文生图 LoRA 列表</h2></div>
+        <button type="button" class="accent-button" data-action="open-lora-create">新增 LoRA</button>
+      </header>
+      <div class="manage-toolbar" aria-label="LoRA 筛选">
+        <label>搜索<input id="lora-search" type="search" placeholder="按 LoRA 文件名搜索" autocomplete="off"></label>
+        <label>底模<select id="lora-filter-base-model"><option value="">全部底模</option></select></label>
+        <label>模型<select id="lora-filter-model"><option value="">全部模型</option></select></label>
+      </div>
+      <p id="lora-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入 LoRA……</p>
+      <p id="lora-error" class="state-line error" role="alert" hidden></p>
+      <section id="lora-list" class="manage-list" aria-label="文生图 LoRA 列表"></section>
+      <nav id="lora-pagination" class="manage-pagination" aria-label="文生图 LoRA 分页"></nav>
+    </div>
+
+    <div class="generation-model-section">
+      <header class="resource-section-heading">
+        <div><p class="eyebrow">画师串</p><h2 id="artist-heading">画师串列表</h2></div>
+        <button type="button" class="accent-button" data-action="open-artist-create">新增画师串</button>
+      </header>
+      <div class="manage-toolbar" aria-label="画师串筛选">
+        <label>搜索<input id="artist-search" type="search" placeholder="按画师串名称搜索" autocomplete="off"></label>
+      </div>
+      <p id="artist-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入画师串……</p>
+      <p id="artist-error" class="state-line error" role="alert" hidden></p>
+      <section id="artist-list" class="manage-list" aria-label="画师串列表"></section>
+      <nav id="artist-pagination" class="manage-pagination" aria-label="画师串分页"></nav>
+    </div>
+
+    <div class="generation-model-section">
+      <header class="resource-section-heading">
+        <div><p class="eyebrow">ComfyUI</p><h2 id="comfyui-instance-heading">ComfyUI 实例列表</h2></div>
+        <button type="button" class="accent-button" data-action="open-comfyui-instance-create">新增 ComfyUI 实例</button>
+      </header>
+      <div class="manage-toolbar" aria-label="ComfyUI 实例筛选">
+        <label>搜索<input id="comfyui-instance-search" type="search" placeholder="按实例名称搜索" autocomplete="off"></label>
+      </div>
+      <p id="comfyui-instance-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入 ComfyUI 实例……</p>
+      <p id="comfyui-instance-error" class="state-line error" role="alert" hidden></p>
+      <section id="comfyui-instance-list" class="manage-list" aria-label="ComfyUI 实例列表"></section>
+      <nav id="comfyui-instance-pagination" class="manage-pagination" aria-label="ComfyUI 实例分页"></nav>
+    </div>
+
+    <div id="comfyui-template-section" class="generation-model-section">
+      <header class="resource-section-heading">
+        <div><p class="eyebrow">ComfyUI</p><h2 id="template-heading">ComfyUI 模板列表</h2></div>
+        <button type="button" class="accent-button" data-action="open-template-create">新增 ComfyUI 模板</button>
+      </header>
+      <div class="manage-toolbar" aria-label="ComfyUI 模板筛选">
+        <label>搜索<input id="template-search" type="search" placeholder="按模板名称搜索" autocomplete="off"></label>
+        <label>底模<select id="template-filter-base-model"><option value="">全部底模</option></select></label>
+        <label>模型<select id="template-filter-model"><option value="">全部模型</option></select></label>
+        <label>LoRA<select id="template-filter-lora"><option value="">全部 LoRA</option></select></label>
+      </div>
+      <p id="template-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入 ComfyUI 模板……</p>
+      <p id="template-error" class="state-line error" role="alert" hidden></p>
+      <section id="template-list" class="manage-list" aria-label="ComfyUI 模板列表"></section>
+      <nav id="template-pagination" class="manage-pagination" aria-label="ComfyUI 模板分页"></nav>
+    </div>
+
+  </main>
+
+  <dialog id="base-model-editor" class="manage-dialog" aria-labelledby="base-model-editor-title">
+    <div class="dialog-heading"><div><p class="eyebrow">文生图底模</p><h2 id="base-model-editor-title">新增底模</h2></div><button type="button" class="icon-button" data-action="close-editor" aria-label="关闭编辑器">×</button></div>
+    <form id="base-model-form" method="dialog"><label>名称<input id="base-model-name" name="name" required autocomplete="off"></label><p id="base-model-form-error" class="state-line error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-editor">取消</button><button type="submit" class="accent-button" value="save">保存</button></div></form>
+  </dialog>
+
+  <dialog id="base-model-delete" class="manage-dialog confirm-dialog" aria-labelledby="base-model-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="base-model-delete-title">确认删除底模</h2></div><button type="button" class="icon-button" data-action="close-delete" aria-label="取消删除">×</button></div>
+    <p id="base-model-delete-target"></p>
+    <section><h3>级联删除</h3><ul id="base-model-cascade-list"></ul></section>
+    <section><h3>解除关联但保留</h3><ul id="base-model-retained-list"></ul></section>
+    <p id="base-model-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-delete">取消</button><button type="button" class="danger-button" data-action="confirm-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="model-editor" class="manage-dialog model-editor" aria-labelledby="model-editor-title">
+    <div class="dialog-heading"><div><p class="eyebrow">文生图模型</p><h2 id="model-editor-title">新增模型</h2></div><button type="button" class="icon-button" data-action="close-model-editor" aria-label="关闭模型编辑器">×</button></div>
+    <div class="detail-body">
+      <form id="model-form">
+        <div class="model-form-grid">
+          <label>底模<select name="base_model_id" required><option value="">请选择底模</option></select></label>
+          <label>文件名<input name="file_name" required autocomplete="off"></label>
+          <label>文件格式<select name="file_format" required><option value="safetensors">safetensors</option><option value="ckpt">ckpt</option><option value="pt">pt</option><option value="pth">pth</option><option value="bin">bin</option><option value="gguf">gguf</option><option value="onnx">onnx</option><option value="dduf">dduf</option><option value="diffusers">diffusers</option><option value="other">other</option></select></label>
+          <label>精度或量化<select name="precision_or_quantization" required><option value="none">none</option><option value="fp16">fp16</option><option value="bf16">bf16</option><option value="fp8">fp8</option><option value="int8">int8</option><option value="int4">int4</option><option value="nf4">nf4</option><option value="other">other</option></select></label>
+          <label>作者<input name="author" autocomplete="off"></label>
+          <label>版本<input name="version" autocomplete="off"></label>
+          <label>发布链接<input name="release_url" type="url" autocomplete="url"></label>
+          <label>发布日期<input name="published_at" type="date"></label>
+          <label>关联 Skill 名称<input name="skill_name" autocomplete="off"></label>
+        </div>
+        <label>描述<textarea name="description" required rows="3"></textarea></label>
+        <label>使用说明<textarea name="usage" required rows="3"></textarea></label>
+        <p id="model-editor-error" class="state-line error" role="alert" hidden></p>
+        <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-model-editor">取消</button><button type="submit" class="accent-button">保存</button></div>
+      </form>
+      <section id="model-media-section" class="model-media-section" hidden aria-labelledby="model-media-heading">
+        <h3 id="model-media-heading">资源图片</h3>
+        <div class="detail-toolbar"><label>选择图片<input id="model-image-upload" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><button type="button" class="accent-button" data-action="upload-model-images">上传</button></div>
+        <p id="model-media-status" class="state-line" aria-live="polite"></p>
+        <div id="model-image-list" class="detail-image-grid"></div>
+      </section>
+    </div>
+  </dialog>
+
+  <dialog id="model-delete" class="manage-dialog confirm-dialog" aria-labelledby="model-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="model-delete-title">确认删除模型</h2></div><button type="button" class="icon-button" data-action="close-model-delete" aria-label="关闭模型删除预览">×</button></div>
+    <p id="model-delete-target"></p>
+    <section><h3>级联删除</h3><ul id="model-cascade-list"></ul></section>
+    <section><h3>解除关联但保留</h3><ul id="model-retained-list"></ul></section>
+    <p id="model-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-model-delete">取消</button><button type="button" class="danger-button" data-action="confirm-model-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="model-image-delete" class="manage-dialog confirm-dialog" aria-labelledby="model-image-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">删除资源图片</p><h2 id="model-image-delete-title">确认删除图片</h2></div><button type="button" class="icon-button" data-action="close-model-image-delete" aria-label="取消删除图片">×</button></div>
+    <p id="model-image-delete-target"></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-model-image-delete">取消</button><button type="button" class="danger-button" data-action="confirm-model-image-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="lora-editor" class="manage-dialog model-editor" aria-labelledby="lora-editor-title">
+    <div class="dialog-heading"><div><p class="eyebrow">文生图 LoRA</p><h2 id="lora-editor-title">新增 LoRA</h2></div><button type="button" class="icon-button" data-action="close-lora-editor" aria-label="关闭 LoRA 编辑器">×</button></div>
+    <div class="detail-body">
+      <form id="lora-form">
+        <div class="model-form-grid">
+          <label>底模<select name="base_model_id" required><option value="">请选择底模</option></select></label>
+          <label>关联模型<select name="model_id" required><option value="">请选择模型</option></select></label>
+          <label>文件名<input name="file_name" required autocomplete="off"></label>
+          <label>文件格式<select name="file_format" required><option value="safetensors">safetensors</option><option value="ckpt">ckpt</option><option value="pt">pt</option><option value="pth">pth</option><option value="bin">bin</option><option value="gguf">gguf</option><option value="onnx">onnx</option><option value="dduf">dduf</option><option value="diffusers">diffusers</option><option value="other">other</option></select></label>
+          <label>精度或量化<select name="precision_or_quantization" required><option value="none">none</option><option value="fp16">fp16</option><option value="bf16">bf16</option><option value="fp8">fp8</option><option value="int8">int8</option><option value="int4">int4</option><option value="nf4">nf4</option><option value="other">other</option></select></label>
+          <label>作者<input name="author" autocomplete="off"></label>
+          <label>版本<input name="version" autocomplete="off"></label>
+          <label>发布链接<input name="release_url" type="url" autocomplete="url"></label>
+          <label>默认模型权重<input name="weight" type="number" step="any" value="1.0" required></label>
+        </div>
+        <label>触发词（每行一个）<textarea name="trigger_words" rows="3"></textarea></label>
+        <label>描述<textarea name="description" required rows="3"></textarea></label>
+        <label>使用说明<textarea name="usage" required rows="3"></textarea></label>
+        <p id="lora-editor-error" class="state-line error" role="alert" hidden></p>
+        <div class="dialog-actions"><button type="button" class="secondary-button" data-action="cancel-lora-editor">取消</button><button type="submit" class="accent-button">保存</button></div>
+      </form>
+      <section id="lora-media-section" class="model-media-section" hidden aria-labelledby="lora-media-heading">
+        <h3 id="lora-media-heading">资源图片</h3>
+        <div class="detail-toolbar"><label>选择图片<input id="lora-image-upload" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><button type="button" class="accent-button" data-action="upload-lora-images">上传</button></div>
+        <p id="lora-media-status" class="state-line" aria-live="polite"></p>
+        <div id="lora-image-list" class="detail-image-grid"></div>
+      </section>
+    </div>
+  </dialog>
+
+  <dialog id="lora-delete" class="manage-dialog confirm-dialog" aria-labelledby="lora-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="lora-delete-title">确认删除 LoRA</h2></div><button type="button" class="icon-button" data-action="close-lora-delete" aria-label="关闭 LoRA 删除预览">×</button></div>
+    <p id="lora-delete-target"></p>
+    <section><h3>级联删除</h3><ul id="lora-cascade-list"></ul></section>
+    <section><h3>解除关联但保留</h3><ul id="lora-retained-list"></ul></section>
+    <p id="lora-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-lora-delete">取消</button><button type="button" class="danger-button" data-action="confirm-lora-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="lora-image-delete" class="manage-dialog confirm-dialog" aria-labelledby="lora-image-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">删除资源图片</p><h2 id="lora-image-delete-title">确认删除图片</h2></div><button type="button" class="icon-button" data-action="close-lora-image-delete" aria-label="取消删除图片">×</button></div>
+    <p id="lora-image-delete-target"></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-lora-image-delete">取消</button><button type="button" class="danger-button" data-action="confirm-lora-image-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="artist-editor" class="manage-dialog model-editor" aria-labelledby="artist-editor-title">
+    <div class="dialog-heading"><div><p class="eyebrow">画师串</p><h2 id="artist-editor-title">新增画师串</h2></div><button type="button" class="icon-button" data-action="close-artist-editor" aria-label="关闭画师串编辑器">×</button></div>
+    <div class="detail-body">
+      <form id="artist-form">
+        <div class="model-form-grid">
+          <label>名称<input name="title" required maxlength="20" autocomplete="off"></label>
+          <label>底模<select name="base_model_id"><option value="">不关联底模</option></select></label>
+        </div>
+        <label>画师提示词串<textarea name="artist_string" required rows="3"></textarea></label>
+        <label>描述<textarea name="description" required rows="3"></textarea></label>
+        <label>关联画风<select name="style_ids" multiple size="6" aria-describedby="artist-style-help"></select></label>
+        <p id="artist-style-help" class="field-help">可多选；保存时将完整替换当前画师串的画风关联。</p>
+        <p id="artist-editor-error" class="state-line error" role="alert" hidden></p>
+        <div class="dialog-actions"><button type="button" class="secondary-button" data-action="cancel-artist-editor">取消</button><button type="submit" class="accent-button">保存</button></div>
+      </form>
+      <section id="artist-media-section" class="model-media-section" hidden aria-labelledby="artist-media-heading">
+        <h3 id="artist-media-heading">资源图片</h3>
+        <div class="detail-toolbar"><label>选择图片<input id="artist-image-upload" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><button type="button" class="accent-button" data-action="upload-artist-images">上传</button></div>
+        <p id="artist-media-status" class="state-line" aria-live="polite"></p>
+        <div id="artist-image-list" class="detail-image-grid"></div>
+      </section>
+    </div>
+  </dialog>
+
+  <dialog id="artist-delete" class="manage-dialog confirm-dialog" aria-labelledby="artist-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="artist-delete-title">确认删除画师串</h2></div><button type="button" class="icon-button" data-action="close-artist-delete" aria-label="关闭画师串删除预览">×</button></div>
+    <p id="artist-delete-target"></p>
+    <section><h3>级联删除</h3><ul id="artist-cascade-list"></ul></section>
+    <section><h3>解除关联但保留</h3><ul id="artist-retained-list"></ul></section>
+    <p id="artist-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-artist-delete">取消</button><button type="button" class="danger-button" data-action="confirm-artist-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="artist-image-delete" class="manage-dialog confirm-dialog" aria-labelledby="artist-image-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">删除资源图片</p><h2 id="artist-image-delete-title">确认删除图片</h2></div><button type="button" class="icon-button" data-action="close-artist-image-delete" aria-label="取消删除图片">×</button></div>
+    <p id="artist-image-delete-target"></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-artist-image-delete">取消</button><button type="button" class="danger-button" data-action="confirm-artist-image-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="comfyui-instance-editor" class="manage-dialog model-editor" aria-labelledby="comfyui-instance-editor-title">
+    <div class="dialog-heading"><div><p class="eyebrow">ComfyUI</p><h2 id="comfyui-instance-editor-title">新增 ComfyUI 实例</h2></div><button type="button" class="icon-button" data-action="close-comfyui-instance-editor" aria-label="关闭 ComfyUI 实例编辑器">×</button></div>
+    <div class="detail-body">
+      <form id="comfyui-instance-form">
+        <div class="model-form-grid">
+          <label>名称<input name="title" required autocomplete="off"></label>
+          <label>服务地址<input name="url" type="url" required autocomplete="url"></label>
+          <label>凭据类型<select name="credential_type" required><option value="none">无凭据</option><option value="http_basic">HTTP Basic</option><option value="bearer">Bearer Token</option></select></label>
+          <label class="comfyui-enabled-field"><input name="is_enabled" type="checkbox" disabled> 启用实例</label>
+        </div>
+        <div id="comfyui-instance-credential-fields"></div>
+        <p id="comfyui-instance-validation-status" class="state-line" aria-live="polite">保存后可检测连接。</p>
+        <p id="comfyui-instance-editor-error" class="state-line error" role="alert" hidden></p>
+        <div class="dialog-actions"><button type="button" class="secondary-button" data-action="validate-comfyui-instance">检测连接</button><button type="button" class="secondary-button" data-action="close-comfyui-instance-editor">取消</button><button type="submit" class="accent-button">保存</button></div>
+      </form>
+    </div>
+  </dialog>
+
+  <dialog id="comfyui-instance-delete" class="manage-dialog confirm-dialog" aria-labelledby="comfyui-instance-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="comfyui-instance-delete-title">确认删除 ComfyUI 实例</h2></div><button type="button" class="icon-button" data-action="close-comfyui-instance-delete" aria-label="关闭 ComfyUI 实例删除预览">×</button></div>
+    <p id="comfyui-instance-delete-target"></p>
+    <p id="comfyui-instance-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-comfyui-instance-delete">取消</button><button type="button" class="danger-button" data-action="confirm-comfyui-instance-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="template-editor" class="manage-dialog model-editor" aria-labelledby="template-editor-title">
+    <div class="dialog-heading"><div><p class="eyebrow">ComfyUI</p><h2 id="template-editor-title">新增 ComfyUI 模板</h2></div><button type="button" class="icon-button" data-action="close-template-editor" aria-label="关闭 ComfyUI 模板编辑器">×</button></div>
+    <div class="detail-body">
+      <form id="template-form">
+        <section>
+          <div class="model-form-grid">
+            <label>底模<select name="base_model_id" required><option value="">请选择底模</option></select></label>
+            <label>模型<select name="model_id" required><option value="">请选择模型</option></select></label>
+            <label>LoRA<select name="lora_id"><option value="">不关联 LoRA</option></select></label>
+            <label>模板类型<select name="template_type" required><option value="text_to_image">文生图</option><option value="text_to_image_lora">文生图 LoRA</option><option value="text_to_image_hires_fix">文生图高清修复</option><option value="text_to_image_second_pass">文生图二次处理</option><option value="text_to_video">文生视频</option><option value="image_to_image">图生图</option><option value="image_to_video">图生视频</option><option value="video_to_video">视频转视频</option><option value="style_transfer">风格迁移</option><option value="controlnet">ControlNet</option><option value="inpainting">局部重绘</option><option value="outpainting">扩图</option><option value="upscale">放大</option><option value="face_detailer">面部修复</option><option value="other">其他</option></select></label>
+            <label>名称<input name="title" required autocomplete="off"></label>
+          </div>
+          <section id="template-media-section" class="model-media-section" hidden aria-labelledby="template-media-heading">
+            <h3 id="template-media-heading">模板封面</h3>
+            <div class="detail-toolbar"><label>选择封面<input id="template-image-upload" type="file" accept="image/jpeg,image/png,image/webp"></label><button type="button" class="accent-button" data-action="upload-template-image">上传</button></div>
+            <p id="template-media-status" class="state-line" aria-live="polite"></p>
+            <div id="template-image-list" class="detail-image-grid"></div>
+          </section>
+        </section>
+        <section>
+          <label>Workflow JSON<textarea name="template_json" required rows="18" spellcheck="false" aria-describedby="template-json-help"></textarea></label>
+          <p id="template-json-help" class="field-help">管理员可直接粘贴从 ComfyUI 导出的 Workflow JSON。系统支持 0.4 和 1.0 格式。</p>
+        </section>
+        <p id="template-editor-error" class="state-line error" role="alert" hidden></p>
+        <div class="dialog-actions" data-template-editor-actions><button type="button" class="secondary-button" data-action="cancel-template-editor">取消</button><button type="submit" class="accent-button">保存模板</button></div>
+      </form>
+    </div>
+  </dialog>
+
+  <dialog id="template-delete" class="manage-dialog confirm-dialog" aria-labelledby="template-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="template-delete-title">确认删除 ComfyUI 模板</h2></div><button type="button" class="icon-button" data-action="close-template-delete" aria-label="关闭 ComfyUI 模板删除预览">×</button></div>
+    <p id="template-delete-target"></p>
+    <section><h3>级联删除</h3><ul id="template-cascade-list"></ul></section>
+    <section><h3>解除关联但保留</h3><ul id="template-retained-list"></ul></section>
+    <p id="template-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-template-delete">取消</button><button type="button" class="danger-button" data-action="confirm-template-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="template-image-delete" class="manage-dialog confirm-dialog" aria-labelledby="template-image-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">删除模板封面</p><h2 id="template-image-delete-title">确认删除图片</h2></div><button type="button" class="icon-button" data-action="close-template-image-delete" aria-label="取消删除模板封面">×</button></div>
+    <p id="template-image-delete-target"></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-template-image-delete">取消</button><button type="button" class="danger-button" data-action="confirm-template-image-delete">确认删除</button></div>
+  </dialog>
+  <!-- NOOBAI_RUNTIME_CONFIG -->
+  <script src="/app/web/assets/runtime.js"></script>
+  <script src="/app/web/assets/http-client.js"></script>
+  <script src="/app/web/assets/pagination.js"></script>
+  <script type="module" src="/app/web/assets/generation-resources.js"></script>
+</body>
+</html>

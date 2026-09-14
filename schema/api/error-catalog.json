@@ -1,0 +1,750 @@
+{
+  "version": 20,
+  "field_meaning": "user_may_resubmit=true 表示本次请求结束后，用户可以明确再次操作并发起一次新请求。前端不得自动重试写请求。",
+  "detail_contracts": {
+    "comfyui_template_workflow_format": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "supported_versions"
+      ],
+      "properties": {
+        "field": {
+          "const": "template_json"
+        },
+        "supported_versions": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "0.4",
+              "1.0"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "errors": {
+    "VALIDATION_ERROR": {
+      "http_status": 422,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operation_detail_contracts": {
+        "createComfyuiTemplate": "comfyui_template_workflow_format",
+        "updateComfyuiTemplate": "comfyui_template_workflow_format"
+      },
+      "operationIds": [
+        "listWorks",
+        "listWorkCharacters",
+        "listCharacters",
+        "listStyles",
+        "searchCatalog",
+        "listManageItems",
+        "getManageItemDetail",
+        "createManageItem",
+        "updateManageItem",
+        "getGenerationResourceOptions",
+        "getPromptTermOptions",
+        "listPromptTerms",
+        "createPromptTerm",
+        "getPromptTerm",
+        "updatePromptTerm",
+        "deletePromptTerm",
+        "listBaseModels",
+        "createBaseModel",
+        "getBaseModel",
+        "updateBaseModel",
+        "deleteBaseModel",
+        "getBaseModelDeleteImpact",
+        "listModels",
+        "createModel",
+        "getModel",
+        "updateModel",
+        "deleteModel",
+        "getModelDeleteImpact",
+        "listLoras",
+        "createLora",
+        "getLora",
+        "updateLora",
+        "deleteLora",
+        "getLoraDeleteImpact",
+        "listArtistPromptStrings",
+        "createArtistPromptString",
+        "getArtistPromptString",
+        "updateArtistPromptString",
+        "deleteArtistPromptString",
+        "getArtistPromptStringDeleteImpact",
+        "listComfyuiInstances",
+        "createComfyuiInstance",
+        "getComfyuiInstance",
+        "updateComfyuiInstance",
+        "deleteComfyuiInstance",
+        "validateComfyuiInstance",
+        "getComfyuiInstanceDeleteImpact",
+        "listImages",
+        "uploadImages",
+        "reorderImages",
+        "setCover",
+        "deleteImage",
+        "batchDelete",
+        "listComfyuiTemplates",
+        "createComfyuiTemplate",
+        "getComfyuiTemplate",
+        "updateComfyuiTemplate",
+        "deleteComfyuiTemplate",
+        "getComfyuiTemplateDeleteImpact"
+      ]
+    },
+    "INVALID_CURSOR": {
+      "http_status": 400,
+      "user_may_resubmit": true,
+      "display": "inline",
+      "operationIds": [
+        "listWorks",
+        "listWorkCharacters",
+        "listCharacters",
+        "listStyles"
+      ]
+    },
+    "WRITE_FORBIDDEN": {
+      "http_status": 403,
+      "user_may_resubmit": false,
+      "display": "global",
+      "operationIds": [
+        "createManageItem",
+        "updateManageItem",
+        "createPromptTerm",
+        "updatePromptTerm",
+        "deletePromptTerm",
+        "createBaseModel",
+        "updateBaseModel",
+        "deleteBaseModel",
+        "createModel",
+        "updateModel",
+        "deleteModel",
+        "createLora",
+        "updateLora",
+        "deleteLora",
+        "createArtistPromptString",
+        "updateArtistPromptString",
+        "deleteArtistPromptString",
+        "createComfyuiInstance",
+        "updateComfyuiInstance",
+        "deleteComfyuiInstance",
+        "validateComfyuiInstance",
+        "uploadImages",
+        "reorderImages",
+        "setCover",
+        "deleteImage",
+        "batchDelete",
+        "createComfyuiTemplate",
+        "updateComfyuiTemplate",
+        "deleteComfyuiTemplate"
+      ]
+    },
+    "NOT_FOUND": {
+      "http_status": 404,
+      "user_may_resubmit": false,
+      "display": "inline",
+      "operationIds": [
+        "getWork",
+        "listWorkCharacters",
+        "getManageItemDetail",
+        "updateManageItem",
+        "getPromptTerm",
+        "updatePromptTerm",
+        "deletePromptTerm",
+        "getBaseModel",
+        "updateBaseModel",
+        "deleteBaseModel",
+        "getBaseModelDeleteImpact",
+        "getModel",
+        "updateModel",
+        "deleteModel",
+        "getModelDeleteImpact",
+        "getLora",
+        "updateLora",
+        "deleteLora",
+        "getLoraDeleteImpact",
+        "getArtistPromptString",
+        "updateArtistPromptString",
+        "deleteArtistPromptString",
+        "getArtistPromptStringDeleteImpact",
+        "getComfyuiInstance",
+        "updateComfyuiInstance",
+        "deleteComfyuiInstance",
+        "validateComfyuiInstance",
+        "getComfyuiInstanceDeleteImpact",
+        "listImages",
+        "getCharacter",
+        "getStyle",
+        "uploadImages",
+        "reorderImages",
+        "setCover",
+        "deleteImage",
+        "getComfyuiTemplate",
+        "updateComfyuiTemplate",
+        "deleteComfyuiTemplate",
+        "getComfyuiTemplateDeleteImpact"
+      ]
+    },
+    "DUPLICATE_RESOURCE": {
+      "http_status": 409,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operationIds": [
+        "createManageItem",
+        "updateManageItem",
+        "createPromptTerm",
+        "updatePromptTerm",
+        "createBaseModel",
+        "updateBaseModel",
+        "createModel",
+        "updateModel",
+        "createLora",
+        "updateLora",
+        "createArtistPromptString",
+        "updateArtistPromptString",
+        "createComfyuiInstance",
+        "updateComfyuiInstance",
+        "uploadImages",
+        "createComfyuiTemplate",
+        "updateComfyuiTemplate"
+      ]
+    },
+    "RELATION_CONFLICT": {
+      "http_status": 409,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operationIds": [
+        "createManageItem",
+        "updateManageItem",
+        "createModel",
+        "updateModel",
+        "createLora",
+        "updateLora",
+        "createArtistPromptString",
+        "updateArtistPromptString",
+        "createComfyuiTemplate",
+        "updateComfyuiTemplate",
+        "deleteBaseModel"
+      ]
+    },
+    "DELETE_IMPACT_STALE": {
+      "http_status": 409,
+      "user_may_resubmit": true,
+      "display": "inline",
+      "operationIds": [
+        "deleteBaseModel",
+        "deleteModel",
+        "deleteLora",
+        "deleteArtistPromptString",
+        "deleteComfyuiInstance",
+        "deleteComfyuiTemplate"
+      ]
+    },
+    "COMFYUI_CREDENTIAL_ERROR": {
+      "http_status": 500,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operationIds": [
+        "createComfyuiInstance",
+        "updateComfyuiInstance",
+        "validateComfyuiInstance"
+      ]
+    },
+    "ITEM_UNAVAILABLE": {
+      "http_status": 409,
+      "user_may_resubmit": true,
+      "display": "inline",
+      "operationIds": [
+        "listImages",
+        "uploadImages",
+        "reorderImages",
+        "setCover",
+        "deleteImage",
+        "batchDelete"
+      ]
+    },
+    "UPLOAD_TOO_LARGE": {
+      "http_status": 413,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operationIds": [
+        "uploadImages"
+      ]
+    },
+    "UPLOAD_TYPE_UNSUPPORTED": {
+      "http_status": 415,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operationIds": [
+        "uploadImages"
+      ]
+    },
+    "FILE_OPERATION_FAILED": {
+      "http_status": 500,
+      "user_may_resubmit": true,
+      "display": "global",
+      "operationIds": [
+        "deleteBaseModel",
+        "uploadImages",
+        "reorderImages",
+        "setCover",
+        "deleteImage",
+        "batchDelete"
+      ]
+    },
+    "DATABASE_BUSY": {
+      "http_status": 503,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "listWorks",
+        "getWork",
+        "listWorkCharacters",
+        "listCharacters",
+        "getCharacter",
+        "listStyles",
+        "getStyle",
+        "searchCatalog",
+        "listManageItems",
+        "getManageItemDetail",
+        "createManageItem",
+        "updateManageItem",
+        "listPromptTerms",
+        "createPromptTerm",
+        "getPromptTerm",
+        "updatePromptTerm",
+        "deletePromptTerm",
+        "listBaseModels",
+        "createBaseModel",
+        "getBaseModel",
+        "updateBaseModel",
+        "deleteBaseModel",
+        "getBaseModelDeleteImpact",
+        "listModels",
+        "createModel",
+        "getModel",
+        "updateModel",
+        "deleteModel",
+        "getModelDeleteImpact",
+        "listLoras",
+        "createLora",
+        "getLora",
+        "updateLora",
+        "deleteLora",
+        "getLoraDeleteImpact",
+        "listArtistPromptStrings",
+        "createArtistPromptString",
+        "getArtistPromptString",
+        "updateArtistPromptString",
+        "deleteArtistPromptString",
+        "getArtistPromptStringDeleteImpact",
+        "listComfyuiInstances",
+        "createComfyuiInstance",
+        "getComfyuiInstance",
+        "updateComfyuiInstance",
+        "deleteComfyuiInstance",
+        "validateComfyuiInstance",
+        "getComfyuiInstanceDeleteImpact",
+        "listImages",
+        "uploadImages",
+        "reorderImages",
+        "setCover",
+        "deleteImage",
+        "batchDelete",
+        "listComfyuiTemplates",
+        "createComfyuiTemplate",
+        "getComfyuiTemplate",
+        "updateComfyuiTemplate",
+        "deleteComfyuiTemplate",
+        "getComfyuiTemplateDeleteImpact"
+      ]
+    },
+    "INTERNAL_ERROR": {
+      "http_status": 500,
+      "user_may_resubmit": true,
+      "display": "global",
+      "operationIds": [
+        "listWorks",
+        "getWork",
+        "listWorkCharacters",
+        "listCharacters",
+        "getCharacter",
+        "listStyles",
+        "getStyle",
+        "searchCatalog",
+        "listManageItems",
+        "getManageItemDetail",
+        "createManageItem",
+        "updateManageItem",
+        "getGenerationResourceOptions",
+        "getPromptTermOptions",
+        "listPromptTerms",
+        "createPromptTerm",
+        "getPromptTerm",
+        "updatePromptTerm",
+        "deletePromptTerm",
+        "listBaseModels",
+        "createBaseModel",
+        "getBaseModel",
+        "updateBaseModel",
+        "deleteBaseModel",
+        "getBaseModelDeleteImpact",
+        "listModels",
+        "createModel",
+        "getModel",
+        "updateModel",
+        "deleteModel",
+        "getModelDeleteImpact",
+        "listLoras",
+        "createLora",
+        "getLora",
+        "updateLora",
+        "deleteLora",
+        "getLoraDeleteImpact",
+        "listArtistPromptStrings",
+        "createArtistPromptString",
+        "getArtistPromptString",
+        "updateArtistPromptString",
+        "deleteArtistPromptString",
+        "getArtistPromptStringDeleteImpact",
+        "listComfyuiInstances",
+        "createComfyuiInstance",
+        "getComfyuiInstance",
+        "updateComfyuiInstance",
+        "deleteComfyuiInstance",
+        "validateComfyuiInstance",
+        "getComfyuiInstanceDeleteImpact",
+        "listImages",
+        "uploadImages",
+        "reorderImages",
+        "setCover",
+        "deleteImage",
+        "batchDelete",
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticStyles",
+        "searchSemanticPromptTerms",
+        "listComfyuiTemplates",
+        "createComfyuiTemplate",
+        "getComfyuiTemplate",
+        "updateComfyuiTemplate",
+        "deleteComfyuiTemplate",
+        "getComfyuiTemplateDeleteImpact"
+      ]
+    },
+    "SEMANTIC_QUERY_VALIDATION": {
+      "http_status": 422,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operationIds": [
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticStyles",
+        "searchSemanticPromptTerms"
+      ]
+    },
+    "CATALOG_REQUEST_INVALID": {
+      "http_status": 422,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operationIds": [
+        "querySemanticBaseModelsForSkill",
+        "querySemanticGenerationModelsForSkill",
+        "querySemanticLorasForSkill",
+        "querySemanticWorksForSkill",
+        "querySemanticCharactersForSkill",
+        "querySemanticStylesForSkill",
+        "querySemanticPromptTermsForSkill",
+        "querySemanticArtistPromptStringsForSkill",
+        "querySemanticComfyuiInstancesForSkill",
+        "querySemanticComfyuiTemplatesForSkill"
+      ]
+    },
+    "CATALOG_REF_NOT_FOUND": {
+      "http_status": 404,
+      "user_may_resubmit": false,
+      "display": "inline",
+      "operationIds": [
+        "querySemanticBaseModelsForSkill",
+        "querySemanticGenerationModelsForSkill",
+        "querySemanticLorasForSkill",
+        "querySemanticWorksForSkill",
+        "querySemanticCharactersForSkill",
+        "querySemanticStylesForSkill",
+        "querySemanticPromptTermsForSkill",
+        "querySemanticArtistPromptStringsForSkill",
+        "querySemanticComfyuiInstancesForSkill",
+        "querySemanticComfyuiTemplatesForSkill"
+      ]
+    },
+    "CATALOG_RESOURCE_UNAVAILABLE": {
+      "http_status": 409,
+      "user_may_resubmit": false,
+      "display": "inline",
+      "operationIds": [
+        "querySemanticWorksForSkill",
+        "querySemanticCharactersForSkill",
+        "querySemanticComfyuiTemplatesForSkill"
+      ]
+    },
+    "CATALOG_DATABASE_BUSY": {
+      "http_status": 503,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "querySemanticBaseModelsForSkill",
+        "querySemanticGenerationModelsForSkill",
+        "querySemanticLorasForSkill",
+        "querySemanticWorksForSkill",
+        "querySemanticCharactersForSkill",
+        "querySemanticStylesForSkill",
+        "querySemanticPromptTermsForSkill",
+        "querySemanticArtistPromptStringsForSkill",
+        "querySemanticComfyuiInstancesForSkill",
+        "querySemanticComfyuiTemplatesForSkill"
+      ]
+    },
+    "CATALOG_INTERNAL_ERROR": {
+      "http_status": 500,
+      "user_may_resubmit": false,
+      "display": "global",
+      "operationIds": [
+        "querySemanticBaseModelsForSkill",
+        "querySemanticGenerationModelsForSkill",
+        "querySemanticLorasForSkill",
+        "querySemanticWorksForSkill",
+        "querySemanticCharactersForSkill",
+        "querySemanticStylesForSkill",
+        "querySemanticPromptTermsForSkill",
+        "querySemanticArtistPromptStringsForSkill",
+        "querySemanticComfyuiInstancesForSkill",
+        "querySemanticComfyuiTemplatesForSkill"
+      ]
+    },
+    "CATALOG_DEPENDENCY_UNAVAILABLE": {
+      "http_status": 502,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "querySemanticWorksForSkill",
+        "querySemanticCharactersForSkill",
+        "querySemanticStylesForSkill",
+        "querySemanticPromptTermsForSkill",
+        "querySemanticLorasForSkill",
+        "querySemanticArtistPromptStringsForSkill"
+      ]
+    },
+    "CATALOG_INDEX_NOT_READY": {
+      "http_status": 503,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "querySemanticWorksForSkill",
+        "querySemanticCharactersForSkill",
+        "querySemanticStylesForSkill",
+        "querySemanticPromptTermsForSkill",
+        "querySemanticLorasForSkill",
+        "querySemanticArtistPromptStringsForSkill"
+      ]
+    },
+    "CATALOG_DEPENDENCY_TIMEOUT": {
+      "http_status": 504,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "querySemanticWorksForSkill",
+        "querySemanticCharactersForSkill",
+        "querySemanticStylesForSkill",
+        "querySemanticPromptTermsForSkill",
+        "querySemanticLorasForSkill",
+        "querySemanticArtistPromptStringsForSkill"
+      ]
+    },
+    "SOURCE_REQUEST_INVALID": {
+      "http_status": 422,
+      "user_may_resubmit": true,
+      "display": "form",
+      "operationIds": [
+        "getComfyuiInstanceSourceForHost",
+        "getComfyuiTemplateBundleForHost"
+      ]
+    },
+    "SOURCE_INSTANCE_NOT_FOUND": {
+      "http_status": 404,
+      "user_may_resubmit": false,
+      "display": "inline",
+      "operationIds": [
+        "getComfyuiInstanceSourceForHost"
+      ]
+    },
+    "SOURCE_TEMPLATE_NOT_FOUND": {
+      "http_status": 404,
+      "user_may_resubmit": false,
+      "display": "inline",
+      "operationIds": [
+        "getComfyuiTemplateBundleForHost"
+      ]
+    },
+    "SOURCE_TEMPLATE_UNAVAILABLE": {
+      "http_status": 409,
+      "user_may_resubmit": false,
+      "display": "global",
+      "operationIds": [
+        "getComfyuiTemplateBundleForHost"
+      ]
+    },
+    "SOURCE_CREDENTIAL_UNAVAILABLE": {
+      "http_status": 500,
+      "user_may_resubmit": false,
+      "display": "global",
+      "operationIds": [
+        "getComfyuiInstanceSourceForHost"
+      ]
+    },
+    "SOURCE_DATABASE_BUSY": {
+      "http_status": 503,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "getComfyuiInstanceSourceForHost",
+        "getComfyuiTemplateBundleForHost"
+      ]
+    },
+    "SOURCE_INTERNAL_ERROR": {
+      "http_status": 500,
+      "user_may_resubmit": false,
+      "display": "global",
+      "operationIds": [
+        "getComfyuiInstanceSourceForHost",
+        "getComfyuiTemplateBundleForHost"
+      ]
+    },
+    "VECTOR_INDEX_NOT_READY": {
+      "http_status": 503,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticPromptTerms"
+      ]
+    },
+    "EMBEDDING_TIMEOUT": {
+      "http_status": 504,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticStyles",
+        "searchSemanticPromptTerms",
+        "createManageItem",
+        "updateManageItem",
+        "createPromptTerm",
+        "updatePromptTerm",
+        "createLora",
+        "updateLora",
+        "createArtistPromptString",
+        "updateArtistPromptString"
+      ]
+    },
+    "EMBEDDING_UNAVAILABLE": {
+      "http_status": 502,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticStyles",
+        "searchSemanticPromptTerms",
+        "createManageItem",
+        "updateManageItem",
+        "createPromptTerm",
+        "updatePromptTerm",
+        "createLora",
+        "updateLora",
+        "createArtistPromptString",
+        "updateArtistPromptString"
+      ]
+    },
+    "RERANKER_TIMEOUT": {
+      "http_status": 504,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticStyles",
+        "searchSemanticPromptTerms"
+      ]
+    },
+    "RERANKER_UNAVAILABLE": {
+      "http_status": 502,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticStyles",
+        "searchSemanticPromptTerms"
+      ]
+    },
+    "MODEL_RATE_LIMITED": {
+      "http_status": 503,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticStyles",
+        "searchSemanticPromptTerms",
+        "createManageItem",
+        "updateManageItem",
+        "createPromptTerm",
+        "updatePromptTerm",
+        "createLora",
+        "updateLora",
+        "createArtistPromptString",
+        "updateArtistPromptString"
+      ]
+    },
+    "SQLITE_BUSY": {
+      "http_status": 503,
+      "user_may_resubmit": true,
+      "display": "transient",
+      "operationIds": [
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticStyles",
+        "searchSemanticPromptTerms"
+      ]
+    },
+    "MODEL_PROTOCOL_ERROR": {
+      "http_status": 500,
+      "user_may_resubmit": false,
+      "display": "global",
+      "operationIds": [
+        "searchSemanticWorks",
+        "searchSemanticCharacters",
+        "searchSemanticStyles",
+        "searchSemanticPromptTerms",
+        "createManageItem",
+        "updateManageItem",
+        "createPromptTerm",
+        "updatePromptTerm",
+        "createLora",
+        "updateLora",
+        "createArtistPromptString",
+        "updateArtistPromptString"
+      ]
+    }
+  }
+}

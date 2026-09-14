@@ -1,0 +1,6133 @@
+openapi: 3.1.0
+info:
+  title: BooruFlow 本地资源管理 API
+  version: 1.0.0
+  description: 公开监听器只提供 `/api/*`；回环监听器提供 `/internal/semantic`、`/internal/semantic/*` 与 `/internal/comfyui-source/*`。公开监听器访问任一内部前缀固定返回 404。GET `/internal/semantic` 返回 Catalog discovery JSON；Catalog operation 成功响应直接返回 CatalogPage，错误响应直接返回 error 对象，均不含 `request_id`。
+paths:
+  /api/works:
+    get:
+      operationId: listWorks
+      parameters:
+        - $ref: "#/components/parameters/HomeSearchQuery"
+        - $ref: "#/components/parameters/HomeLimit"
+        - $ref: "#/components/parameters/HomeCursor"
+      responses:
+        "200":
+          $ref: "#/components/responses/WorkList"
+        "400":
+          $ref: "#/components/responses/E400Cursor"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/works/{work_id}:
+    parameters:
+      - $ref: "#/components/parameters/WorkId"
+    get:
+      operationId: getWork
+      responses:
+        "200":
+          $ref: "#/components/responses/WorkOne"
+        "404":
+          $ref: "#/components/responses/E404"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/works/{work_id}/characters:
+    parameters:
+      - $ref: "#/components/parameters/WorkId"
+    get:
+      operationId: listWorkCharacters
+      parameters:
+        - $ref: "#/components/parameters/HomeSearchQuery"
+        - $ref: "#/components/parameters/HomeLimit"
+        - $ref: "#/components/parameters/HomeCursor"
+      responses:
+        "200":
+          $ref: "#/components/responses/CharacterList"
+        "400":
+          $ref: "#/components/responses/E400Cursor"
+        "404":
+          $ref: "#/components/responses/E404"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/characters:
+    get:
+      operationId: listCharacters
+      parameters:
+        - $ref: "#/components/parameters/HomeSearchQuery"
+        - $ref: "#/components/parameters/HomeLimit"
+        - $ref: "#/components/parameters/HomeCursor"
+      responses:
+        "200":
+          $ref: "#/components/responses/CharacterList"
+        "400":
+          $ref: "#/components/responses/E400Cursor"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/characters/{character_id}:
+    parameters:
+      - $ref: "#/components/parameters/CharacterId"
+    get:
+      operationId: getCharacter
+      responses:
+        "200":
+          $ref: "#/components/responses/CharacterOne"
+        "404":
+          $ref: "#/components/responses/E404"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/styles:
+    get:
+      operationId: listStyles
+      parameters:
+        - $ref: "#/components/parameters/HomeSearchQuery"
+        - $ref: "#/components/parameters/HomeLimit"
+        - $ref: "#/components/parameters/HomeCursor"
+      responses:
+        "200":
+          $ref: "#/components/responses/StyleList"
+        "400":
+          $ref: "#/components/responses/E400Cursor"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/styles/{style_id}:
+    parameters:
+      - $ref: "#/components/parameters/StyleId"
+    get:
+      operationId: getStyle
+      responses:
+        "200":
+          $ref: "#/components/responses/StyleOne"
+        "404":
+          $ref: "#/components/responses/E404"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/manage/items:
+    get:
+      operationId: listManageItems
+      parameters:
+        - $ref: "#/components/parameters/ManageKind"
+        - $ref: "#/components/parameters/ManageSearchQuery"
+        - $ref: "#/components/parameters/ManageLimit"
+        - $ref: "#/components/parameters/ManagePage"
+        - $ref: "#/components/parameters/BaseModelFilter"
+        - $ref: "#/components/parameters/ManageAvailabilityFilter"
+      responses:
+        "200":
+          $ref: "#/components/responses/ManageItemList"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/manage/items/{kind}/{item_id}:
+    parameters:
+      - $ref: "#/components/parameters/ItemKind"
+      - $ref: "#/components/parameters/ItemId"
+    get:
+      operationId: getManageItemDetail
+      responses:
+        "200":
+          $ref: "#/components/responses/ManageItemDetail"
+        "404":
+          $ref: "#/components/responses/E404"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+    put:
+      operationId: updateManageItem
+      requestBody:
+        $ref: "#/components/requestBodies/ManageItemWrite"
+      responses:
+        "200":
+          $ref: "#/components/responses/ManageItemWriteEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/ModelWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ManagementWriteInternal"
+        "502":
+          $ref: "#/components/responses/ManagementWriteEmbeddingUnavailable"
+        "503":
+          $ref: "#/components/responses/ManagementWriteBusyOrRateLimited"
+        "504":
+          $ref: "#/components/responses/ManagementWriteEmbeddingTimeout"
+  /api/manage/items/{kind}:
+    parameters:
+      - $ref: "#/components/parameters/ItemKind"
+    post:
+      operationId: createManageItem
+      requestBody:
+        $ref: "#/components/requestBodies/ManageItemWrite"
+      responses:
+        "201":
+          $ref: "#/components/responses/ManageItemWriteEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "409":
+          $ref: "#/components/responses/ModelWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ManagementWriteInternal"
+        "502":
+          $ref: "#/components/responses/ManagementWriteEmbeddingUnavailable"
+        "503":
+          $ref: "#/components/responses/ManagementWriteBusyOrRateLimited"
+        "504":
+          $ref: "#/components/responses/ManagementWriteEmbeddingTimeout"
+  /api/manage/generation-resource-options:
+    get:
+      operationId: getGenerationResourceOptions
+      responses:
+        "200":
+          $ref: "#/components/responses/GenerationResourceOptionsEnvelope"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+  /api/manage/prompt-term-options:
+    get:
+      operationId: getPromptTermOptions
+      responses:
+        "200":
+          $ref: "#/components/responses/PromptTermOptionsEnvelope"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+  /api/manage/prompt-terms:
+    get:
+      operationId: listPromptTerms
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/PromptTermCategoryFilter"
+        - $ref: "#/components/parameters/PromptTermPostCountMin"
+        - $ref: "#/components/parameters/PromptTermPostCountMax"
+      responses:
+        "200":
+          $ref: "#/components/responses/PromptTermListEnvelope"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    post:
+      operationId: createPromptTerm
+      requestBody:
+        $ref: "#/components/requestBodies/PromptTermWrite"
+      responses:
+        "201":
+          $ref: "#/components/responses/PromptTermEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "409":
+          $ref: "#/components/responses/PromptTermWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ManagementWriteInternal"
+        "502":
+          $ref: "#/components/responses/ManagementWriteEmbeddingUnavailable"
+        "503":
+          $ref: "#/components/responses/ManagementWriteBusyOrRateLimited"
+        "504":
+          $ref: "#/components/responses/ManagementWriteEmbeddingTimeout"
+  /api/manage/prompt-terms/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getPromptTerm
+      responses:
+        "200":
+          $ref: "#/components/responses/PromptTermEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    put:
+      operationId: updatePromptTerm
+      requestBody:
+        $ref: "#/components/requestBodies/PromptTermWrite"
+      responses:
+        "200":
+          $ref: "#/components/responses/PromptTermEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/PromptTermWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ManagementWriteInternal"
+        "502":
+          $ref: "#/components/responses/ManagementWriteEmbeddingUnavailable"
+        "503":
+          $ref: "#/components/responses/ManagementWriteBusyOrRateLimited"
+        "504":
+          $ref: "#/components/responses/ManagementWriteEmbeddingTimeout"
+    delete:
+      operationId: deletePromptTerm
+      responses:
+        "200":
+          $ref: "#/components/responses/PromptTermDeleteEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/base-models:
+    get:
+      operationId: listBaseModels
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Q"
+      responses:
+        "200":
+          $ref: "#/components/responses/BaseModelList"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+    post:
+      operationId: createBaseModel
+      requestBody:
+        $ref: "#/components/requestBodies/BaseModelWrite"
+      responses:
+        "201":
+          $ref: "#/components/responses/BaseModelOne"
+        "403":
+          $ref: "#/components/responses/E403Write"
+        "409":
+          $ref: "#/components/responses/E409DuplicateResource"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/manage/base-models/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getBaseModel
+      responses:
+        "200":
+          $ref: "#/components/responses/BaseModelOne"
+        "404":
+          $ref: "#/components/responses/E404"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+    put:
+      operationId: updateBaseModel
+      requestBody:
+        $ref: "#/components/requestBodies/BaseModelWrite"
+      responses:
+        "200":
+          $ref: "#/components/responses/BaseModelOne"
+        "403":
+          $ref: "#/components/responses/E403Write"
+        "404":
+          $ref: "#/components/responses/E404"
+        "409":
+          $ref: "#/components/responses/E409DuplicateResource"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+    delete:
+      operationId: deleteBaseModel
+      requestBody:
+        $ref: "#/components/requestBodies/DeleteConfirm"
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteBaseModel"
+        "403":
+          $ref: "#/components/responses/E403Write"
+        "404":
+          $ref: "#/components/responses/E404"
+        "409":
+          $ref: "#/components/responses/BaseModelDeleteConflict"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500FileOrInternal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/manage/base-models/{id}/delete-impact:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getBaseModelDeleteImpact
+      responses:
+        "200":
+          $ref: "#/components/responses/BaseModelDeleteImpact"
+        "404":
+          $ref: "#/components/responses/E404"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/manage/models:
+    get:
+      operationId: listModels
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/BaseModelFilter"
+        - $ref: "#/components/parameters/FileFormatFilter"
+        - $ref: "#/components/parameters/PrecisionFilter"
+      responses:
+        "200":
+          $ref: "#/components/responses/ModelListEnvelope"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    post:
+      operationId: createModel
+      requestBody:
+        $ref: "#/components/requestBodies/ModelWrite"
+      responses:
+        "201":
+          $ref: "#/components/responses/ModelEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "409":
+          $ref: "#/components/responses/ModelWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/models/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getModel
+      responses:
+        "200":
+          $ref: "#/components/responses/ModelEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    put:
+      operationId: updateModel
+      requestBody:
+        $ref: "#/components/requestBodies/ModelWrite"
+      responses:
+        "200":
+          $ref: "#/components/responses/ModelEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/ModelWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    delete:
+      operationId: deleteModel
+      requestBody:
+        $ref: "#/components/requestBodies/DeleteConfirm"
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/DeleteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/models/{id}/delete-impact:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getModelDeleteImpact
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteImpactEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/loras:
+    get:
+      operationId: listLoras
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/BaseModelFilter"
+        - $ref: "#/components/parameters/ModelFilter"
+        - $ref: "#/components/parameters/FileFormatFilter"
+        - $ref: "#/components/parameters/PrecisionFilter"
+      responses:
+        "200":
+          $ref: "#/components/responses/LoraListEnvelope"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    post:
+      operationId: createLora
+      requestBody:
+        $ref: "#/components/requestBodies/LoraWrite"
+      responses:
+        "201":
+          $ref: "#/components/responses/LoraEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "409":
+          $ref: "#/components/responses/LoraWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ManagementWriteInternal"
+        "502":
+          $ref: "#/components/responses/ManagementWriteEmbeddingUnavailable"
+        "503":
+          $ref: "#/components/responses/ManagementWriteBusyOrRateLimited"
+        "504":
+          $ref: "#/components/responses/ManagementWriteEmbeddingTimeout"
+  /api/manage/loras/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getLora
+      responses:
+        "200":
+          $ref: "#/components/responses/LoraEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    put:
+      operationId: updateLora
+      requestBody:
+        $ref: "#/components/requestBodies/LoraWrite"
+      responses:
+        "200":
+          $ref: "#/components/responses/LoraEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/LoraWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ManagementWriteInternal"
+        "502":
+          $ref: "#/components/responses/ManagementWriteEmbeddingUnavailable"
+        "503":
+          $ref: "#/components/responses/ManagementWriteBusyOrRateLimited"
+        "504":
+          $ref: "#/components/responses/ManagementWriteEmbeddingTimeout"
+    delete:
+      operationId: deleteLora
+      requestBody:
+        $ref: "#/components/requestBodies/DeleteConfirm"
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/DeleteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/loras/{id}/delete-impact:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getLoraDeleteImpact
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteImpactEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/artist-prompt-strings:
+    get:
+      operationId: listArtistPromptStrings
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/BaseModelFilter"
+        - $ref: "#/components/parameters/StyleFilter"
+      responses:
+        "200":
+          $ref: "#/components/responses/ArtistPromptStringListEnvelope"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    post:
+      operationId: createArtistPromptString
+      requestBody:
+        $ref: "#/components/requestBodies/ArtistPromptStringWrite"
+      responses:
+        "201":
+          $ref: "#/components/responses/ArtistPromptStringEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "409":
+          $ref: "#/components/responses/ArtistPromptStringWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ManagementWriteInternal"
+        "502":
+          $ref: "#/components/responses/ManagementWriteEmbeddingUnavailable"
+        "503":
+          $ref: "#/components/responses/ManagementWriteBusyOrRateLimited"
+        "504":
+          $ref: "#/components/responses/ManagementWriteEmbeddingTimeout"
+  /api/manage/artist-prompt-strings/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getArtistPromptString
+      responses:
+        "200":
+          $ref: "#/components/responses/ArtistPromptStringEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    put:
+      operationId: updateArtistPromptString
+      requestBody:
+        $ref: "#/components/requestBodies/ArtistPromptStringWrite"
+      responses:
+        "200":
+          $ref: "#/components/responses/ArtistPromptStringEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/ArtistPromptStringWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ManagementWriteInternal"
+        "502":
+          $ref: "#/components/responses/ManagementWriteEmbeddingUnavailable"
+        "503":
+          $ref: "#/components/responses/ManagementWriteBusyOrRateLimited"
+        "504":
+          $ref: "#/components/responses/ManagementWriteEmbeddingTimeout"
+    delete:
+      operationId: deleteArtistPromptString
+      requestBody:
+        $ref: "#/components/requestBodies/DeleteConfirm"
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/DeleteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/artist-prompt-strings/{id}/delete-impact:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getArtistPromptStringDeleteImpact
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteImpactEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/comfyui-instances:
+    get:
+      operationId: listComfyuiInstances
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/CredentialTypeFilter"
+        - $ref: "#/components/parameters/IsValidFilter"
+        - $ref: "#/components/parameters/IsEnabledFilter"
+      responses:
+        "200":
+          $ref: "#/components/responses/ComfyuiInstanceListEnvelope"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    post:
+      operationId: createComfyuiInstance
+      requestBody:
+        $ref: "#/components/requestBodies/ComfyuiInstanceWrite"
+      responses:
+        "201":
+          $ref: "#/components/responses/ComfyuiInstanceEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "409":
+          $ref: "#/components/responses/ComfyuiConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ComfyuiError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/comfyui-instances/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getComfyuiInstance
+      responses:
+        "200":
+          $ref: "#/components/responses/ComfyuiInstanceEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    put:
+      operationId: updateComfyuiInstance
+      requestBody:
+        $ref: "#/components/requestBodies/ComfyuiInstanceWrite"
+      responses:
+        "200":
+          $ref: "#/components/responses/ComfyuiInstanceEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/ComfyuiConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ComfyuiError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    delete:
+      operationId: deleteComfyuiInstance
+      requestBody:
+        $ref: "#/components/requestBodies/DeleteConfirm"
+      responses:
+        "200":
+          $ref: "#/components/responses/ComfyuiInstanceDeleteEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/DeleteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/comfyui-instances/{id}/validate:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      operationId: validateComfyuiInstance
+      responses:
+        "200":
+          $ref: "#/components/responses/ComfyuiInstanceEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/ComfyuiError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/comfyui-instances/{id}/delete-impact:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getComfyuiInstanceDeleteImpact
+      responses:
+        "200":
+          $ref: "#/components/responses/ComfyuiInstanceDeleteImpactEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/comfyui-templates:
+    get:
+      operationId: listComfyuiTemplates
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/BaseModelFilter"
+        - $ref: "#/components/parameters/ModelFilter"
+        - $ref: "#/components/parameters/LoraFilter"
+        - $ref: "#/components/parameters/TemplateTypeFilter"
+      responses:
+        "200":
+          $ref: "#/components/responses/ComfyuiTemplateListEnvelope"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    post:
+      operationId: createComfyuiTemplate
+      requestBody:
+        $ref: "#/components/requestBodies/ComfyuiTemplateWrite"
+      responses:
+        "201":
+          $ref: "#/components/responses/ComfyuiTemplateEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "409":
+          $ref: "#/components/responses/ModelWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/comfyui-templates/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getComfyuiTemplate
+      responses:
+        "200":
+          $ref: "#/components/responses/ComfyuiTemplateEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    put:
+      operationId: updateComfyuiTemplate
+      requestBody:
+        $ref: "#/components/requestBodies/ComfyuiTemplateWrite"
+      responses:
+        "200":
+          $ref: "#/components/responses/ComfyuiTemplateEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/ModelWriteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+    delete:
+      operationId: deleteComfyuiTemplate
+      requestBody:
+        $ref: "#/components/requestBodies/DeleteConfirm"
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteEnvelope"
+        "403":
+          $ref: "#/components/responses/WriteForbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/DeleteConflict"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/manage/comfyui-templates/{id}/delete-impact:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getComfyuiTemplateDeleteImpact
+      responses:
+        "200":
+          $ref: "#/components/responses/DeleteImpactEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/DatabaseBusy"
+  /api/search:
+    get:
+      operationId: searchCatalog
+      parameters:
+        - $ref: "#/components/parameters/SearchQuery"
+      responses:
+        "200":
+          $ref: "#/components/responses/SearchResults"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/semantic/works:
+    get:
+      operationId: searchSemanticWorks
+      parameters:
+        - $ref: "#/components/parameters/SemanticQuery"
+        - $ref: "#/components/parameters/SemanticLimit"
+      responses:
+        "200":
+          $ref: "#/components/responses/SemanticWorkResults"
+        "422":
+          $ref: "#/components/responses/E422Semantic"
+        "500":
+          $ref: "#/components/responses/E500Semantic"
+        "502":
+          $ref: "#/components/responses/E502Semantic"
+        "503":
+          $ref: "#/components/responses/E503Semantic"
+        "504":
+          $ref: "#/components/responses/E504Semantic"
+  /api/semantic/characters:
+    get:
+      operationId: searchSemanticCharacters
+      parameters:
+        - $ref: "#/components/parameters/SemanticQuery"
+        - $ref: "#/components/parameters/SemanticLimit"
+        - $ref: "#/components/parameters/SemanticWorkId"
+      responses:
+        "200":
+          $ref: "#/components/responses/SemanticCharacterResults"
+        "422":
+          $ref: "#/components/responses/E422Semantic"
+        "500":
+          $ref: "#/components/responses/E500Semantic"
+        "502":
+          $ref: "#/components/responses/E502Semantic"
+        "503":
+          $ref: "#/components/responses/E503Semantic"
+        "504":
+          $ref: "#/components/responses/E504Semantic"
+  /api/semantic/styles:
+    get:
+      operationId: searchSemanticStyles
+      parameters:
+        - $ref: "#/components/parameters/SemanticQuery"
+        - $ref: "#/components/parameters/SemanticBaseModelName"
+        - $ref: "#/components/parameters/SemanticLimit"
+      responses:
+        "200":
+          $ref: "#/components/responses/SemanticStyleResults"
+        "422":
+          $ref: "#/components/responses/E422Semantic"
+        "500":
+          $ref: "#/components/responses/E500Semantic"
+        "502":
+          $ref: "#/components/responses/E502Semantic"
+        "503":
+          $ref: "#/components/responses/E503StyleSemantic"
+        "504":
+          $ref: "#/components/responses/E504Semantic"
+  /api/semantic/prompt-terms:
+    get:
+      operationId: searchSemanticPromptTerms
+      parameters:
+        - $ref: "#/components/parameters/SemanticQuery"
+        - $ref: "#/components/parameters/SemanticLimit"
+      responses:
+        "200":
+          $ref: "#/components/responses/SemanticPromptTermResults"
+        "422":
+          $ref: "#/components/responses/E422Semantic"
+        "500":
+          $ref: "#/components/responses/E500Semantic"
+        "502":
+          $ref: "#/components/responses/E502Semantic"
+        "503":
+          $ref: "#/components/responses/E503Semantic"
+        "504":
+          $ref: "#/components/responses/E504Semantic"
+  /api/items/{owner_kind}/{owner_id}/images:
+    parameters:
+      - $ref: "#/components/parameters/OwnerKind"
+      - $ref: "#/components/parameters/OwnerId"
+    get:
+      operationId: listImages
+      responses:
+        "200":
+          $ref: "#/components/responses/MediaSnapshot"
+        "404":
+          $ref: "#/components/responses/E404"
+        "409":
+          $ref: "#/components/responses/E409Item"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500Internal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+    post:
+      operationId: uploadImages
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - files
+              properties:
+                files:
+                  type: array
+                  minItems: 1
+                  maxItems: 10
+                  items:
+                    type: string
+                    format: binary
+                    description: 仅 JPEG、PNG、WebP；每个文件最大 10 MiB
+      responses:
+        "201":
+          $ref: "#/components/responses/MediaSnapshot"
+        "403":
+          $ref: "#/components/responses/E403Write"
+        "404":
+          $ref: "#/components/responses/E404"
+        "409":
+          $ref: "#/components/responses/E409UploadItem"
+        "413":
+          $ref: "#/components/responses/E413"
+        "415":
+          $ref: "#/components/responses/E415"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500FileOrInternal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/items/{owner_kind}/{owner_id}/images/order:
+    parameters:
+      - $ref: "#/components/parameters/OwnerKind"
+      - $ref: "#/components/parameters/OwnerId"
+    put:
+      operationId: reorderImages
+      requestBody:
+        $ref: "#/components/requestBodies/ImageOrder"
+      responses:
+        "200":
+          $ref: "#/components/responses/MediaSnapshot"
+        "403":
+          $ref: "#/components/responses/E403Write"
+        "404":
+          $ref: "#/components/responses/E404"
+        "409":
+          $ref: "#/components/responses/E409Item"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500FileOrInternal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/items/{owner_kind}/{owner_id}/cover:
+    parameters:
+      - $ref: "#/components/parameters/OwnerKind"
+      - $ref: "#/components/parameters/OwnerId"
+    put:
+      operationId: setCover
+      requestBody:
+        $ref: "#/components/requestBodies/CoverWrite"
+      responses:
+        "200":
+          $ref: "#/components/responses/MediaSnapshot"
+        "403":
+          $ref: "#/components/responses/E403Write"
+        "404":
+          $ref: "#/components/responses/E404"
+        "409":
+          $ref: "#/components/responses/E409Item"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500FileOrInternal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/items/{owner_kind}/{owner_id}/images/{id}:
+    parameters:
+      - $ref: "#/components/parameters/OwnerKind"
+      - $ref: "#/components/parameters/OwnerId"
+      - $ref: "#/components/parameters/Id"
+    delete:
+      operationId: deleteImage
+      responses:
+        "200":
+          $ref: "#/components/responses/MediaSnapshot"
+        "403":
+          $ref: "#/components/responses/E403Write"
+        "404":
+          $ref: "#/components/responses/E404"
+        "409":
+          $ref: "#/components/responses/E409Item"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500FileOrInternal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /api/items/batch-delete:
+    post:
+      operationId: batchDelete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - items
+              properties:
+                items:
+                  type: array
+                  minItems: 1
+                  maxItems: 100
+                  items:
+                    $ref: "#/components/schemas/BatchIdentity"
+      responses:
+        "200":
+          $ref: "#/components/responses/BatchResult"
+        "403":
+          $ref: "#/components/responses/E403Write"
+        "409":
+          $ref: "#/components/responses/E409Item"
+        "422":
+          $ref: "#/components/responses/E422"
+        "500":
+          $ref: "#/components/responses/E500FileOrInternal"
+        "503":
+          $ref: "#/components/responses/E503Busy"
+  /internal/semantic:
+    get:
+      summary: Get Catalog discovery
+      description: Return the frozen internal Catalog operations available to loopback Harness callers.
+      operationId: getSemanticDiscovery
+      responses:
+        "200":
+          $ref: "#/components/responses/SemanticDiscovery"
+  /internal/semantic/base-models:
+    post:
+      summary: Search or resolve base-model records
+      description: Search or resolve base-model records by base-model name for generation catalog filtering.
+      operationId: querySemanticBaseModelsForSkill
+      x-harness-tool-name: query_semantic_base_models
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogBaseModelRequest"
+            examples:
+              search:
+                summary: Search base-model records
+                value:
+                  mode: search
+                  query: watercolor
+                  page: 1
+                  page_size: 20
+              resolve:
+                summary: Resolve one base-model record
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogBaseModelPage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "503":
+          $ref: "#/components/responses/E503CatalogDatabaseBusy"
+  /internal/semantic/generation-models:
+    post:
+      summary: Search or resolve generation-model records
+      description: Search or resolve generation-model records by file name, optionally restricted to one base model.
+      operationId: querySemanticGenerationModelsForSkill
+      x-harness-tool-name: query_semantic_generation_models
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogGenerationModelRequest"
+            examples:
+              search:
+                summary: Search generation-model records
+                value:
+                  mode: search
+                  query: watercolor
+                  page: 1
+                  page_size: 20
+                  base_model_id: "123"
+              resolve:
+                summary: Resolve one generation-model record
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogGenerationModelPage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "503":
+          $ref: "#/components/responses/E503CatalogDatabaseBusy"
+  /internal/semantic/loras:
+    post:
+      summary: Search or resolve LoRA records
+      description: Semantically search or resolve LoRA catalog records with usage, trigger words, and default weight guidance.
+      operationId: querySemanticLorasForSkill
+      x-harness-tool-name: query_semantic_loras
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogLoraRequest"
+            examples:
+              search:
+                summary: Search LoRA records
+                value:
+                  mode: search
+                  query: watercolor
+                  page: 1
+                  page_size: 20
+                  base_model_id: "123"
+              resolve:
+                summary: Resolve one LoRA record
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogLoraPage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "502":
+          $ref: "#/components/responses/E502CatalogDependencyUnavailable"
+        "503":
+          $ref: "#/components/responses/E503CatalogIndexOrDatabase"
+        "504":
+          $ref: "#/components/responses/E504CatalogDependencyTimeout"
+  /internal/semantic/works:
+    post:
+      summary: Search or resolve work records
+      description: Semantically search or resolve available work records with aliases, category, and known character names.
+      operationId: querySemanticWorksForSkill
+      x-harness-tool-name: query_semantic_works
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogWorkRequest"
+            examples:
+              search:
+                summary: Search work records
+                value:
+                  mode: search
+                  query: watercolor
+                  page: 1
+                  page_size: 20
+              resolve:
+                summary: Resolve one work record
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogWorkPage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "409":
+          $ref: "#/components/responses/E409CatalogResourceUnavailable"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "502":
+          $ref: "#/components/responses/E502CatalogDependencyUnavailable"
+        "503":
+          $ref: "#/components/responses/E503CatalogIndexOrDatabase"
+        "504":
+          $ref: "#/components/responses/E504CatalogDependencyTimeout"
+  /internal/semantic/characters:
+    post:
+      summary: Search or resolve character records
+      description: Semantically search or resolve available character records, optionally restricted to one work.
+      operationId: querySemanticCharactersForSkill
+      x-harness-tool-name: query_semantic_characters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogCharacterRequest"
+            examples:
+              search:
+                summary: Search character records
+                value:
+                  mode: search
+                  query: watercolor
+                  page: 1
+                  page_size: 20
+                  work_id: "123"
+              resolve:
+                summary: Resolve one character record
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogCharacterPage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "409":
+          $ref: "#/components/responses/E409CatalogResourceUnavailable"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "502":
+          $ref: "#/components/responses/E502CatalogDependencyUnavailable"
+        "503":
+          $ref: "#/components/responses/E503CatalogIndexOrDatabase"
+        "504":
+          $ref: "#/components/responses/E504CatalogDependencyTimeout"
+  /internal/semantic/styles:
+    post:
+      summary: Search or resolve style records
+      description: Semantically search or resolve style records with descriptions and prompt semantics.
+      operationId: querySemanticStylesForSkill
+      x-harness-tool-name: query_semantic_styles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogStyleRequest"
+            examples:
+              search:
+                summary: Search style records
+                value:
+                  mode: search
+                  query: watercolor
+                  page: 1
+                  page_size: 20
+                  base_model_id: "123"
+              resolve:
+                summary: Resolve one style record
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogStylePage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "502":
+          $ref: "#/components/responses/E502CatalogDependencyUnavailable"
+        "503":
+          $ref: "#/components/responses/E503CatalogIndexOrDatabase"
+        "504":
+          $ref: "#/components/responses/E504CatalogDependencyTimeout"
+  /internal/semantic/prompt-terms:
+    post:
+      summary: Search or resolve prompt-term records
+      description: Semantically search or resolve canonical prompt-term records and their aliases.
+      operationId: querySemanticPromptTermsForSkill
+      x-harness-tool-name: query_semantic_prompt_terms
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogPromptTermRequest"
+            examples:
+              search:
+                summary: Search Prompt-term records
+                value:
+                  mode: search
+                  query: watercolor
+                  page: 1
+                  page_size: 20
+              resolve:
+                summary: Resolve one Prompt-term record
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogPromptTermPage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "502":
+          $ref: "#/components/responses/E502CatalogDependencyUnavailable"
+        "503":
+          $ref: "#/components/responses/E503CatalogIndexOrDatabase"
+        "504":
+          $ref: "#/components/responses/E504CatalogDependencyTimeout"
+  /internal/semantic/artist-prompt-strings:
+    post:
+      summary: Search or resolve artist Prompt string records
+      description: Semantically search or resolve curated artist prompt strings, optionally restricted to one base model.
+      operationId: querySemanticArtistPromptStringsForSkill
+      x-harness-tool-name: query_semantic_artist_prompt_strings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogArtistPromptStringRequest"
+            examples:
+              search:
+                summary: Search artist Prompt string records
+                value:
+                  mode: search
+                  query: watercolor
+                  page: 1
+                  page_size: 20
+                  base_model_id: "123"
+              resolve:
+                summary: Resolve one artist Prompt string record
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogArtistPromptStringPage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "502":
+          $ref: "#/components/responses/E502CatalogDependencyUnavailable"
+        "503":
+          $ref: "#/components/responses/E503CatalogIndexOrDatabase"
+        "504":
+          $ref: "#/components/responses/E504CatalogDependencyTimeout"
+  /internal/semantic/comfyui-instances:
+    post:
+      summary: Search or resolve ComfyUI instance records
+      description: Search or resolve ComfyUI instance records by title without exposing connection details or credentials.
+      operationId: querySemanticComfyuiInstancesForSkill
+      x-harness-tool-name: query_semantic_comfyui_instances
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogComfyuiInstanceRequest"
+            examples:
+              search:
+                summary: Search ComfyUI instance records
+                value:
+                  mode: search
+                  query: studio
+                  page: 1
+                  page_size: 20
+              resolve:
+                summary: Resolve one ComfyUI instance record
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogComfyuiInstancePage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "503":
+          $ref: "#/components/responses/E503CatalogDatabaseBusy"
+  /internal/semantic/comfyui-templates:
+    post:
+      summary: Search or resolve ComfyUI template summaries
+      description: Search or resolve ComfyUI template summaries by title with current Workflow JSON.
+      operationId: querySemanticComfyuiTemplatesForSkill
+      x-harness-tool-name: query_semantic_comfyui_templates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogComfyuiTemplateRequest"
+            examples:
+              search:
+                summary: Search ComfyUI template summaries
+                value:
+                  mode: search
+                  query: portrait
+                  page: 1
+                  page_size: 20
+                  base_model_id: "123"
+              resolve:
+                summary: Resolve one ComfyUI template summary
+                value:
+                  mode: resolve
+                  id: "123"
+      responses:
+        "200":
+          $ref: "#/components/responses/CatalogComfyuiTemplatePage"
+        "404":
+          $ref: "#/components/responses/E404CatalogRef"
+        "409":
+          $ref: "#/components/responses/E409CatalogResourceUnavailable"
+        "422":
+          $ref: "#/components/responses/E422CatalogRequest"
+        "500":
+          $ref: "#/components/responses/E500CatalogInternal"
+        "503":
+          $ref: "#/components/responses/E503CatalogDatabaseBusy"
+  /internal/comfyui-source:
+    get:
+      summary: Get Host Source discovery
+      description: Return the loopback Host Source operations available to the source runtime.
+      operationId: getComfyuiSourceDiscovery
+      responses:
+        "200":
+          $ref: "#/components/responses/SourceDiscovery"
+  /internal/comfyui-source/instances/{instance_id}:
+    parameters:
+      - $ref: "#/components/parameters/SourceInstanceId"
+    get:
+      summary: Read one ComfyUI instance Host Source
+      description: Return the complete connection source for one registered ComfyUI instance, including an Authorization header value for the Host runtime.
+      operationId: getComfyuiInstanceSourceForHost
+      responses:
+        "200":
+          $ref: "#/components/responses/SourceInstance"
+        "404":
+          $ref: "#/components/responses/E404SourceInstance"
+        "422":
+          $ref: "#/components/responses/E422SourceRequest"
+        "500":
+          $ref: "#/components/responses/E500SourceCredentialOrInternal"
+        "503":
+          $ref: "#/components/responses/E503SourceDatabaseBusy"
+  /internal/comfyui-source/templates/{template_id}/bundle:
+    parameters:
+      - $ref: "#/components/parameters/SourceTemplateId"
+    get:
+      summary: Read one ComfyUI template Host Source bundle
+      description: Return the complete saved Workflow JSON for one registered ComfyUI template.
+      operationId: getComfyuiTemplateBundleForHost
+      responses:
+        "200":
+          $ref: "#/components/responses/SourceTemplateBundle"
+        "404":
+          $ref: "#/components/responses/E404SourceTemplate"
+        "409":
+          $ref: "#/components/responses/E409SourceTemplateUnavailable"
+        "422":
+          $ref: "#/components/responses/E422SourceRequest"
+        "500":
+          $ref: "#/components/responses/E500SourceInternal"
+        "503":
+          $ref: "#/components/responses/E503SourceDatabaseBusy"
+components:
+  parameters:
+    WorkId:
+      name: work_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    CharacterId:
+      name: character_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    StyleId:
+      name: style_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    SourceInstanceId:
+      name: instance_id
+      in: path
+      required: true
+      description: Stable decimal positive integer string identifier for a registered ComfyUI instance
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 20
+        pattern: ^[1-9][0-9]{0,19}$
+    SourceTemplateId:
+      name: template_id
+      in: path
+      required: true
+      description: Stable decimal positive integer string identifier for a registered ComfyUI template
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 20
+        pattern: ^[1-9][0-9]{0,19}$
+    ItemId:
+      name: item_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Decimal safe positive integer identifier; exponent notation
+      signs: null
+      decimals: null
+      and values above Number.MAX_SAFE_INTEGER are invalid: null
+      schema:
+        $ref: "#/components/schemas/SafePositiveIntegerId"
+    ItemKind:
+      name: kind
+      in: path
+      required: true
+      schema:
+        enum:
+          - work
+          - character
+          - style
+    OwnerId:
+      name: owner_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    OwnerKind:
+      name: owner_kind
+      in: path
+      required: true
+      schema:
+        enum:
+          - work
+          - character
+          - style
+          - model
+          - lora
+          - artist_prompt_string
+          - template
+    SearchQuery:
+      name: q
+      in: query
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+    SemanticQuery:
+      name: q
+      in: query
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+    SemanticBaseModelName:
+      name: base_model_name
+      in: query
+      required: true
+      description: Exact generation_base_models.name used to scope Style retrieval; leading and trailing whitespace is invalid
+      example: WAI
+      schema:
+        type: string
+        minLength: 1
+        example: WAI
+    SemanticLimit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 20
+        default: 20
+    SemanticWorkId:
+      name: work_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    HomeSearchQuery:
+      name: q
+      in: query
+      required: false
+      schema:
+        type: string
+        maxLength: 100
+        default: ""
+    HomeLimit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 30
+    HomeCursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+    ManageKind:
+      name: kind
+      in: query
+      required: false
+      schema:
+        enum:
+          - all
+          - work
+          - character
+          - style
+        default: all
+    ManageSearchQuery:
+      name: q
+      in: query
+      required: false
+      schema:
+        type: string
+        maxLength: 100
+        default: ""
+    ManageLimit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 16
+    ManagePage:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000000
+        default: 1
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PageSize:
+      name: page_size
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 16
+    Q:
+      name: q
+      in: query
+      required: false
+      description: 最多 100 个 UTF-16 code units
+      schema:
+        type: string
+        maxLength: 100
+        default: ""
+    PromptTermCategoryFilter:
+      name: category
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/PromptTermCategoryCode"
+    PromptTermPostCountMin:
+      name: post_count_min
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 9007199254740991
+    PromptTermPostCountMax:
+      name: post_count_max
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 9007199254740991
+    BaseModelFilter:
+      name: base_model_id
+      in: query
+      required: false
+      description: Decimal safe positive integer base-model identifier; validate the complete raw query value before numeric conversion
+      schema:
+        $ref: "#/components/schemas/SafePositiveIntegerId"
+    ModelFilter:
+      name: model_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    LoraFilter:
+      name: lora_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    StyleFilter:
+      name: style_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    ManageAvailabilityFilter:
+      name: availability
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - available
+          - unavailable
+    FileFormatFilter:
+      name: file_format
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/FileFormat"
+    PrecisionFilter:
+      name: precision_or_quantization
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/Precision"
+    CredentialTypeFilter:
+      name: credential_type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - none
+          - http_basic
+          - bearer
+    IsValidFilter:
+      name: is_valid
+      in: query
+      required: false
+      schema:
+        type: boolean
+    IsEnabledFilter:
+      name: is_enabled
+      in: query
+      required: false
+      schema:
+        type: boolean
+    TemplateTypeFilter:
+      name: template_type
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/TemplateType"
+  schemas:
+    ErrorBase:
+      type: object
+      additionalProperties: false
+      required:
+        - ok
+        - request_id
+        - error
+      properties:
+        ok:
+          const: false
+          description: Error envelope marker
+        request_id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          description: Server-generated correlation value for this HTTP response and server logs; it is not a task identity
+          replay key: null
+          idempotency key: null
+          or submission-guard input: null
+        error:
+          type: object
+          additionalProperties: false
+          required:
+            - code
+            - message
+          description: Error details
+          properties:
+            code:
+              type: string
+              description: Stable service error code
+            message:
+              type: string
+              description: Human-readable service error detail
+            user_may_resubmit:
+              type: boolean
+              description: Canonical error-catalog permission to submit a new request
+            display:
+              type: string
+              enum:
+                - form
+                - inline
+                - global
+                - transient
+              description: Canonical error-catalog presentation scope
+    Envelope:
+      type: object
+      additionalProperties: false
+      required:
+        - ok
+        - request_id
+        - data
+      properties:
+        ok:
+          const: true
+          description: Success envelope marker
+        request_id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          description: Server-generated correlation value for this HTTP response and server logs; it is not a task identity
+          replay key: null
+          idempotency key: null
+          or submission-guard input: null
+        data:
+          description: Operation success payload
+    CatalogBaseModelSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the base-model Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for text search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: Base-model name text normalized before a literal LIKE search
+          example: watercolor
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of base-model items returned on one page
+          example: 20
+    CatalogBaseModelResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one base-model Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal base-model record identifier
+          example: "123"
+    CatalogBaseModelRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogBaseModelSearchRequest"
+        - $ref: "#/components/schemas/CatalogBaseModelResolveRequest"
+      description: Closed search-or-resolve request for the base-model Catalog operation.
+      example:
+        mode: search
+        query: watercolor
+        page: 1
+        page_size: 20
+    CatalogBaseModelPage:
+      $ref: "#/components/schemas/CatalogSourceSuccess"
+    CatalogGenerationModelSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the generation-model Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for text search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: Generation-model file name text normalized before a literal LIKE search
+          example: watercolor
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of generation-model items returned on one page
+          example: 20
+        base_model_id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Optional stable string identifier for the exact generation_base_models parent record
+          example: "123"
+    CatalogGenerationModelResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one generation-model Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal generation-model record identifier
+          example: "123"
+    CatalogGenerationModelRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogGenerationModelSearchRequest"
+        - $ref: "#/components/schemas/CatalogGenerationModelResolveRequest"
+      description: Closed search-or-resolve request for the generation-model Catalog operation.
+      example:
+        mode: search
+        query: watercolor
+        page: 1
+        page_size: 20
+        base_model_id: "123"
+    CatalogGenerationModelPage:
+      $ref: "#/components/schemas/CatalogSampleImageSuccess"
+    CatalogLoraSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the generation LoRA Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for semantic LoRA search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: LoRA file name, trigger words, description, and usage sent to the fixed generation_lora semantic index
+          example: watercolor
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of LoRA items returned on one page
+          example: 20
+        base_model_id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Optional stable string identifier for the exact generation_base_models parent record
+          example: "123"
+    CatalogLoraResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one generation LoRA Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal generation_loras.id value represented as a stable string identifier
+          example: "123"
+    CatalogLoraRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogLoraSearchRequest"
+        - $ref: "#/components/schemas/CatalogLoraResolveRequest"
+      description: Closed search-or-resolve request for the generation LoRA Catalog operation.
+      example:
+        mode: search
+        query: watercolor
+        page: 1
+        page_size: 20
+        base_model_id: "123"
+    CatalogLoraPage:
+      $ref: "#/components/schemas/CatalogSampleImageSuccess"
+    CatalogWorkSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the work Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for semantic work search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: Work name, aliases, and category text sent to the fixed work semantic index
+          example: watercolor
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of work items returned on one page
+          example: 20
+    CatalogWorkResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one work Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal works.id value represented as a stable string identifier
+          example: "123"
+    CatalogWorkRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogWorkSearchRequest"
+        - $ref: "#/components/schemas/CatalogWorkResolveRequest"
+      description: Closed search-or-resolve request for the work Catalog operation.
+      example:
+        mode: search
+        query: watercolor
+        page: 1
+        page_size: 20
+    CatalogWorkPage:
+      $ref: "#/components/schemas/CatalogSampleImageSuccess"
+    CatalogCharacterSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the character Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for semantic character search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: Work name, character name, aliases, and prompt text sent to the fixed character semantic index
+          example: watercolor
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of character items returned on one page
+          example: 20
+        work_id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Optional stable string identifier for the exact works parent record
+          example: "123"
+    CatalogCharacterResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one character Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal characters.id value represented as a stable string identifier
+          example: "123"
+    CatalogCharacterRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogCharacterSearchRequest"
+        - $ref: "#/components/schemas/CatalogCharacterResolveRequest"
+      description: Closed search-or-resolve request for the character Catalog operation.
+      example:
+        mode: search
+        query: watercolor
+        page: 1
+        page_size: 20
+        work_id: "123"
+    CatalogCharacterPage:
+      $ref: "#/components/schemas/CatalogSampleImageSuccess"
+    CatalogStyleSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the style Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for semantic style search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: Style name, aliases, description, and prompt text sent to the fixed style semantic index
+          example: watercolor
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of style items returned on one page
+          example: 20
+        base_model_id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Optional stable string identifier for the exact generation base-model record
+          example: "123"
+    CatalogStyleResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one style Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal styles.id value represented as a stable string identifier
+          example: "123"
+    CatalogStyleRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogStyleSearchRequest"
+        - $ref: "#/components/schemas/CatalogStyleResolveRequest"
+      description: Closed search-or-resolve request for the style Catalog operation.
+      example:
+        mode: search
+        query: watercolor
+        page: 1
+        page_size: 20
+        base_model_id: "123"
+    CatalogStylePage:
+      $ref: "#/components/schemas/CatalogSampleImageSuccess"
+    CatalogPromptTermSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the Prompt-term Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for semantic Prompt-term search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: Canonical prompt tag and aliases sent to the fixed prompt_term semantic index
+          example: watercolor
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of Prompt-term items returned on one page
+          example: 20
+    CatalogPromptTermResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one Prompt-term Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal prompt_terms.id value represented as a stable string identifier
+          example: "123"
+    CatalogPromptTermRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogPromptTermSearchRequest"
+        - $ref: "#/components/schemas/CatalogPromptTermResolveRequest"
+      description: Closed search-or-resolve request for the Prompt-term Catalog operation.
+      example:
+        mode: search
+        query: watercolor
+        page: 1
+        page_size: 20
+    CatalogPromptTermPage:
+      $ref: "#/components/schemas/CatalogSampleImageSuccess"
+    CatalogArtistPromptStringSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the artist Prompt string Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for semantic artist Prompt string search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: Artist Prompt string title, description, and artist string sent to the fixed artist_prompt_string semantic index
+          example: watercolor
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of artist Prompt string items returned on one page
+          example: 20
+        base_model_id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Optional stable string identifier for the exact generation base-model record
+          example: "123"
+    CatalogArtistPromptStringResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one artist Prompt string Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal artist_prompt_strings.id value represented as a stable string identifier
+          example: "123"
+    CatalogArtistPromptStringRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogArtistPromptStringSearchRequest"
+        - $ref: "#/components/schemas/CatalogArtistPromptStringResolveRequest"
+      description: Closed search-or-resolve request for the artist Prompt string Catalog operation.
+      example:
+        mode: search
+        query: watercolor
+        page: 1
+        page_size: 20
+        base_model_id: "123"
+    CatalogArtistPromptStringPage:
+      $ref: "#/components/schemas/CatalogSampleImageSuccess"
+    CatalogComfyuiInstanceSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the ComfyUI instance Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for text search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: ComfyUI instance title text normalized before a literal LIKE search
+          example: studio
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of ComfyUI instance items returned on one page
+          example: 20
+    CatalogComfyuiInstanceResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one ComfyUI instance Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal ComfyUI instance record identifier
+          example: "123"
+    CatalogComfyuiInstanceRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogComfyuiInstanceSearchRequest"
+        - $ref: "#/components/schemas/CatalogComfyuiInstanceResolveRequest"
+      description: Closed search-or-resolve request for the ComfyUI instance Catalog operation.
+      example:
+        mode: search
+        query: studio
+        page: 1
+        page_size: 20
+    CatalogComfyuiInstancePage:
+      $ref: "#/components/schemas/CatalogSourceSuccess"
+    CatalogComfyuiTemplateSearchRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+      description: Search branch for the ComfyUI template Catalog operation.
+      properties:
+        mode:
+          const: search
+          description: Catalog request branch discriminator for text search
+          example: search
+        query:
+          type: string
+          minLength: 0
+          maxLength: 200
+          default: ""
+          description: ComfyUI template title text normalized before a literal LIKE search
+          example: portrait
+        page:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+          description: One-based result page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Maximum number of ComfyUI template items returned on one page
+          example: 20
+        base_model_id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Optional stable string identifier for the exact generation_base_models parent record
+          example: "123"
+    CatalogComfyuiTemplateResolveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mode
+        - id
+      description: Resolve branch for one ComfyUI template Catalog record.
+      properties:
+        mode:
+          const: resolve
+          description: Catalog request branch discriminator for stable-ID resolution
+          example: resolve
+        id:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: ^[1-9][0-9]{0,19}$
+          description: Decimal ComfyUI template record identifier
+          example: "123"
+    CatalogComfyuiTemplateRequest:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/CatalogComfyuiTemplateSearchRequest"
+        - $ref: "#/components/schemas/CatalogComfyuiTemplateResolveRequest"
+      description: Closed search-or-resolve request for the ComfyUI template Catalog operation.
+      example:
+        mode: search
+        query: portrait
+        page: 1
+        page_size: 20
+        base_model_id: "123"
+    CatalogComfyuiTemplatePage:
+      $ref: "#/components/schemas/CatalogSampleImageSuccess"
+    CatalogError:
+      $ref: "#/components/schemas/CatalogSourceError"
+    SourceError:
+      $ref: "#/components/schemas/CatalogSourceError"
+    InstanceSource:
+      $ref: "#/components/schemas/CatalogSourceSuccess"
+    E422SourceRequest:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E404SourceInstance:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E404SourceTemplate:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E409SourceTemplateUnavailable:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E500SourceCredentialUnavailable:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E500SourceInternal:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E503SourceDatabaseBusy:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E500SourceCredentialOrInternal:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E422CatalogRequest:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E404CatalogRef:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E409CatalogResourceUnavailable:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E503CatalogDatabaseBusy:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E502CatalogDependencyUnavailable:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E503CatalogIndexNotReady:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E503CatalogIndexOrDatabase:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E504CatalogDependencyTimeout:
+      $ref: "#/components/schemas/CatalogSourceError"
+    E500CatalogInternal:
+      $ref: "#/components/schemas/CatalogSourceError"
+    Work:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - aliases
+        - prompt_text
+        - work_id
+        - work_name
+        - character_ids
+        - image_count
+        - cover_media_path
+        - is_available
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        prompt_text:
+          type:
+            - string
+            - "null"
+        work_id:
+          type: "null"
+        work_name:
+          type: "null"
+        character_ids:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+        image_count:
+          type: integer
+          minimum: 0
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        is_available:
+          type: boolean
+    Character:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - work_id
+        - work_name
+        - name
+        - aliases
+        - prompt_text
+        - character_ids
+        - image_count
+        - cover_media_path
+        - is_available
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        work_id:
+          type: integer
+          minimum: 1
+        work_name:
+          type: string
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        prompt_text:
+          type: string
+        character_ids:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+        image_count:
+          type: integer
+          minimum: 0
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        is_available:
+          type: boolean
+    Style:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - aliases
+        - prompt_text
+        - style_description
+        - work_id
+        - work_name
+        - character_ids
+        - image_count
+        - cover_media_path
+        - is_available
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        prompt_text:
+          type: string
+        style_description:
+          type:
+            - string
+            - "null"
+        work_id:
+          type: "null"
+        work_name:
+          type: "null"
+        character_ids:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+        image_count:
+          type: integer
+          minimum: 0
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        is_available:
+          type: boolean
+    Image:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - media_path
+        - sort_order
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        media_path:
+          type: string
+          minLength: 1
+        sort_order:
+          type: integer
+          minimum: 0
+    ManageItem:
+      type: object
+      additionalProperties: false
+      required:
+        - kind
+        - id
+        - name
+        - work_name
+        - aliases
+        - prompt_text
+        - style_description
+        - category_name
+        - base_model_id
+        - base_model_name
+        - cover_media_path
+        - image_count
+        - is_available
+      properties:
+        kind:
+          enum:
+            - work
+            - character
+            - style
+        id:
+          type: integer
+          minimum: 1
+        work_id:
+          anyOf:
+            - $ref: "#/components/schemas/SafePositiveIntegerId"
+            - type: "null"
+        name:
+          type: string
+          minLength: 1
+        work_name:
+          type:
+            - string
+            - "null"
+        aliases:
+          type: array
+          items:
+            type: string
+        prompt_text:
+          type:
+            - string
+            - "null"
+        style_description:
+          type:
+            - string
+            - "null"
+        category_name:
+          type:
+            - string
+            - "null"
+        base_model_id:
+          anyOf:
+            - $ref: "#/components/schemas/SafePositiveIntegerId"
+            - type: "null"
+        base_model_name:
+          type:
+            - string
+            - "null"
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        image_count:
+          type: integer
+          minimum: 0
+        is_available:
+          type: boolean
+    ManageItemDetail:
+      type: object
+      additionalProperties: false
+      required:
+        - kind
+        - id
+        - name
+        - work_name
+        - aliases
+        - prompt_text
+        - style_description
+        - category_name
+        - base_model_id
+        - base_model_name
+        - cover_media_path
+        - image_count
+        - is_available
+        - images
+      properties:
+        kind:
+          enum:
+            - work
+            - character
+            - style
+        id:
+          type: integer
+          minimum: 1
+        work_id:
+          anyOf:
+            - $ref: "#/components/schemas/SafePositiveIntegerId"
+            - type: "null"
+        name:
+          type: string
+          minLength: 1
+        work_name:
+          type:
+            - string
+            - "null"
+        aliases:
+          type: array
+          items:
+            type: string
+        prompt_text:
+          type:
+            - string
+            - "null"
+        style_description:
+          type:
+            - string
+            - "null"
+        category_name:
+          type:
+            - string
+            - "null"
+        base_model_id:
+          anyOf:
+            - $ref: "#/components/schemas/SafePositiveIntegerId"
+            - type: "null"
+        base_model_name:
+          type:
+            - string
+            - "null"
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        image_count:
+          type: integer
+          minimum: 0
+        is_available:
+          type: boolean
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+        created_at:
+          type:
+            - string
+            - "null"
+        updated_at:
+          type:
+            - string
+            - "null"
+        characters:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - id
+              - name
+              - cover_media_path
+              - is_available
+            properties:
+              id:
+                type: integer
+                minimum: 1
+              name:
+                type: string
+              cover_media_path:
+                type:
+                  - string
+                  - "null"
+              is_available:
+                type: boolean
+    WorkManagementWrite:
+      type: object
+      additionalProperties: false
+      required: [name, category_name, aliases_json, is_available]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 200 }
+        category_name: { type: [string, "null"], maxLength: 200 }
+        aliases_json:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          items: { type: string, minLength: 1, maxLength: 200 }
+        is_available: { type: boolean }
+    CharacterManagementWrite:
+      type: object
+      additionalProperties: false
+      required: [work_id, name, aliases_json, prompt_text, is_available]
+      properties:
+        work_id: { $ref: "#/components/schemas/SafePositiveIntegerId" }
+        name: { type: string, minLength: 1, maxLength: 200 }
+        aliases_json:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          items: { type: string, minLength: 1, maxLength: 200 }
+        prompt_text: { type: string, minLength: 1, maxLength: 10000 }
+        is_available: { type: boolean }
+    StyleManagementWrite:
+      type: object
+      additionalProperties: false
+      required: [base_model_id, name, aliases_json, prompt_text, style_description]
+      properties:
+        base_model_id: { $ref: "#/components/schemas/SafePositiveIntegerId" }
+        name: { type: string, minLength: 1, maxLength: 200 }
+        aliases_json:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          items: { type: string, minLength: 1, maxLength: 200 }
+        prompt_text: { type: string, minLength: 1, maxLength: 10000 }
+        style_description: { type: [string, "null"], maxLength: 10000 }
+    CatalogManagementRecord:
+      type: object
+      description: Work, character or style record returned after a management write.
+      required: [kind, id, name, aliases_json, cover_media_path]
+      properties:
+        kind: { enum: [work, character, style] }
+        id: { type: integer, minimum: 1 }
+        work_id: { type: integer, minimum: 1 }
+        work_name: { type: string }
+        base_model_id: { type: integer, minimum: 1 }
+        base_model_name: { type: string }
+        name: { type: string, minLength: 1 }
+        aliases_json:
+          type: array
+          items: { type: string }
+        category_name: { type: [string, "null"] }
+        prompt_text: { type: string }
+        style_description: { type: [string, "null"] }
+        is_available: { type: boolean }
+        cover_media_path: { type: [string, "null"] }
+        created_at: { type: [string, "null"] }
+        updated_at: { type: [string, "null"] }
+    BaseModel:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - model_count
+        - lora_count
+        - style_count
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+        model_count:
+          type: integer
+          minimum: 0
+        lora_count:
+          type: integer
+          minimum: 0
+        style_count:
+          type: integer
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    PromptTermCategoryCode:
+      type: integer
+      enum:
+        - 0
+        - 1
+        - 3
+        - 4
+        - 5
+    PromptTerm:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - canonical_tag
+        - category
+        - aliases_json
+        - post_count
+        - created_at
+        - updated_at
+      properties:
+        id:
+          $ref: "#/components/schemas/SafePositiveIntegerId"
+        canonical_tag:
+          type: string
+          minLength: 1
+        category:
+          $ref: "#/components/schemas/PromptTermCategoryCode"
+        aliases_json:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
+        post_count:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    PromptTermWrite:
+      type: object
+      additionalProperties: false
+      required:
+        - canonical_tag
+        - category
+        - aliases_json
+        - post_count
+      properties:
+        canonical_tag:
+          type: string
+          minLength: 1
+        category:
+          $ref: "#/components/schemas/PromptTermCategoryCode"
+        aliases_json:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
+        post_count:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+    PromptTermPage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+        - page
+        - page_size
+        - total_count
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PromptTerm"
+        page:
+          type: integer
+          minimum: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total_count:
+          type: integer
+          minimum: 0
+    PromptTermDeleteResult:
+      type: object
+      additionalProperties: false
+      required:
+        - target
+      properties:
+        target:
+          type: object
+          additionalProperties: false
+          required:
+            - id
+            - canonical_tag
+          properties:
+            id:
+              $ref: "#/components/schemas/SafePositiveIntegerId"
+            canonical_tag:
+              type: string
+              minLength: 1
+    BaseModelWrite:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+    Model:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - base_model_id
+        - base_model_name
+        - file_name
+        - file_format
+        - precision_or_quantization
+        - description
+        - usage
+        - cover_media_path
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        base_model_id:
+          type: integer
+          minimum: 1
+        base_model_name:
+          type: string
+          minLength: 1
+        file_name:
+          type: string
+          minLength: 1
+        file_format:
+          $ref: "#/components/schemas/FileFormat"
+        precision_or_quantization:
+          $ref: "#/components/schemas/Precision"
+        author:
+          type:
+            - string
+            - "null"
+        version:
+          type:
+            - string
+            - "null"
+        release_url:
+          type:
+            - string
+            - "null"
+          format: uri
+          pattern: ^https?://(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(?=[A-Za-z0-9.-]{1,253}(?::(?:0|[1-9]\d{0,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5]))?(?:[/?#]|$))(?!(?:(?:\d+|0[xX][0-9A-Fa-f]+)\.)*(?:\d+|0[xX][0-9A-Fa-f]+)(?::(?:0|[1-9]\d{0,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5]))?(?:[/?#]|$))[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*)(?::(?:0|[1-9]\d{0,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5]))?(?:[/?#](?:[A-Za-z0-9._~:/?#@!$&'()*+,;=-]|%[0-9A-Fa-f]{2})*)?$
+        published_at:
+          type:
+            - string
+            - "null"
+          format: date
+        description:
+          type: string
+          minLength: 1
+        usage:
+          type: string
+          minLength: 1
+        skill_name:
+          type:
+            - string
+            - "null"
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    ModelWrite:
+      type: object
+      additionalProperties: false
+      required:
+        - base_model_id
+        - file_name
+        - file_format
+        - precision_or_quantization
+        - description
+        - usage
+      properties:
+        base_model_id:
+          type: integer
+          minimum: 1
+        file_name:
+          type: string
+          minLength: 1
+        file_format:
+          $ref: "#/components/schemas/FileFormat"
+        precision_or_quantization:
+          $ref: "#/components/schemas/Precision"
+        author:
+          type:
+            - string
+            - "null"
+        version:
+          type:
+            - string
+            - "null"
+        release_url:
+          type:
+            - string
+            - "null"
+          format: uri
+          pattern: ^https?://(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|(?=[A-Za-z0-9.-]{1,253}(?::(?:0|[1-9]\d{0,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5]))?(?:[/?#]|$))(?!(?:(?:\d+|0[xX][0-9A-Fa-f]+)\.)*(?:\d+|0[xX][0-9A-Fa-f]+)(?::(?:0|[1-9]\d{0,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5]))?(?:[/?#]|$))[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*)(?::(?:0|[1-9]\d{0,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5]))?(?:[/?#](?:[A-Za-z0-9._~:/?#@!$&'()*+,;=-]|%[0-9A-Fa-f]{2})*)?$
+        published_at:
+          type:
+            - string
+            - "null"
+          format: date
+        description:
+          type: string
+          minLength: 1
+        usage:
+          type: string
+          minLength: 1
+        skill_name:
+          type:
+            - string
+            - "null"
+    SafePositiveIntegerId:
+      type: integer
+      minimum: 1
+      maximum: 9007199254740991
+      description: Positive integer representable exactly by JavaScript Number
+      example: 1
+    NullableSafePositiveIntegerId:
+      oneOf:
+        - $ref: "#/components/schemas/SafePositiveIntegerId"
+        - type: "null"
+    Lora:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - base_model_id
+        - base_model_name
+        - model_id
+        - model_name
+        - file_name
+        - file_format
+        - precision_or_quantization
+        - description
+        - usage
+        - trigger_words
+        - weight
+        - cover_media_path
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        base_model_id:
+          type: integer
+          minimum: 1
+        base_model_name:
+          type: string
+          minLength: 1
+        model_id:
+          type: integer
+          minimum: 1
+        model_name:
+          type: string
+          minLength: 1
+        file_name:
+          type: string
+          minLength: 1
+        file_format:
+          $ref: "#/components/schemas/FileFormat"
+        precision_or_quantization:
+          $ref: "#/components/schemas/Precision"
+        author:
+          type:
+            - string
+            - "null"
+        version:
+          type:
+            - string
+            - "null"
+        release_url:
+          type:
+            - string
+            - "null"
+          format: uri
+        description:
+          type: string
+          minLength: 1
+        usage:
+          type: string
+          minLength: 1
+        trigger_words:
+          type: array
+          uniqueItems: true
+          description: 服务端去除每个触发词的首尾空白后判断空值与重复。
+          items:
+            type: string
+            minLength: 1
+            pattern: .*\S.*
+        weight:
+          type: number
+          description: 未显式指定运行权重时写入 ComfyUI strength_model 的默认数值。
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    LoraWrite:
+      type: object
+      additionalProperties: false
+      required:
+        - base_model_id
+        - model_id
+        - file_name
+        - file_format
+        - precision_or_quantization
+        - description
+        - usage
+        - trigger_words
+        - weight
+      properties:
+        base_model_id:
+          type: integer
+          minimum: 1
+        model_id:
+          type: integer
+          minimum: 1
+        file_name:
+          type: string
+          minLength: 1
+        file_format:
+          $ref: "#/components/schemas/FileFormat"
+        precision_or_quantization:
+          $ref: "#/components/schemas/Precision"
+        author:
+          type:
+            - string
+            - "null"
+        version:
+          type:
+            - string
+            - "null"
+        release_url:
+          type:
+            - string
+            - "null"
+          format: uri
+        description:
+          type: string
+          minLength: 1
+        usage:
+          type: string
+          minLength: 1
+        trigger_words:
+          type: array
+          uniqueItems: true
+          description: 服务端去除每个触发词的首尾空白后判断空值与重复。
+          items:
+            type: string
+            minLength: 1
+            pattern: .*\S.*
+        weight:
+          type: number
+          description: 未显式指定运行权重时写入 ComfyUI strength_model 的默认数值。
+    ArtistPromptString:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - title
+        - description
+        - artist_string
+        - base_model_id
+        - base_model_name
+        - style_ids
+        - cover_media_path
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        title:
+          type: string
+          minLength: 1
+          maxLength: 20
+        description:
+          type: string
+          minLength: 1
+        artist_string:
+          type: string
+          minLength: 1
+        base_model_id:
+          type:
+            - integer
+            - "null"
+          minimum: 1
+        base_model_name:
+          type:
+            - string
+            - "null"
+        style_ids:
+          type: array
+          uniqueItems: true
+          items:
+            type: integer
+            minimum: 1
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    ArtistPromptStringWrite:
+      type: object
+      additionalProperties: false
+      required:
+        - title
+        - description
+        - artist_string
+        - base_model_id
+        - style_ids
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 20
+          description: Unicode code points
+        description:
+          type: string
+          minLength: 1
+        artist_string:
+          type: string
+          minLength: 1
+        base_model_id:
+          type:
+            - integer
+            - "null"
+          minimum: 1
+        style_ids:
+          type: array
+          uniqueItems: true
+          items:
+            type: integer
+            minimum: 1
+    ComfyuiInstance:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - title
+        - url
+        - credential_type
+        - is_enabled
+        - is_valid
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        title:
+          type: string
+          minLength: 1
+        url:
+          type: string
+          format: uri
+        credential_type:
+          enum:
+            - none
+            - http_basic
+            - bearer
+        is_enabled:
+          type: boolean
+        is_valid:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    ComfyuiInstanceWrite:
+      type: object
+      additionalProperties: false
+      required:
+        - title
+        - url
+        - credential
+        - is_enabled
+      properties:
+        title:
+          type: string
+          minLength: 1
+        url:
+          type: string
+          format: uri
+        credential:
+          $ref: "#/components/schemas/ComfyuiCredentialWrite"
+        is_enabled:
+          type: boolean
+    ComfyuiCredentialWrite:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required:
+            - action
+          properties:
+            action:
+              const: keep
+        - type: object
+          additionalProperties: false
+          required:
+            - action
+            - type
+            - username
+            - password
+          properties:
+            action:
+              const: replace
+            type:
+              const: http_basic
+            username:
+              type: string
+              minLength: 1
+            password:
+              type: string
+              minLength: 1
+        - type: object
+          additionalProperties: false
+          required:
+            - action
+            - type
+            - token
+          properties:
+            action:
+              const: replace
+            type:
+              const: bearer
+            token:
+              type: string
+              minLength: 1
+        - type: object
+          additionalProperties: false
+          required:
+            - action
+          properties:
+            action:
+              const: clear
+        - type: object
+          additionalProperties: false
+          required:
+            - type
+          properties:
+            type:
+              const: none
+    ComfyuiInstanceTarget:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+    ComfyuiInstanceDeleteImpact:
+      type: object
+      additionalProperties: false
+      required:
+        - target
+        - cascade_deleted
+        - retained
+        - impact_token
+      properties:
+        target:
+          $ref: "#/components/schemas/ComfyuiInstanceTarget"
+        cascade_deleted:
+          type: array
+          maxItems: 0
+        retained:
+          type: array
+          maxItems: 0
+        impact_token:
+          type: string
+          minLength: 1
+    ComfyuiInstanceDeleteResult:
+      type: object
+      additionalProperties: false
+      required:
+        - target
+        - cascade_deleted
+        - retained
+      properties:
+        target:
+          $ref: "#/components/schemas/ComfyuiInstanceTarget"
+        cascade_deleted:
+          type: array
+          maxItems: 0
+        retained:
+          type: array
+          maxItems: 0
+    ComfyuiTemplate:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - base_model_id
+        - base_model_name
+        - model_id
+        - model_name
+        - lora_id
+        - lora_name
+        - template_type
+        - title
+        - template_json
+        - cover_media_path
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        base_model_id:
+          type: integer
+          minimum: 1
+        base_model_name:
+          type: string
+          minLength: 1
+        model_id:
+          type: integer
+          minimum: 1
+        model_name:
+          type: string
+          minLength: 1
+        lora_id:
+          type:
+            - integer
+            - "null"
+          minimum: 1
+        lora_name:
+          type:
+            - string
+            - "null"
+        template_type:
+          $ref: "#/components/schemas/TemplateType"
+        title:
+          type: string
+          minLength: 1
+        template_json:
+          type: object
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    ComfyuiTemplateWrite:
+      type: object
+      additionalProperties: false
+      required:
+        - base_model_id
+        - model_id
+        - lora_id
+        - template_type
+        - title
+        - template_json
+      properties:
+        base_model_id:
+          type: integer
+          minimum: 1
+        model_id:
+          type: integer
+          minimum: 1
+        lora_id:
+          type:
+            - integer
+            - "null"
+          minimum: 1
+        template_type:
+          $ref: "#/components/schemas/TemplateType"
+        title:
+          type: string
+          minLength: 1
+        template_json:
+          description: ComfyUI Workflow JSON 0.4 或 1.0；服务端根据顶层 version 选择对应结构校验
+          oneOf:
+            - type: object
+              additionalProperties: true
+              required:
+                - version
+                - last_node_id
+                - last_link_id
+                - nodes
+                - links
+              properties:
+                version:
+                  const: 0.4
+                last_node_id: {}
+                last_link_id:
+                  type: number
+                nodes:
+                  type: array
+                links:
+                  type: array
+            - type: object
+              additionalProperties: true
+              required:
+                - version
+                - state
+                - nodes
+              properties:
+                version:
+                  const: 1
+                state:
+                  type: object
+                nodes:
+                  type: array
+    ComfyuiTemplatePage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+        - page
+        - page_size
+        - total_count
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ComfyuiTemplate"
+        page:
+          type: integer
+          minimum: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total_count:
+          type: integer
+          minimum: 0
+    FileFormat:
+      type: string
+      minLength: 1
+      maxLength: 64
+      pattern: "^(?!\\s)(?!.*\\s$)[^\\u0000-\\u001F\\u007F]+$"
+    Precision:
+      type: string
+      minLength: 1
+      maxLength: 64
+      pattern: "^(?!\\s)(?!.*\\s$)[^\\u0000-\\u001F\\u007F]+$"
+    GenerationResourceOptions:
+      type: object
+      additionalProperties: false
+      required:
+        - file_format_suggestions
+        - precision_or_quantization_suggestions
+      properties:
+        file_format_suggestions:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/FileFormat"
+        precision_or_quantization_suggestions:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/Precision"
+    PromptTermCategory:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - key
+        - label_zh
+      properties:
+        code:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 3
+            - 4
+            - 5
+        key:
+          type: string
+          minLength: 1
+        label_zh:
+          type: string
+          minLength: 1
+    PromptTermOptions:
+      type: object
+      additionalProperties: false
+      required:
+        - categories
+      properties:
+        categories:
+          type: array
+          minItems: 5
+          maxItems: 5
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/PromptTermCategory"
+    TemplateType:
+      type: string
+      enum:
+        - text_to_image
+        - text_to_image_lora
+        - text_to_image_hires_fix
+        - text_to_image_second_pass
+        - text_to_video
+        - image_to_image
+        - image_to_video
+        - video_to_video
+        - style_transfer
+        - controlnet
+        - inpainting
+        - outpainting
+        - upscale
+        - face_detailer
+        - other
+    DeleteConfirm:
+      type: object
+      additionalProperties: false
+      required:
+        - impact_token
+      properties:
+        impact_token:
+          type: string
+          minLength: 1
+    BaseModelTarget:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+    BaseModelImpactItem:
+      type: object
+      required:
+        - kind
+        - id
+      properties:
+        kind:
+          enum:
+            - model
+            - lora
+            - template
+            - image
+            - artist_prompt_string
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        owner_kind:
+          type: string
+        owner_id:
+          type: integer
+          minimum: 1
+        media_path:
+          type: string
+    BaseModelDeleteImpact:
+      type: object
+      additionalProperties: false
+      required:
+        - target
+        - cascade_deleted
+        - retained
+        - impact_token
+      properties:
+        target:
+          $ref: "#/components/schemas/BaseModelTarget"
+        cascade_deleted:
+          type: array
+          items:
+            $ref: "#/components/schemas/BaseModelImpactItem"
+        retained:
+          type: array
+          items:
+            $ref: "#/components/schemas/BaseModelImpactItem"
+        impact_token:
+          type: string
+          minLength: 1
+    BaseModelCleanupFailure:
+      type: object
+      additionalProperties: false
+      required:
+        - path
+        - reason
+        - occurred_at
+        - remove_error
+        - enqueue_error
+      properties:
+        path:
+          type: string
+          minLength: 1
+        reason:
+          const: owner_delete
+        occurred_at:
+          type: string
+          format: date-time
+        remove_error:
+          type: string
+          minLength: 1
+          maxLength: 1024
+        enqueue_error:
+          type: string
+          minLength: 1
+          maxLength: 1024
+        audit_error:
+          type: string
+          minLength: 1
+          maxLength: 1024
+    BaseModelDeleteResult:
+      type: object
+      additionalProperties: false
+      required:
+        - target
+        - cascade_deleted
+        - retained
+        - cleanup_warning
+        - cleanup_failures
+      properties:
+        target:
+          $ref: "#/components/schemas/BaseModelTarget"
+        cascade_deleted:
+          type: array
+          items:
+            $ref: "#/components/schemas/BaseModelImpactItem"
+        retained:
+          type: array
+          items:
+            $ref: "#/components/schemas/BaseModelImpactItem"
+        cleanup_warning:
+          type: boolean
+        cleanup_failures:
+          type: array
+          items:
+            $ref: "#/components/schemas/BaseModelCleanupFailure"
+    ModelPage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+        - page
+        - page_size
+        - total_count
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Model"
+        page:
+          type: integer
+          minimum: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total_count:
+          type: integer
+          minimum: 0
+    LoraPage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+        - page
+        - page_size
+        - total_count
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Lora"
+        page:
+          type: integer
+          minimum: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total_count:
+          type: integer
+          minimum: 0
+    ArtistPromptStringPage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+        - page
+        - page_size
+        - total_count
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArtistPromptString"
+        page:
+          type: integer
+          minimum: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total_count:
+          type: integer
+          minimum: 0
+    ComfyuiInstancePage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+        - page
+        - page_size
+        - total_count
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ComfyuiInstance"
+        page:
+          type: integer
+          minimum: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total_count:
+          type: integer
+          minimum: 0
+    E409ModelConflict:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - DUPLICATE_RESOURCE
+                    - RELATION_CONFLICT
+                    - DELETE_IMPACT_STALE
+    E409BaseModelDeleteConflict:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - RELATION_CONFLICT
+                    - DELETE_IMPACT_STALE
+    E409ModelWriteConflict:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - DUPLICATE_RESOURCE
+                    - RELATION_CONFLICT
+    E409LoraWriteConflict:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - DUPLICATE_RESOURCE
+                    - RELATION_CONFLICT
+    E409ArtistPromptStringWriteConflict:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - DUPLICATE_RESOURCE
+                    - RELATION_CONFLICT
+    MediaSnapshot:
+      type: object
+      additionalProperties: false
+      required:
+        - owner_kind
+        - owner_id
+        - cover_media_path
+        - images
+        - cleanup_warning
+      properties:
+        owner_kind:
+          enum:
+            - work
+            - character
+            - style
+            - model
+            - lora
+            - artist_prompt_string
+            - template
+        owner_id:
+          type: integer
+          minimum: 1
+        cover_media_path:
+          type:
+            - string
+            - "null"
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+        cleanup_warning:
+          type: boolean
+    BatchIdentity:
+      type: object
+      additionalProperties: false
+      required:
+        - kind
+        - id
+      properties:
+        kind:
+          enum:
+            - work
+            - character
+            - style
+        id:
+          type: integer
+          minimum: 1
+    SearchResult:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required:
+            - kind
+            - id
+            - name
+          properties:
+            kind:
+              const: work
+            id:
+              type: integer
+            name:
+              type: string
+        - type: object
+          additionalProperties: false
+          required:
+            - kind
+            - id
+            - name
+            - work_name
+          properties:
+            kind:
+              enum:
+                - character
+                - style
+            id:
+              type: integer
+            name:
+              type: string
+            work_name:
+              type:
+                - string
+                - "null"
+    SemanticWork:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - aliases
+        - category_name
+        - rank
+        - vector_score
+        - reranker_score
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        category_name:
+          type:
+            - string
+            - "null"
+        rank:
+          type: integer
+          minimum: 1
+        vector_score:
+          type: number
+        reranker_score:
+          type: number
+    SemanticCharacter:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - work_id
+        - name
+        - aliases
+        - prompt_text
+        - rank
+        - vector_score
+        - reranker_score
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        work_id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        prompt_text:
+          type: string
+        rank:
+          type: integer
+          minimum: 1
+        vector_score:
+          type: number
+        reranker_score:
+          type: number
+    SemanticStyle:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - aliases
+        - prompt_text
+        - style_description
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        prompt_text:
+          type: string
+        style_description:
+          type:
+            - string
+            - "null"
+    SemanticPromptTerm:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - canonical_tag
+        - aliases
+        - category
+        - post_count
+        - rank
+        - vector_score
+        - reranker_score
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        canonical_tag:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        category:
+          type: integer
+        post_count:
+          type: integer
+          minimum: 0
+        rank:
+          type: integer
+          minimum: 1
+        vector_score:
+          type: number
+        reranker_score:
+          type: number
+    InternalSemanticDiscovery:
+      type: object
+      additionalProperties: true
+      description: Frozen OpenAPI Catalog discovery document for implemented internal Catalog operations
+      example:
+        openapi: 3.1.0
+        x-imagegen-contract-id: imagegen-source-contract
+        x-imagegen-contract-version: 1
+        paths: {}
+    InternalSourceDiscovery:
+      type: object
+      additionalProperties: true
+      description: Frozen OpenAPI Host Source discovery document for implemented internal Source operations
+      example:
+        openapi: 3.1.0
+        x-imagegen-contract-id: imagegen-source-contract
+        x-imagegen-contract-version: 1
+        paths: {}
+    E403Write:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: WRITE_FORBIDDEN
+    E400Cursor:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: INVALID_CURSOR
+    E404:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: NOT_FOUND
+    E409DuplicateResource:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: DUPLICATE_RESOURCE
+    E409ComfyuiConflict:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: DUPLICATE_RESOURCE
+    E409DeleteImpactStale:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: DELETE_IMPACT_STALE
+    E409Item:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: ITEM_UNAVAILABLE
+    E409UploadItem:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - ITEM_UNAVAILABLE
+                    - DUPLICATE_RESOURCE
+    E413:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: UPLOAD_TOO_LARGE
+    E415:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: UPLOAD_TYPE_UNSUPPORTED
+    E422:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: VALIDATION_ERROR
+    E500Internal:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: INTERNAL_ERROR
+    E500ManagementWrite:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - MODEL_PROTOCOL_ERROR
+                    - INTERNAL_ERROR
+    E500Comfyui:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - COMFYUI_CREDENTIAL_ERROR
+                    - INTERNAL_ERROR
+    E500FileOrInternal:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - FILE_OPERATION_FAILED
+                    - INTERNAL_ERROR
+    E503Busy:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: DATABASE_BUSY
+    E502ManagementWrite:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: EMBEDDING_UNAVAILABLE
+    E503ManagementWrite:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - MODEL_RATE_LIMITED
+                    - DATABASE_BUSY
+    E504ManagementWrite:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: EMBEDDING_TIMEOUT
+    E422Semantic:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  const: SEMANTIC_QUERY_VALIDATION
+    E502Semantic:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - EMBEDDING_UNAVAILABLE
+                    - RERANKER_UNAVAILABLE
+    E503Semantic:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - VECTOR_INDEX_NOT_READY
+                    - MODEL_RATE_LIMITED
+                    - SQLITE_BUSY
+    E503StyleSemantic:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - MODEL_RATE_LIMITED
+                    - SQLITE_BUSY
+    E504Semantic:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - EMBEDDING_TIMEOUT
+                    - RERANKER_TIMEOUT
+    E500Semantic:
+      allOf:
+        - $ref: "#/components/schemas/ErrorBase"
+        - properties:
+            error:
+              properties:
+                code:
+                  enum:
+                    - MODEL_PROTOCOL_ERROR
+                    - INTERNAL_ERROR
+    CatalogSourceResultRecord:
+      type: object
+      additionalProperties: true
+      description: One database result record. The service preserves database column names and database value types, parses stored JSON text into JSON values, qualifies same-name joined columns as table.column, and may replace cover_media_path with cover_url.
+    CatalogSampleImageResultRecord:
+      allOf:
+        - $ref: "#/components/schemas/CatalogSourceResultRecord"
+        - type: object
+          required:
+            - sample_image_urls
+          properties:
+            sample_image_urls:
+              type: array
+              uniqueItems: true
+              description: Ordered non-cover image URLs for the current Catalog record.
+              items:
+                type: string
+                format: uri
+                pattern: '^http://127\.0\.0\.1:(?:[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])/.+$'
+                description: Loopback media URL generated from one non-cover item_images.media_path value.
+                example: http://127.0.0.1:18092/media/images/example-2.webp
+    CatalogSourceSuccess:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - message
+        - results
+        - page
+        - page_size
+        - total_count
+      description: Common successful Catalog or Host Source response.
+      properties:
+        status:
+          const: ok
+          description: The request completed successfully.
+          example: ok
+        message:
+          type: "null"
+          description: Successful responses contain null.
+          example: null
+        results:
+          type: array
+          maxItems: 100
+          description: Database result records in the service-defined order.
+          example: []
+          items:
+            $ref: "#/components/schemas/CatalogSourceResultRecord"
+        page:
+          type: integer
+          minimum: 1
+          description: One-based result page number.
+          example: 1
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Number of result records requested or returned for this page.
+          example: 20
+        total_count:
+          type: integer
+          minimum: 0
+          description: Total matching database records before pagination.
+          example: 0
+    CatalogSampleImageSuccess:
+      $ref: "#/components/schemas/CatalogSourceSuccess"
+      properties:
+        results:
+          type: array
+          maxItems: 100
+          description: Catalog result records with ordered non-cover image URLs.
+          items:
+            $ref: "#/components/schemas/CatalogSampleImageResultRecord"
+    CatalogSourceError:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - message
+        - results
+        - page
+        - page_size
+        - total_count
+      description: Common failed Catalog or Host Source response.
+      properties:
+        status:
+          const: error
+          description: The request failed.
+          example: error
+        message:
+          type: string
+          minLength: 1
+          description: The concrete request failure message.
+          example: Catalog request is invalid.
+        results:
+          type: array
+          maxItems: 0
+          description: Failed responses contain an empty array.
+          example: []
+          items:
+            $ref: "#/components/schemas/CatalogSourceResultRecord"
+        page:
+          const: 1
+          description: Failed responses use page 1.
+          example: 1
+        page_size:
+          const: 0
+          description: Failed responses contain no result records.
+          example: 0
+        total_count:
+          const: 0
+          description: Failed responses expose no matching record count.
+          example: 0
+  requestBodies:
+    ManageItemWrite:
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: "#/components/schemas/WorkManagementWrite"
+              - $ref: "#/components/schemas/CharacterManagementWrite"
+              - $ref: "#/components/schemas/StyleManagementWrite"
+    PromptTermWrite:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PromptTermWrite"
+    BaseModelWrite:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/BaseModelWrite"
+    ModelWrite:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ModelWrite"
+    LoraWrite:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoraWrite"
+    ArtistPromptStringWrite:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ArtistPromptStringWrite"
+    ComfyuiInstanceWrite:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ComfyuiInstanceWrite"
+    ComfyuiTemplateWrite:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ComfyuiTemplateWrite"
+    DeleteConfirm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DeleteConfirm"
+    ImageOrder:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - ids
+            properties:
+              ids:
+                type: array
+                minItems: 1
+                uniqueItems: true
+                items:
+                  type: integer
+                  minimum: 1
+    CoverWrite:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - id
+            properties:
+              id:
+                type:
+                  - integer
+                  - "null"
+                minimum: 1
+  responses:
+    WorkOne:
+      description: work
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/Work"
+    WorkList:
+      description: bounded works page
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                      - next_cursor
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Work"
+                      next_cursor:
+                        type:
+                          - string
+                          - "null"
+    CharacterOne:
+      description: character
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/Character"
+    CharacterList:
+      description: bounded characters page
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                      - next_cursor
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Character"
+                      next_cursor:
+                        type:
+                          - string
+                          - "null"
+    StyleOne:
+      description: style
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/Style"
+    StyleList:
+      description: bounded styles page
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                      - next_cursor
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Style"
+                      next_cursor:
+                        type:
+                          - string
+                          - "null"
+    SearchResults:
+      description: search results
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SearchResult"
+    SemanticWorkResults:
+      description: public semantic work results
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SemanticWork"
+    SemanticCharacterResults:
+      description: public semantic character results
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SemanticCharacter"
+    SemanticStyleResults:
+      description: public semantic style results
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SemanticStyle"
+    SemanticPromptTermResults:
+      description: public semantic Prompt-term results
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SemanticPromptTerm"
+    CatalogBaseModelPage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogSourceSuccess"
+          examples:
+            empty:
+              value: &a1
+                status: ok
+                message: null
+                results: []
+                page: 1
+                page_size: 20
+                total_count: 0
+    CatalogGenerationModelPage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogGenerationModelPage"
+          examples:
+            empty:
+              value: *a1
+    CatalogLoraPage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogLoraPage"
+          examples:
+            empty:
+              value: *a1
+    CatalogWorkPage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogWorkPage"
+          examples:
+            empty:
+              value: *a1
+    CatalogCharacterPage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogCharacterPage"
+          examples:
+            empty:
+              value: *a1
+    CatalogStylePage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogStylePage"
+          examples:
+            empty:
+              value: *a1
+    CatalogPromptTermPage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogPromptTermPage"
+          examples:
+            empty:
+              value: *a1
+    CatalogArtistPromptStringPage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogArtistPromptStringPage"
+          examples:
+            empty:
+              value: *a1
+    CatalogComfyuiInstancePage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogSourceSuccess"
+          examples:
+            empty:
+              value: *a1
+    CatalogComfyuiTemplatePage:
+      description: Common successful Catalog response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogComfyuiTemplatePage"
+          examples:
+            empty:
+              value: *a1
+    E422CatalogRequest:
+      description: Catalog request is invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E422CatalogRequest"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Catalog request is invalid.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E404CatalogRef:
+      description: Catalog record was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E404CatalogRef"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Catalog record was not found.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E409CatalogResourceUnavailable:
+      description: Catalog record cannot be returned.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409CatalogResourceUnavailable"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Catalog record cannot be returned.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E502CatalogDependencyUnavailable:
+      description: Catalog dependency is unavailable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E502CatalogDependencyUnavailable"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Catalog dependency is unavailable.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E503CatalogIndexOrDatabase:
+      description: Catalog database is busy.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E503CatalogIndexOrDatabase"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Catalog database is busy.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E503CatalogDatabaseBusy:
+      description: Catalog database is busy.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E503CatalogDatabaseBusy"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Catalog database is busy.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E504CatalogDependencyTimeout:
+      description: Catalog dependency timed out.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E504CatalogDependencyTimeout"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Catalog dependency timed out.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E500CatalogInternal:
+      description: Catalog query failed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E500CatalogInternal"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Catalog query failed.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    SemanticDiscovery:
+      description: Frozen internal Catalog operation discovery document
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/InternalSemanticDiscovery"
+          examples:
+            snapshot:
+              value:
+                openapi: 3.1.0
+                paths: {}
+    SourceDiscovery:
+      description: Frozen internal Host Source operation discovery document
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/InternalSourceDiscovery"
+          examples:
+            snapshot:
+              value:
+                openapi: 3.1.0
+                paths: {}
+    SourceInstance:
+      description: Common successful Host Source instance response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogSourceSuccess"
+    SourceTemplateBundle:
+      description: Common successful Host Source template bundle response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CatalogSourceSuccess"
+    E422SourceRequest:
+      description: Source request is invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E422SourceRequest"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Source request is invalid.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E404SourceInstance:
+      description: ComfyUI instance was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E404SourceInstance"
+          examples:
+            failure:
+              value:
+                status: error
+                message: ComfyUI instance was not found.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E404SourceTemplate:
+      description: ComfyUI template was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E404SourceTemplate"
+          examples:
+            failure:
+              value:
+                status: error
+                message: ComfyUI template was not found.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E409SourceTemplateUnavailable:
+      description: ComfyUI template data is unavailable.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409SourceTemplateUnavailable"
+          examples:
+            failure:
+              value:
+                status: error
+                message: ComfyUI template data is unavailable.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E500SourceCredentialOrInternal:
+      description: Source read failed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E500SourceCredentialOrInternal"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Source read failed.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E500SourceInternal:
+      description: Source read failed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E500SourceInternal"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Source read failed.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    E503SourceDatabaseBusy:
+      description: Source catalog is busy.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E503SourceDatabaseBusy"
+          examples:
+            failure:
+              value:
+                status: error
+                message: Source catalog is busy.
+                results: []
+                page: 1
+                page_size: 0
+                total_count: 0
+    ManageItemList:
+      description: bounded management catalog page with total-count pagination
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                      - total_count
+                      - page
+                      - page_size
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/ManageItem"
+                      total_count:
+                        type: integer
+                        minimum: 0
+                      page:
+                        type: integer
+                        minimum: 1
+                      page_size:
+                        type: integer
+                        minimum: 1
+                        maximum: 100
+    ManageItemDetail:
+      description: management object detail snapshot
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ManageItemDetail"
+    ManageItemWriteEnvelope:
+      description: catalog management write result
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/CatalogManagementRecord"
+    GenerationResourceOptionsEnvelope:
+      description: configured generation resource file-attribute suggestions
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/GenerationResourceOptions"
+    PromptTermOptionsEnvelope:
+      description: supported Prompt Tag categories
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/PromptTermOptions"
+    PromptTermEnvelope:
+      description: Prompt Tag record
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/PromptTerm"
+    PromptTermListEnvelope:
+      description: Prompt Tag page
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/PromptTermPage"
+    PromptTermDeleteEnvelope:
+      description: deleted Prompt Tag record
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/PromptTermDeleteResult"
+    PromptTermWriteConflict:
+      description: Prompt Tag canonical_tag already exists
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409DuplicateResource"
+    BaseModelOne:
+      description: base model
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/BaseModel"
+    BaseModelList:
+      description: base model page
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - items
+                      - page
+                      - page_size
+                      - total_count
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/BaseModel"
+                      page:
+                        type: integer
+                        minimum: 1
+                      page_size:
+                        type: integer
+                        minimum: 1
+                        maximum: 100
+                      total_count:
+                        type: integer
+                        minimum: 0
+    BaseModelDeleteImpact:
+      description: base model deletion impact
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Envelope"
+    DeleteBaseModel:
+      description: deleted base model; cleanup_warning=true means post-commit media cleanup needs attention. cleanup_failures records durable queue audit evidence when removal and enqueue both fail unless audit_error is present
+      which explicitly means that audit persistence failed: null
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/BaseModelDeleteResult"
+    ModelEnvelope:
+      description: generation model
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/Model"
+    ModelListEnvelope:
+      description: generation model page
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ModelPage"
+    LoraEnvelope:
+      description: generation model LoRA
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/Lora"
+    LoraListEnvelope:
+      description: generation model LoRA page
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/LoraPage"
+    ArtistPromptStringEnvelope:
+      description: artist prompt string
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ArtistPromptString"
+    ArtistPromptStringListEnvelope:
+      description: artist prompt string page
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ArtistPromptStringPage"
+    ComfyuiInstanceEnvelope:
+      description: ComfyUI instance without credential plaintext or ciphertext
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ComfyuiInstance"
+    ComfyuiInstanceListEnvelope:
+      description: ComfyUI instance page without credentials
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ComfyuiInstancePage"
+    ComfyuiInstanceDeleteImpactEnvelope:
+      description: ComfyUI instance deletion impact
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ComfyuiInstanceDeleteImpact"
+    ComfyuiInstanceDeleteEnvelope:
+      description: ComfyUI instance deletion result
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ComfyuiInstanceDeleteResult"
+    ComfyuiTemplateEnvelope:
+      description: ComfyUI template
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ComfyuiTemplate"
+    ComfyuiTemplateListEnvelope:
+      description: ComfyUI template page
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/ComfyuiTemplatePage"
+    DeleteImpactEnvelope:
+      description: generation model deletion impact
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/BaseModelDeleteImpact"
+    DeleteEnvelope:
+      description: generation model deletion result
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/BaseModelDeleteResult"
+    Validation:
+      description: VALIDATION_ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E422"
+    WriteForbidden:
+      description: WRITE_FORBIDDEN
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E403Write"
+    NotFound:
+      description: NOT_FOUND
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E404"
+    Conflict:
+      description: DUPLICATE_RESOURCE、RELATION_CONFLICT 或 DELETE_IMPACT_STALE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409ModelConflict"
+    ConflictItem:
+      description: ITEM_UNAVAILABLE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409Item"
+    ModelWriteConflict:
+      description: DUPLICATE_RESOURCE 或 RELATION_CONFLICT
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409ModelWriteConflict"
+    LoraWriteConflict:
+      description: DUPLICATE_RESOURCE 或 RELATION_CONFLICT
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409LoraWriteConflict"
+    ArtistPromptStringWriteConflict:
+      description: DUPLICATE_RESOURCE 或 RELATION_CONFLICT
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409ArtistPromptStringWriteConflict"
+    BaseModelDeleteConflict:
+      description: RELATION_CONFLICT 或 DELETE_IMPACT_STALE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409BaseModelDeleteConflict"
+    DeleteConflict:
+      description: DELETE_IMPACT_STALE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409DeleteImpactStale"
+    InternalError:
+      description: INTERNAL_ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E500Internal"
+    ManagementWriteInternal:
+      description: A management write returns MODEL_PROTOCOL_ERROR or INTERNAL_ERROR in its 500 response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E500ManagementWrite"
+    ManagementWriteEmbeddingUnavailable:
+      description: A management write returns EMBEDDING_UNAVAILABLE in its 502 response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E502ManagementWrite"
+    ManagementWriteBusyOrRateLimited:
+      description: A management write returns MODEL_RATE_LIMITED or DATABASE_BUSY in its 503 response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E503ManagementWrite"
+    ManagementWriteEmbeddingTimeout:
+      description: A management write returns EMBEDDING_TIMEOUT in its 504 response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E504ManagementWrite"
+    ComfyuiError:
+      description: COMFYUI_CREDENTIAL_ERROR or INTERNAL_ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E500Comfyui"
+    ComfyuiConflict:
+      description: DUPLICATE_RESOURCE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409ComfyuiConflict"
+    DatabaseBusy:
+      description: DATABASE_BUSY
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E503Busy"
+    ImageOne:
+      description: image
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/Image"
+    MediaSnapshot:
+      description: item media and stored cover path snapshot
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    $ref: "#/components/schemas/MediaSnapshot"
+    BatchResult:
+      description: atomically deleted items and post-commit cleanup warnings
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Envelope"
+              - properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - deleted
+                      - cleanup_warnings
+                    properties:
+                      deleted:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/BatchIdentity"
+                      cleanup_warnings:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/BatchIdentity"
+    E403Write:
+      description: WRITE_FORBIDDEN
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E403Write"
+    E400Cursor:
+      description: invalid or mismatched management cursor
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E400Cursor"
+    E404:
+      description: NOT_FOUND
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E404"
+    E409DuplicateResource:
+      description: DUPLICATE_RESOURCE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409DuplicateResource"
+    E409DeleteImpactStale:
+      description: DELETE_IMPACT_STALE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409DeleteImpactStale"
+    E409Item:
+      description: ITEM_UNAVAILABLE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409Item"
+    E409UploadItem:
+      description: ITEM_UNAVAILABLE 或 DUPLICATE_RESOURCE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E409UploadItem"
+    E413:
+      description: UPLOAD_TOO_LARGE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E413"
+    E415:
+      description: UPLOAD_TYPE_UNSUPPORTED
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E415"
+    E422:
+      description: VALIDATION_ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E422"
+    E500Internal:
+      description: INTERNAL_ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E500Internal"
+    E500FileOrInternal:
+      description: file/internal error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E500FileOrInternal"
+    E503Busy:
+      description: DATABASE_BUSY
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E503Busy"
+    E422Semantic:
+      description: semantic query validation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E422Semantic"
+    E502Semantic:
+      description: semantic model unavailable
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E502Semantic"
+    E503Semantic:
+      description: semantic index/rate/database busy
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E503Semantic"
+    E503StyleSemantic:
+      description: Style rate/database busy without a vector-index readiness code
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E503StyleSemantic"
+    E504Semantic:
+      description: semantic model timeout
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E504Semantic"
+    E500Semantic:
+      description: semantic model protocol/internal error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/E500Semantic"

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "detail-result.schema.json",
+  "title": "详情采集结果",
+  "oneOf": [
+    { "$ref": "#/$defs/work" },
+    { "$ref": "#/$defs/character" },
+    { "$ref": "#/$defs/style" }
+  ],
+  "$defs": {
+    "work": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "source_url", "name", "aliases", "fetched_at"],
+      "properties": {
+        "identity": { "$ref": "common.schema.json#/$defs/workIdentity" },
+        "source_url": { "$ref": "common.schema.json#/$defs/sourceUrl" },
+        "name": { "$ref": "common.schema.json#/$defs/nonEmptyText" },
+        "aliases": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/nonEmptyText" }, "uniqueItems": true },
+        "category_name": { "type": ["string", "null"], "minLength": 1 },
+        "source_version": { "type": ["string", "null"], "minLength": 1 },
+        "source_updated_at": { "anyOf": [{ "$ref": "common.schema.json#/$defs/utcTimestamp" }, { "type": "null" }] },
+        "fetched_at": { "$ref": "common.schema.json#/$defs/utcTimestamp" },
+        "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+      }
+    },
+    "character": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "source_url", "name", "aliases", "prompt_text", "image_results", "fetched_at"],
+      "properties": {
+        "identity": { "$ref": "common.schema.json#/$defs/characterIdentity" },
+        "source_url": { "$ref": "common.schema.json#/$defs/sourceUrl" },
+        "name": { "$ref": "common.schema.json#/$defs/nonEmptyText" },
+        "aliases": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/nonEmptyText" }, "uniqueItems": true },
+        "prompt_text": { "$ref": "common.schema.json#/$defs/nonEmptyText" },
+        "source_version": { "type": ["string", "null"], "minLength": 1 },
+        "source_updated_at": { "anyOf": [{ "$ref": "common.schema.json#/$defs/utcTimestamp" }, { "type": "null" }] },
+        "image_results": { "type": "array", "items": { "$ref": "image-result.schema.json" } },
+        "fetched_at": { "$ref": "common.schema.json#/$defs/utcTimestamp" },
+        "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+      }
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "base_model_id", "source_url", "name", "aliases", "prompt_text", "image_results", "fetched_at"],
+      "properties": {
+        "identity": { "$ref": "common.schema.json#/$defs/styleIdentity" },
+        "base_model_id": { "type": "integer", "minimum": 1 },
+        "source_url": { "$ref": "common.schema.json#/$defs/sourceUrl" },
+        "name": { "$ref": "common.schema.json#/$defs/nonEmptyText" },
+        "aliases": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/nonEmptyText" }, "uniqueItems": true },
+        "prompt_text": { "$ref": "common.schema.json#/$defs/nonEmptyText" },
+        "style_description": { "type": ["string", "null"], "minLength": 1 },
+        "image_results": { "type": "array", "items": { "$ref": "image-result.schema.json" } },
+        "fetched_at": { "$ref": "common.schema.json#/$defs/utcTimestamp" },
+        "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+      }
+    }
+  }
+}

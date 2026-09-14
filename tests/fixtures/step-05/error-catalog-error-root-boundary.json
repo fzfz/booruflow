@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "errors": {
+    "ROOT_ERROR_ONEOF": {
+      "http_status": 400,
+      "operationIds": ["inspectErrorRootBoundary"]
+    },
+    "ROOT_ERROR_REF": {
+      "http_status": 400,
+      "operationIds": ["inspectErrorRootBoundary"]
+    },
+    "ROOT_INLINE_ALLOF": {
+      "http_status": 400,
+      "operationIds": ["inspectErrorRootBoundary"]
+    },
+    "ROOT_REF_SIBLING": {
+      "http_status": 400,
+      "operationIds": ["inspectErrorRootBoundary"]
+    }
+  }
+}

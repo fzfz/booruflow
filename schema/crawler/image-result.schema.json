@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"image-result.schema.json","title":"图片采集结果","type":"object","additionalProperties":false,
+  "required":["owner_identity","sort_order","status"],
+  "properties":{
+    "owner_identity":{"$ref":"common.schema.json#/$defs/imageOwnerIdentity"},"source_id":{"type":["string","null"],"minLength":1,"maxLength":256},"source_url":{"anyOf":[{"$ref":"common.schema.json#/$defs/sourceUrl"},{"type":"null"}]},"content_hash":{"anyOf":[{"$ref":"common.schema.json#/$defs/sha256"},{"type":"null"}]},"canonical_image_ref":{"type":["string","null"],"pattern":"^[A-Za-z0-9._:-]{1,256}$"},"local_path":{"anyOf":[{"$ref":"common.schema.json#/$defs/relativeSafePath"},{"type":"null"}]},"sort_order":{"type":"integer","minimum":0},"status":{"type":"string","enum":["downloaded","existing","duplicate","failed","skipped"]},"error":{"type":["object","null"],"additionalProperties":false,"required":["code","message"],"properties":{"code":{"$ref":"common.schema.json#/$defs/errorCode"},"message":{"$ref":"common.schema.json#/$defs/nonEmptyText"}}},"reason":{"type":["string","null"],"maxLength":512},"extensions":{"$ref":"common.schema.json#/$defs/extensions"}
+  },
+  "allOf":[
+    {"if":{"properties":{"status":{"enum":["downloaded","existing"]}},"required":["status"]},"then":{"required":["source_url","content_hash"],"properties":{"source_url":{"$ref":"common.schema.json#/$defs/sourceUrl"},"content_hash":{"$ref":"common.schema.json#/$defs/sha256"}}}},
+    {"if":{"properties":{"status":{"const":"failed"}},"required":["status"]},"then":{"required":["error"]}},
+    {"if":{"properties":{"status":{"const":"duplicate"}},"required":["status"]},"then":{"anyOf":[{"required":["content_hash"],"properties":{"content_hash":{"$ref":"common.schema.json#/$defs/sha256"}}},{"required":["canonical_image_ref"],"properties":{"canonical_image_ref":{"type":"string","pattern":"^[A-Za-z0-9._:-]{1,256}$"}}}]}},
+    {"if":{"properties":{"status":{"const":"skipped"}},"required":["status"]},"then":{"required":["reason"]}}
+  ],
+  "description":"导入层额外要求同一详情 image_results 中 sort_order 唯一，非空 source_url 唯一。"
+}

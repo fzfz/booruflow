@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fzfz/booruflow/blob/main/schema/release/backup-version.schema.json",
+  "title": "BooruFlow backup release version",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["metadata_version", "backup", "tag", "repository_https"],
+  "properties": {
+    "metadata_version": { "type": "integer", "const": 1 },
+    "backup": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$" },
+    "tag": { "type": "string", "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "repository_https": { "type": "string", "const": "https://github.com/fzfz/booruflow.git" }
+  }
+}

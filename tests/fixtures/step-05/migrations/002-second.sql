@@ -1,0 +1,1 @@
+CREATE TABLE another_sample (id INTEGER PRIMARY KEY);

@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"file-cleanup.schema.json",
+  "title":"提交后文件清理队列",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["queue_version","updated_at","entries"],
+  "properties":{
+    "queue_version":{"const":1},
+    "updated_at":{"$ref":"crawler/common.schema.json#/$defs/utcTimestamp"},
+    "entries":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["path","reason","queued_at","attempts"],"properties":{"path":{"$ref":"crawler/common.schema.json#/$defs/relativeSafePath"},"reason":{"type":"string","enum":["image_delete","owner_delete","orphan_cleanup"]},"queued_at":{"$ref":"crawler/common.schema.json#/$defs/utcTimestamp"},"attempts":{"type":"integer","minimum":0},"last_error":{"type":["string","null"],"maxLength":1024}}},"uniqueItems":true},
+    "audit_failures":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["path","reason","occurred_at","remove_error","enqueue_error"],"properties":{"path":{"$ref":"crawler/common.schema.json#/$defs/relativeSafePath"},"reason":{"type":"string","enum":["image_delete","owner_delete","orphan_cleanup"]},"occurred_at":{"$ref":"crawler/common.schema.json#/$defs/utcTimestamp"},"remove_error":{"type":"string","minLength":1,"maxLength":1024},"enqueue_error":{"type":"string","minLength":1,"maxLength":1024}}},"uniqueItems":true}
+  },
+  "description":"path 相对 data/media/images；实现层解析后确认仍位于该根目录。"
+}

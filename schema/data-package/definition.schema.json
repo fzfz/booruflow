@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "format_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "application_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "database_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "rows_per_chunk": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_files": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_file_bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_total_bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tables": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "empty_tables": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "initialization_tables": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "image_owners": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "format_version",
+    "application_version",
+    "database_version",
+    "rows_per_chunk",
+    "max_files",
+    "max_file_bytes",
+    "max_total_bytes",
+    "tables",
+    "empty_tables",
+    "initialization_tables",
+    "image_owners"
+  ],
+  "additionalProperties": false
+}

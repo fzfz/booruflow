@@ -1,0 +1,88 @@
+openapi: 3.1.0
+info:
+  title: Error root boundary fixture
+  version: 1.0.0
+paths:
+  /api/error-root-boundary:
+    get:
+      operationId: inspectErrorRootBoundary
+      responses:
+        '400':
+          description: Error root boundary
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/RootErrorReference'
+                  - $ref: '#/components/schemas/RootErrorReference'
+                    properties:
+                      error:
+                        type: object
+                        properties:
+                          code:
+                            const: ROOT_REF_SIBLING
+                  - allOf:
+                      - type: object
+                        properties:
+                          error:
+                            type: object
+                            properties:
+                              code:
+                                const: ROOT_INLINE_ALLOF
+                  - type: object
+                    properties:
+                      meta:
+                        type: object
+                        properties:
+                          error:
+                            type: object
+                            properties:
+                              code:
+                                const: NESTED_META_MUST_NOT_COUNT
+                      details:
+                        type: object
+                        properties:
+                          error:
+                            type: object
+                            properties:
+                              code:
+                                const: NESTED_DETAILS_MUST_NOT_COUNT
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        error:
+                          type: object
+                          properties:
+                            code:
+                              const: NESTED_ITEMS_MUST_NOT_COUNT
+                  - type: object
+                    $defs:
+                      NestedError:
+                        type: object
+                        properties:
+                          error:
+                            type: object
+                            properties:
+                              code:
+                                const: NESTED_DEFS_MUST_NOT_COUNT
+components:
+  parameters: {}
+  responses: {}
+  schemas:
+    RootErrorReference:
+      allOf:
+        - type: object
+          properties:
+            error:
+              oneOf:
+                - $ref: '#/components/schemas/RootErrorCode'
+                - type: object
+                  properties:
+                    code:
+                      const: ROOT_ERROR_ONEOF
+    RootErrorCode:
+      type: object
+      properties:
+        code:
+          const: ROOT_ERROR_REF

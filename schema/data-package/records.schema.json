@@ -1,0 +1,682 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "generation_base_models": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "works": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_updated_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "name_normalized": {
+          "type": "string"
+        },
+        "aliases_json": {
+          "type": "string"
+        },
+        "category_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_available": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "cover_media_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "source_id",
+        "source_url",
+        "source_version",
+        "source_updated_at",
+        "name",
+        "name_normalized",
+        "aliases_json",
+        "category_name",
+        "is_available",
+        "created_at",
+        "updated_at",
+        "cover_media_path"
+      ],
+      "additionalProperties": false
+    },
+    "characters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "work_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_updated_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "name_normalized": {
+          "type": "string"
+        },
+        "aliases_json": {
+          "type": "string"
+        },
+        "prompt_text": {
+          "type": "string"
+        },
+        "is_available": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "cover_media_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "work_id",
+        "source_id",
+        "source_url",
+        "source_version",
+        "source_updated_at",
+        "name",
+        "name_normalized",
+        "aliases_json",
+        "prompt_text",
+        "is_available",
+        "created_at",
+        "updated_at",
+        "cover_media_path"
+      ],
+      "additionalProperties": false
+    },
+    "styles": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "base_model_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "type": "string"
+        },
+        "aliases_json": {
+          "type": "string"
+        },
+        "prompt_text": {
+          "type": "string"
+        },
+        "style_description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cover_media_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "base_model_id",
+        "name",
+        "aliases_json",
+        "prompt_text",
+        "style_description",
+        "cover_media_path"
+      ],
+      "additionalProperties": false
+    },
+    "prompt_terms": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "canonical_tag": {
+          "type": "string"
+        },
+        "category": {
+          "type": "integer"
+        },
+        "post_count": {
+          "type": "integer"
+        },
+        "aliases_json": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "canonical_tag",
+        "category",
+        "post_count",
+        "aliases_json",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "generation_models": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "base_model_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "file_name": {
+          "type": "string"
+        },
+        "file_format": {
+          "type": "string"
+        },
+        "precision_or_quantization": {
+          "type": "string"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "release_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "published_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "skill_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cover_media_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "base_model_id",
+        "file_name",
+        "file_format",
+        "precision_or_quantization",
+        "author",
+        "version",
+        "release_url",
+        "published_at",
+        "description",
+        "usage",
+        "skill_name",
+        "cover_media_path",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "generation_loras": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "base_model_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "model_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "file_name": {
+          "type": "string"
+        },
+        "file_format": {
+          "type": "string"
+        },
+        "precision_or_quantization": {
+          "type": "string"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "release_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "cover_media_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "trigger_words_json": {
+          "type": "string"
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "base_model_id",
+        "model_id",
+        "file_name",
+        "file_format",
+        "precision_or_quantization",
+        "author",
+        "version",
+        "release_url",
+        "description",
+        "usage",
+        "cover_media_path",
+        "created_at",
+        "updated_at",
+        "trigger_words_json",
+        "weight"
+      ],
+      "additionalProperties": false
+    },
+    "artist_prompt_strings": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "artist_string": {
+          "type": "string"
+        },
+        "base_model_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "cover_media_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "artist_string",
+        "base_model_id",
+        "cover_media_path",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "artist_prompt_string_styles": {
+      "type": "object",
+      "properties": {
+        "artist_prompt_string_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "style_id": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "artist_prompt_string_id",
+        "style_id"
+      ],
+      "additionalProperties": false
+    },
+    "comfyui_instances": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "credential_type": {
+          "type": "string"
+        },
+        "credential_ciphertext": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_enabled": {
+          "type": "integer"
+        },
+        "is_valid": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url",
+        "credential_type",
+        "credential_ciphertext",
+        "is_enabled",
+        "is_valid",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "comfyui_templates": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "base_model_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "model_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lora_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "template_type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "template_json": {
+          "type": "string"
+        },
+        "cover_media_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "base_model_id",
+        "model_id",
+        "lora_id",
+        "template_type",
+        "title",
+        "template_json",
+        "cover_media_path",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "item_images": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "owner_kind": {
+          "type": "string"
+        },
+        "owner_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "content_hash": {
+          "type": "string"
+        },
+        "media_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sort_order": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "owner_kind",
+        "owner_id",
+        "source_id",
+        "source_url",
+        "content_hash",
+        "media_path",
+        "sort_order",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

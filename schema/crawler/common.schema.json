@@ -1,0 +1,23 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"common.schema.json","title":"采集器共享定义",
+  "$defs":{
+    "utcTimestamp":{"type":"string","format":"date-time","pattern":"Z$"},
+    "nonEmptyText":{"type":"string","minLength":1,"maxLength":16000,"pattern":"^[^\\u0000-\\u001F\\u007F]*$","description":"导入层须 NFC 规范化并拒绝控制字符。"},
+    "normalizedName":{"type":"string","minLength":1,"maxLength":512,"pattern":"^[^\\u0000-\\u001F\\u007F]*$"},
+    "sourceUrl":{"type":"string","format":"uri","pattern":"^https?://","maxLength":4096,"description":"仅允许明确配置来源边界内的 HTTP/HTTPS 地址。"},
+    "safeRelativePath":{"type":"string","minLength":1,"maxLength":1024,"pattern":"^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9][A-Za-z0-9._/-]*$"},
+    "relativeSafePath":{"$ref":"#/$defs/safeRelativePath"},
+    "rawEvidencePath":{"allOf":[{"$ref":"#/$defs/safeRelativePath"},{"pattern":"^data/raw/"}]},
+    "sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "extensions":{"type":"object","additionalProperties":true,"description":"隔离的额外字段，不参与正式导入。"},
+    "workIdentity":{"type":"object","additionalProperties":false,"required":["kind","normalized_name"],"properties":{"kind":{"const":"work"},"source_id":{"type":["string","null"],"minLength":1,"maxLength":256},"parent_identity":{"type":["string","null"],"const":"root"},"normalized_name":{"$ref":"#/$defs/normalizedName"}}},
+    "characterIdentity":{"type":"object","additionalProperties":false,"required":["kind","parent_work_identity","normalized_name"],"properties":{"kind":{"const":"character"},"source_id":{"type":["string","null"],"minLength":1,"maxLength":256},"parent_work_identity":{"$ref":"#/$defs/workIdentity"},"normalized_name":{"$ref":"#/$defs/normalizedName"}}},
+    "styleIdentity":{"type":"object","additionalProperties":false,"required":["kind","base_model_id","normalized_name"],"properties":{"kind":{"const":"style"},"base_model_id":{"type":"integer","minimum":1},"source_id":{"type":["string","null"],"minLength":1,"maxLength":256},"parent_identity":{"type":["string","null"],"const":"root"},"normalized_name":{"$ref":"#/$defs/normalizedName"}}},
+    "identity":{"oneOf":[{"$ref":"#/$defs/workIdentity"},{"$ref":"#/$defs/characterIdentity"},{"$ref":"#/$defs/styleIdentity"}]},
+    "imageOwnerIdentity":{"oneOf":[{"$ref":"#/$defs/characterIdentity"},{"$ref":"#/$defs/styleIdentity"}]},
+    "errorCode":{"type":"string","enum":["HTTP_403","HTTP_429","CAPTCHA_DETECTED","AUTH_EXPIRED","NETWORK_ERROR","HTTP_5XX","TIMEOUT","DETAIL_PARSE_FAILED","IMAGE_DOWNLOAD_FAILED","STRUCTURE_CHANGED","MISSING_REQUIRED_FIELD","INVALID_FIELD","HIDDEN_CONTENT","CONTROL_CHARACTER","SCRIPT_CONTENT","PAGE_INSTRUCTION","ENCODED_CONTENT","STATE_VERSION_INCOMPATIBLE","RUN_TIME_LIMIT","PROCESS_INTERRUPTED","PERSIST_FAILED","THREE_CONSECUTIVE_OBJECT_FAILURES","SOURCE_MAPPING_MISMATCH","UNKNOWN"]},
+    "detailTask":{"type":"object","additionalProperties":false,"required":["identity","detail_url"],"properties":{"identity":{"$ref":"#/$defs/identity"},"detail_url":{"$ref":"#/$defs/sourceUrl"},"attempts":{"type":"integer","minimum":0,"maximum":2},"extensions":{"$ref":"#/$defs/extensions"}}},
+    "imageTask":{"type":"object","additionalProperties":false,"required":["owner_identity","source_url","sort_order"],"properties":{"owner_identity":{"$ref":"#/$defs/imageOwnerIdentity"},"source_url":{"$ref":"#/$defs/sourceUrl"},"sort_order":{"type":"integer","minimum":0}}},
+    "persistTask":{"type":"object","additionalProperties":false,"required":["identity","detail_path"],"properties":{"identity":{"$ref":"#/$defs/identity"},"detail_path":{"$ref":"#/$defs/rawEvidencePath"}}}
+  }
+}

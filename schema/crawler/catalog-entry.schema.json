@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog-entry.schema.json",
+  "title": "目录发现条目",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["identity", "source_url", "name", "discovered_at"],
+  "properties": {
+    "identity": {
+      "$ref": "common.schema.json#/$defs/identity"
+    },
+    "source_url": { "$ref": "common.schema.json#/$defs/sourceUrl" },
+    "name": {
+      "$ref": "common.schema.json#/$defs/nonEmptyText"
+    },
+    "category_name": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "source_version": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "source_updated_at": {
+      "anyOf": [
+        { "$ref": "common.schema.json#/$defs/utcTimestamp" },
+        { "type": "null" }
+      ]
+    },
+    "discovered_at": {
+      "$ref": "common.schema.json#/$defs/utcTimestamp"
+    },
+    "extensions": {
+      "$ref": "common.schema.json#/$defs/extensions"
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"identity": {"$ref": "common.schema.json#/$defs/characterIdentity"}}, "required": ["identity"]},
+      "then": {"not": {"required": ["category_name"]}}
+    }
+  ],
+  "description": "作品 category_name 映射 works.category_name；角色不含分类；画风 category_name 仅为来源证据，不写入 styles。"
+}

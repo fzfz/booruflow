@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "source_name": "fixed-local-source",
+  "source_base_url": "https://source.example",
+  "unknown": true
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "../../schema/release/release-config.schema.json",
+  "config_version": 1,
+  "project_name": "BooruFlow",
+  "repository_https": "https://github.com/fzfz/booruflow.git",
+  "default_tag": "v0.88.0",
+  "requirements": {
+    "node_minimum": "24.21.0",
+    "npm_minimum": "10.9.3",
+    "git_minimum": "2.55.0",
+    "node_download_url": "https://nodejs.org/en/download",
+    "git_download_url": "https://git-scm.com/downloads"
+  },
+  "runtime": {
+    "startup_timeout_seconds": 30,
+    "stop_timeout_seconds": 20,
+    "poll_interval_seconds": 1,
+    "pid_file": "runtime/run/app.pid",
+    "shutdown_file": "runtime/run/shutdown.request",
+    "backup_version_directory": "data/recovery",
+    "log_directory": "data/diagnostics",
+    "data_archive_max_bytes": 10737418240,
+    "data_archive_max_entries": 100000
+  },
+  "release_artifacts": {
+    "windows_installer": "install.bat",
+    "macos_installer": "install.sh"
+  }
+}

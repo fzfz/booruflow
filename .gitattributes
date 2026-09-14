@@ -1,0 +1,16 @@
+* text=auto
+*.sh text eol=lf
+*.bat text eol=crlf
+*.mjs text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sql text eol=lf
+*.md text eol=lf
+*.svg text eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+# Preserve published migration bytes.
+schema/database/018-comfyui-template-builtin-catalog.sql whitespace=-blank-at-eol
+schema/database/019-comfyui-template-runtime-corrections.sql whitespace=-blank-at-eol

@@ -1,0 +1,23 @@
+{
+  "fixture_id": "step-04-local-catalog-v1",
+  "origin": "repository-local",
+  "network_access": false,
+  "catalog": [
+    {
+      "kind": "work",
+      "id": "fixture-work-archive-room",
+      "name": "档案室"
+    },
+    {
+      "kind": "character",
+      "id": "fixture-character-ink-keeper",
+      "name": "墨守人",
+      "work_id": "fixture-work-archive-room"
+    },
+    {
+      "kind": "style",
+      "id": "fixture-style-warm-paper",
+      "name": "暖白纸张"
+    }
+  ]
+}

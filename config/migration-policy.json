@@ -1,0 +1,19 @@
+{
+  "structural_with_offline_handler": [
+    5,
+    15,
+    36,
+    37
+  ],
+  "historical_seed_versions": [
+    18,
+    19,
+    20,
+    21,
+    23
+  ],
+  "supported_upgrade_versions": [
+    39,
+    40
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crawl-report.schema.json",
+  "title": "采集报告",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["report_version", "source_name", "started_at", "finished_at", "status", "counts", "errors", "structure_diffs", "deduplications"],
+  "properties": {
+    "report_version": { "const": 1 },
+    "source_name": { "$ref": "common.schema.json#/$defs/nonEmptyText" },
+    "started_at": { "$ref": "common.schema.json#/$defs/utcTimestamp" },
+    "finished_at": { "$ref": "common.schema.json#/$defs/utcTimestamp" },
+    "status": { "type": "string", "enum": ["completed", "paused", "failed"] },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discovered", "fetched", "created", "updated", "duplicates", "skipped", "skipped_existing", "failed", "pending", "images_downloaded", "images_skipped", "images_failed"],
+      "properties": {
+        "discovered": { "type": "integer", "minimum": 0 },
+        "fetched": { "type": "integer", "minimum": 0 },
+        "created": { "type": "integer", "minimum": 0 },
+        "updated": { "type": "integer", "minimum": 0 },
+        "duplicates": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "skipped_existing": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "pending": { "type": "integer", "minimum": 0 },
+        "images_downloaded": { "type": "integer", "minimum": 0 },
+        "images_skipped": { "type": "integer", "minimum": 0 },
+        "images_failed": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "crawl-error.schema.json" }
+    },
+    "structure_diffs": {
+      "type": "array",
+      "items": { "$ref": "structure-diff.schema.json" }
+    },
+    "deduplications": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/deduplication" }
+    },
+    "extensions": {
+      "$ref": "common.schema.json#/$defs/extensions"
+    }
+  },
+  "$defs": {
+    "imageIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner_identity"],
+      "properties": {
+        "owner_identity": { "$ref": "common.schema.json#/$defs/imageOwnerIdentity" },
+        "source_url": { "$ref": "common.schema.json#/$defs/sourceUrl" },
+        "content_hash": { "$ref": "common.schema.json#/$defs/sha256" }
+      },
+      "anyOf": [
+        { "required": ["source_url"] },
+        { "required": ["content_hash"] }
+      ]
+    },
+    "workDeduplication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "incoming_identity", "canonical_identity", "reason"],
+      "properties": {
+        "kind": { "const": "work" },
+        "incoming_identity": { "$ref": "common.schema.json#/$defs/workIdentity" },
+        "canonical_identity": { "$ref": "common.schema.json#/$defs/workIdentity" },
+        "reason": { "type": "string", "enum": ["source_id", "normalized_name"] },
+        "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+      }
+    },
+    "characterDeduplication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "incoming_identity", "canonical_identity", "reason"],
+      "properties": {
+        "kind": { "const": "character" },
+        "incoming_identity": { "$ref": "common.schema.json#/$defs/characterIdentity" },
+        "canonical_identity": { "$ref": "common.schema.json#/$defs/characterIdentity" },
+        "reason": { "type": "string", "enum": ["source_id", "normalized_name"] },
+        "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+      }
+    },
+    "styleDeduplication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "incoming_identity", "canonical_identity", "reason"],
+      "properties": {
+        "kind": { "const": "style" },
+        "incoming_identity": { "$ref": "common.schema.json#/$defs/styleIdentity" },
+        "canonical_identity": { "$ref": "common.schema.json#/$defs/styleIdentity" },
+        "reason": { "type": "string", "enum": ["source_id", "normalized_name"] },
+        "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+      }
+    },
+    "imageDeduplication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "incoming_image", "canonical_image", "reason"],
+      "properties": {
+        "kind": { "const": "image" },
+        "incoming_image": { "$ref": "#/$defs/imageIdentity" },
+        "canonical_image": { "$ref": "#/$defs/imageIdentity" },
+        "reason": { "type": "string", "enum": ["source_url", "content_hash"] },
+        "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+      }
+    },
+    "deduplication": {
+      "oneOf": [
+        { "$ref": "#/$defs/workDeduplication" },
+        { "$ref": "#/$defs/characterDeduplication" },
+        { "$ref": "#/$defs/styleDeduplication" },
+        { "$ref": "#/$defs/imageDeduplication" }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "completed" } }, "required": ["status"] },
+      "then": { "properties": { "counts": { "properties": { "pending": { "const": 0 } } } } }
+    }
+  ],
+  "description": "导入验证器还须校验 finished_at 不早于 started_at，并与 crawl-state 的 report_path、待办队列保持一致。"
+}

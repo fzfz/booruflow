@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "kind": "character",
+    "source_id": "character-1",
+    "parent_work_identity": {
+      "kind": "work",
+      "source_id": "work-1",
+      "parent_identity": "root",
+      "normalized_name": "雨夜书店"
+    },
+    "normalized_name": "店主"
+  },
+  "source_url": "https://source.example/characters/1",
+  "name": "店主",
+  "aliases": [],
+  "prompt_text": "warm light",
+  "image_results": [
+    {
+      "owner_identity": {
+        "kind": "character",
+        "source_id": "character-2",
+        "parent_work_identity": {
+          "kind": "work",
+          "source_id": "work-1",
+          "parent_identity": "root",
+          "normalized_name": "雨夜书店"
+        },
+        "normalized_name": "访客"
+      },
+      "source_url": "https://source.example/images/1.jpg",
+      "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "local_path": "characters/1.jpg",
+      "sort_order": 0,
+      "status": "downloaded"
+    }
+  ],
+  "fetched_at": "2026-07-26T12:00:00Z"
+}

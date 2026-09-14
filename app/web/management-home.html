@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>管理首页 · BooruFlow</title>
+  <link rel="stylesheet" href="/app/web/assets/management.css">
+</head>
+<body data-page="management-home">
+  <a class="skip-link" href="#management-home-content">跳到管理首页</a>
+  <main class="manage-shell management-home-shell">
+    <nav id="management-navigation" class="management-navigation" data-management-page-id="management-home" aria-label="管理菜单"></nav>
+    <section id="management-home-content" class="management-workspace">
+      <header class="workspace-bar">
+        <div class="breadcrumb"><span>总览</span> / <strong>首页</strong></div>
+      </header>
+      <section class="main-content">
+        <section class="home-view" aria-labelledby="home-title">
+          <header class="home-hero">
+            <div class="home-hero-copy">
+              <p class="home-eyebrow">本机资源管理</p>
+              <h1 id="home-title">把角色、画风、Prompt Tag 与生成资源，整理在一个工作台。</h1>
+              <p class="management-home-purpose">BooruFlow用于维护内容目录、Prompt Tag、文生图模型资源，以及 ComfyUI 实例与 Workflow 模板。搜索、新增和编辑在各自的管理页面中完成。</p>
+            </div>
+            <aside class="home-version" aria-labelledby="home-version-title">
+              <p class="home-version-label" id="home-version-title">当前版本</p>
+              <strong class="home-version-number">v<!-- NOOBAI_APPLICATION_VERSION --></strong>
+              <p class="home-version-description">本机角色、画风与文生图工作流管理应用。</p>
+            </aside>
+          </header>
+          <section class="home-functions" aria-labelledby="home-functions-title">
+            <header class="home-section-heading">
+              <h2 id="home-functions-title">功能介绍</h2>
+              <p>选择管理入口后，进入对应资源的搜索、维护与图片管理。</p>
+            </header>
+            <div id="management-home-groups" class="home-function-grid" aria-label="管理功能入口"></div>
+          </section>
+        </section>
+      </section>
+    </section>
+  </main>
+  <!-- NOOBAI_RUNTIME_CONFIG -->
+  <script type="module" src="/app/web/assets/management-navigation.js"></script>
+  <script type="module" src="/app/web/assets/management-home.js"></script>
+</body>
+</html>

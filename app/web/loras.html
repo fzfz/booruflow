@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LoRA 管理 · 管理</title>
+  <link rel="stylesheet" href="/app/web/assets/management.css">
+</head>
+<body data-page="loras">
+  <a class="skip-link" href="#generation-resource-content">跳到主要内容</a>
+  <main id="generation-resource-content" class="manage-shell">
+    <nav id="management-navigation" class="management-navigation" data-management-page-id="lora-management" data-management-initial-focus="#lora-search" aria-label="管理菜单"></nav>
+    <div class="generation-model-section list-view">
+      <header class="resource-section-heading page-heading">
+        <div class="page-heading-copy"><h1 id="generation-lora-heading">LoRA 管理</h1><p>维护 LoRA 文件、模型关系、触发词与默认权重。</p></div>
+        <button type="button" class="accent-button" data-action="open-lora-create">新增 LoRA</button>
+      </header>
+      <form id="lora-filter-form" class="manage-toolbar" aria-label="LoRA 筛选">
+        <label>关键词<input id="lora-search" type="search" placeholder="搜索文件名、作者、版本、描述、使用说明、触发词" autocomplete="off"></label>
+        <label>底模<select id="lora-filter-base-model"><option value="">全部底模</option></select></label>
+        <label>模型<select id="lora-filter-model"><option value="">全部模型</option></select></label>
+        <label>文件格式<div class="editable-combobox"><input id="lora-filter-file-format" role="combobox" aria-expanded="false" aria-controls="lora-filter-file-format-listbox" aria-autocomplete="list" autocomplete="off" placeholder="全部格式"><div id="lora-filter-file-format-listbox" class="editable-combobox-listbox" role="listbox" hidden></div></div></label>
+        <label>精度或量化<div class="editable-combobox"><input id="lora-filter-precision" role="combobox" aria-expanded="false" aria-controls="lora-filter-precision-listbox" aria-autocomplete="list" autocomplete="off" placeholder="全部精度"><div id="lora-filter-precision-listbox" class="editable-combobox-listbox" role="listbox" hidden></div></div></label>
+        <div class="filter-actions"><button type="submit" class="accent-button">搜索</button><button type="button" class="secondary-button" data-action="reset-filters">重置</button></div>
+      </form>
+      <p id="lora-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入 LoRA……</p>
+      <p id="lora-error" class="state-line error" role="alert" hidden></p>
+      <section id="lora-list" class="manage-list" aria-label="文生图 LoRA 列表"></section>
+      <nav id="lora-pagination" class="manage-pagination" aria-label="文生图 LoRA 分页"></nav>
+    </div>
+  </main>
+
+  <dialog id="lora-editor" class="manage-dialog model-editor" aria-labelledby="lora-editor-title">
+    <div class="dialog-heading"><div><h2 id="lora-editor-title">新增 LoRA</h2><p id="lora-editor-subtitle" class="editor-subtitle"></p></div><button type="button" class="icon-button" data-action="close-lora-editor" aria-label="关闭编辑弹窗">×</button></div>
+    <div class="detail-body">
+      <form id="lora-form">
+        <div class="model-form-grid">
+          <label>底模<select name="base_model_id" required><option value="">请选择底模</option></select></label>
+          <label>关联模型<select name="model_id" required><option value="">请选择模型</option></select></label>
+          <label>文件名<input name="file_name" required autocomplete="off"></label>
+          <label>文件格式<div class="editable-combobox"><input id="lora-file-format" name="file_format" role="combobox" aria-expanded="false" aria-controls="lora-file-format-listbox" aria-autocomplete="list" required autocomplete="off"><div id="lora-file-format-listbox" class="editable-combobox-listbox" role="listbox" hidden></div></div></label>
+          <label>精度或量化<div class="editable-combobox"><input id="lora-precision" name="precision_or_quantization" role="combobox" aria-expanded="false" aria-controls="lora-precision-listbox" aria-autocomplete="list" required autocomplete="off"><div id="lora-precision-listbox" class="editable-combobox-listbox" role="listbox" hidden></div></div></label>
+          <label>作者<input name="author" autocomplete="off"></label>
+          <label>版本<input name="version" autocomplete="off"></label>
+          <label>发布链接<input name="release_url" type="url" autocomplete="url"></label>
+          <label>默认模型权重<input name="weight" type="number" step="any" value="1.0" required></label>
+        </div>
+        <label>触发词（每行一个）<textarea name="trigger_words" rows="3"></textarea></label>
+        <label>描述<textarea name="description" required rows="3"></textarea></label>
+        <label>使用说明<textarea name="usage" required rows="3"></textarea></label>
+        <p id="lora-editor-error" class="state-line error" role="alert" hidden></p>
+      </form>
+      <section id="lora-media-section" class="model-media-section" hidden aria-labelledby="lora-media-heading">
+        <h3 id="lora-media-heading">资源图片</h3>
+        <input id="lora-cover-upload" type="file" accept="image/jpeg,image/png,image/webp" hidden><input id="lora-image-upload" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+        <div class="editor-media-actions"><button type="button" class="secondary-button" data-action="choose-lora-cover">更换封面</button><button type="button" class="secondary-button" data-action="open-lora-image-manager">管理图片</button></div>
+        <p id="lora-media-status" class="state-line" aria-live="polite"></p>
+        <div id="lora-image-list" class="editor-media-summary"></div>
+      </section>
+    </div>
+    <div class="dialog-actions editor-dialog-actions"><button id="lora-editor-delete" type="button" class="danger-button" data-action="open-lora-delete" hidden>删除</button><button id="lora-editor-submit" type="submit" form="lora-form" class="accent-button">创建 LoRA</button></div>
+  </dialog>
+
+  <dialog id="lora-delete" class="manage-dialog confirm-dialog" aria-labelledby="lora-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="lora-delete-title">确认删除 LoRA</h2></div><button type="button" class="icon-button" data-action="close-lora-delete" aria-label="关闭 LoRA 删除预览">×</button></div>
+    <p id="lora-delete-target"></p>
+    <section><h3>级联删除</h3><ul id="lora-cascade-list"></ul></section>
+    <section><h3>解除关联但保留</h3><ul id="lora-retained-list"></ul></section>
+    <p id="lora-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-lora-delete">取消</button><button type="button" class="danger-button" data-action="confirm-lora-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="lora-image-delete" class="manage-dialog confirm-dialog" aria-labelledby="lora-image-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">删除资源图片</p><h2 id="lora-image-delete-title">确认删除图片</h2></div><button type="button" class="icon-button" data-action="close-lora-image-delete" aria-label="取消删除图片">×</button></div>
+    <p id="lora-image-delete-target"></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-lora-image-delete">取消</button><button type="button" class="danger-button" data-action="confirm-lora-image-delete">确认删除</button></div>
+  </dialog>
+  <dialog id="lora-image-manager" class="manage-dialog image-manager-dialog" aria-labelledby="lora-image-manager-title">
+    <div class="dialog-heading"><div><p class="eyebrow">LoRA 图片</p><h2 id="lora-image-manager-title">管理 LoRA 图片</h2></div><div class="image-manager-heading-actions"><button type="button" class="secondary-button" data-action="choose-lora-images">添加图片</button><button type="button" class="accent-button" data-action="close-lora-image-manager">完成</button></div></div>
+    <div id="lora-image-manager-grid" class="image-manager-grid"></div>
+    <footer class="image-manager-footer"><p id="lora-image-manager-range" class="state-line"></p><div class="image-manager-pagination"><button type="button" class="secondary-button" data-action="previous-lora-image-group" aria-label="显示前 3 张图片">← 前 3 张</button><button type="button" class="secondary-button" data-action="next-lora-image-group" aria-label="显示后 3 张图片">后 3 张 →</button></div></footer>
+  </dialog>
+  <dialog id="lora-image-preview" class="manage-dialog image-preview-dialog" aria-labelledby="lora-image-preview-title">
+    <div class="dialog-heading"><div><h2 id="lora-image-preview-title">查看原图</h2><p id="lora-image-preview-count" class="state-line"></p></div><button type="button" class="icon-button" data-action="close-lora-image-preview" aria-label="关闭原图预览">×</button></div>
+    <div class="image-preview-stage"><button type="button" class="image-preview-arrow" data-action="previous-lora-preview" aria-label="显示上一张图">←</button><img id="lora-image-preview-image" alt="LoRA 资源原图"><button type="button" class="image-preview-arrow" data-action="next-lora-preview" aria-label="显示下一张图">→</button></div>
+  </dialog>
+  <!-- NOOBAI_RUNTIME_CONFIG -->
+  <script src="/app/web/assets/runtime.js"></script>
+  <script src="/app/web/assets/http-client.js"></script>
+  <script src="/app/web/assets/pagination.js"></script>
+  <script type="module" src="/app/web/assets/management-navigation.js"></script>
+  <script type="module" src="/app/web/assets/lora-management.js"></script>
+</body>
+</html>

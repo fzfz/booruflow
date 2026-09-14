@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="280" viewBox="0 0 1200 280" role="img" aria-labelledby="title desc">
+<title id="title">BooruFlow</title><desc id="desc">你的本机文生图资源库. 作品 → 角色; 底模 → 模型 → LoRA; 画风 · 提示词 · ComfyUI 模板.</desc>
+<rect width="1200" height="280" rx="12" fill="#f2f1eb"/>
+<g font-family="Segoe UI, PingFang SC, Noto Sans CJK JP, sans-serif" fill="#1d292f">
+<text x="56" y="108" font-size="68" font-weight="700">BooruFlow</text>
+<text x="58" y="162" font-size="27">你的本机文生图资源库</text>
+<text x="58" y="225" font-size="18" fill="#68787d">LOCAL CATALOG / v0.88.0</text>
+<path d="M730 52v176" stroke="#d18b43" stroke-width="2"/>
+<text x="770" y="88" font-size="20">作品 → 角色</text>
+<text x="770" y="149" font-size="20">底模 → 模型 → LoRA</text>
+<text x="770" y="210" font-size="20">画风 · 提示词 · ComfyUI 模板</text>
+</g></svg>

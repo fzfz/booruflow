@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>画师串管理 · 管理</title>
+  <link rel="stylesheet" href="/app/web/assets/management.css">
+</head>
+<body data-page="artist-prompt-strings">
+  <a class="skip-link" href="#generation-resource-content">跳到主要内容</a>
+  <main id="generation-resource-content" class="manage-shell">
+    <nav id="management-navigation" class="management-navigation" data-management-page-id="artist-prompt-string-management" data-management-initial-focus="#artist-search" aria-label="管理菜单"></nav>
+    <div class="generation-model-section list-view">
+      <header class="resource-section-heading page-heading">
+        <div class="page-heading-copy"><h1 id="artist-heading">画师串管理</h1><p>维护画师提示词串、适用底模、关联画风和说明。</p></div>
+        <button type="button" class="accent-button" data-action="open-artist-create">新增画师串</button>
+      </header>
+      <form id="artist-filter-form" class="manage-toolbar" aria-label="画师串筛选">
+        <label>关键词<input id="artist-search" type="search" placeholder="搜索名称、画师提示词串、描述" autocomplete="off"></label>
+        <label>底模<select id="artist-filter-base-model"><option value="">全部底模</option></select></label>
+        <label>关联画风<select id="artist-filter-style"><option value="">全部画风</option></select></label>
+        <div class="filter-actions"><button type="submit" class="accent-button">搜索</button><button type="button" class="secondary-button" data-action="reset-filters">重置</button></div>
+      </form>
+      <p id="artist-status" class="state-line" role="status" aria-live="polite" aria-busy="true">正在载入画师串……</p>
+      <p id="artist-error" class="state-line error" role="alert" hidden></p>
+      <section id="artist-list" class="manage-list" aria-label="画师串列表"></section>
+      <nav id="artist-pagination" class="manage-pagination" aria-label="画师串分页"></nav>
+    </div>
+  </main>
+
+  <dialog id="artist-editor" class="manage-dialog model-editor" aria-labelledby="artist-editor-title">
+    <div class="dialog-heading"><div><h2 id="artist-editor-title">新增画师串</h2><p id="artist-editor-subtitle" class="editor-subtitle"></p></div><button type="button" class="icon-button" data-action="close-artist-editor" aria-label="关闭编辑弹窗">×</button></div>
+    <div class="detail-body">
+      <form id="artist-form">
+        <div class="model-form-grid">
+          <label>名称<input name="title" required maxlength="20" autocomplete="off"></label>
+          <label>底模<select name="base_model_id"><option value="">不关联底模</option></select></label>
+        </div>
+        <label>画师提示词串<textarea name="artist_string" required rows="3"></textarea></label>
+        <label>描述<textarea name="description" required rows="3"></textarea></label>
+        <div class="artist-style-field"><span class="field-label">关联画风</span><button id="artist-style-trigger" type="button" class="searchable-multi-trigger" aria-expanded="false" aria-controls="artist-style-panel"><span id="artist-style-summary">未选择画风</span><span id="artist-style-count">已选 0 个</span><span aria-hidden="true">⌄</span></button><div id="artist-style-panel" class="searchable-multi-panel" hidden><label>搜索画风名称<input id="artist-style-search" type="search" placeholder="搜索画风名称" autocomplete="off"></label><div class="searchable-multi-selection"><span id="artist-style-selection-count">已选 0 个</span><div id="artist-style-selected" class="searchable-multi-selected"></div></div><div id="artist-style-options" class="searchable-multi-options" role="listbox" aria-multiselectable="true"></div></div><select name="style_ids" multiple hidden aria-hidden="true" tabindex="-1"></select></div>
+        <p id="artist-editor-error" class="state-line error" role="alert" hidden></p>
+      </form>
+      <section id="artist-media-section" class="model-media-section" hidden aria-labelledby="artist-media-heading">
+        <h3 id="artist-media-heading">资源图片</h3>
+        <input id="artist-cover-upload" type="file" accept="image/jpeg,image/png,image/webp" hidden><input id="artist-image-upload" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+        <div class="editor-media-actions"><button type="button" class="secondary-button" data-action="choose-artist-cover">更换封面</button><button type="button" class="secondary-button" data-action="open-artist-image-manager">管理图片</button></div>
+        <p id="artist-media-status" class="state-line" aria-live="polite"></p>
+        <div id="artist-image-list" class="editor-media-summary"></div>
+      </section>
+    </div>
+    <div class="dialog-actions editor-dialog-actions"><button id="artist-editor-delete" type="button" class="danger-button" data-action="open-artist-delete" hidden>删除</button><button id="artist-editor-submit" type="submit" form="artist-form" class="accent-button">创建画师串</button></div>
+  </dialog>
+
+  <dialog id="artist-delete" class="manage-dialog confirm-dialog" aria-labelledby="artist-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">危险操作</p><h2 id="artist-delete-title">确认删除画师串</h2></div><button type="button" class="icon-button" data-action="close-artist-delete" aria-label="关闭画师串删除预览">×</button></div>
+    <p id="artist-delete-target"></p>
+    <section><h3>级联删除</h3><ul id="artist-cascade-list"></ul></section>
+    <section><h3>解除关联但保留</h3><ul id="artist-retained-list"></ul></section>
+    <p id="artist-delete-error" class="state-line error" role="alert" hidden></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-artist-delete">取消</button><button type="button" class="danger-button" data-action="confirm-artist-delete">确认删除</button></div>
+  </dialog>
+
+  <dialog id="artist-image-delete" class="manage-dialog confirm-dialog" aria-labelledby="artist-image-delete-title">
+    <div class="dialog-heading"><div><p class="eyebrow">删除资源图片</p><h2 id="artist-image-delete-title">确认删除图片</h2></div><button type="button" class="icon-button" data-action="close-artist-image-delete" aria-label="取消删除图片">×</button></div>
+    <p id="artist-image-delete-target"></p>
+    <div class="dialog-actions"><button type="button" class="secondary-button" data-action="close-artist-image-delete">取消</button><button type="button" class="danger-button" data-action="confirm-artist-image-delete">确认删除</button></div>
+  </dialog>
+  <dialog id="artist-image-manager" class="manage-dialog image-manager-dialog" aria-labelledby="artist-image-manager-title">
+    <div class="dialog-heading"><div><p class="eyebrow">画师串图片</p><h2 id="artist-image-manager-title">管理画师串图片</h2></div><div class="image-manager-heading-actions"><button type="button" class="secondary-button" data-action="choose-artist-images">添加图片</button><button type="button" class="accent-button" data-action="close-artist-image-manager">完成</button></div></div>
+    <div id="artist-image-manager-grid" class="image-manager-grid"></div>
+    <footer class="image-manager-footer"><p id="artist-image-manager-range" class="state-line"></p><div class="image-manager-pagination"><button type="button" class="secondary-button" data-action="previous-artist-image-group" aria-label="显示前 3 张图片">← 前 3 张</button><button type="button" class="secondary-button" data-action="next-artist-image-group" aria-label="显示后 3 张图片">后 3 张 →</button></div></footer>
+  </dialog>
+  <dialog id="artist-image-preview" class="manage-dialog image-preview-dialog" aria-labelledby="artist-image-preview-title">
+    <div class="dialog-heading"><div><h2 id="artist-image-preview-title">查看原图</h2><p id="artist-image-preview-count" class="state-line"></p></div><button type="button" class="icon-button" data-action="close-artist-image-preview" aria-label="关闭原图预览">×</button></div>
+    <div class="image-preview-stage"><button type="button" class="image-preview-arrow" data-action="previous-artist-preview" aria-label="显示上一张图">←</button><img id="artist-image-preview-image" alt="画师串资源原图"><button type="button" class="image-preview-arrow" data-action="next-artist-preview" aria-label="显示下一张图">→</button></div>
+  </dialog>
+  <!-- NOOBAI_RUNTIME_CONFIG -->
+  <script src="/app/web/assets/runtime.js"></script>
+  <script src="/app/web/assets/http-client.js"></script>
+  <script src="/app/web/assets/pagination.js"></script>
+  <script type="module" src="/app/web/assets/management-navigation.js"></script>
+  <script type="module" src="/app/web/assets/artist-prompt-string-management.js"></script>
+</body>
+</html>

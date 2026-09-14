@@ -1,0 +1,10 @@
+openapi: 3.1.0
+paths:
+  /api/check:
+    get: {operationId: checkContract, responses: {'200': {$ref: '#/components/responses/Missing'}}}
+components:
+  parameters:
+  schemas:
+    ErrorBase: {type: object}
+  responses:
+    Ok: {description: ok}

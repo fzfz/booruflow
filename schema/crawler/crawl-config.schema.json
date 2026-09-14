@@ -1,0 +1,11 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"crawl-config.schema.json","title":"人工采集配置","type":"object","additionalProperties":false,
+  "required":["schema_version","source_name","source_base_url"],
+  "properties":{
+    "schema_version":{"const":1},"source_name":{"$ref":"common.schema.json#/$defs/nonEmptyText"},"source_base_url":{"$ref":"common.schema.json#/$defs/sourceUrl"},"refresh":{"type":"boolean","default":false},
+    "request":{"type":"object","default":{"concurrency":1,"min_delay_seconds":3,"max_delay_seconds":6,"timeout_seconds":20,"max_retries":2,"retry_wait_seconds":[30,120],"max_run_minutes":60},"additionalProperties":false,"properties":{
+      "concurrency":{"type":"integer","minimum":1,"maximum":1,"default":1},"min_delay_seconds":{"type":"integer","minimum":3,"maximum":30,"default":3},"max_delay_seconds":{"type":"integer","minimum":3,"maximum":60,"default":6},"timeout_seconds":{"type":"integer","minimum":5,"maximum":120,"default":20},"max_retries":{"type":"integer","minimum":0,"maximum":2,"default":2},"retry_wait_seconds":{"type":"array","prefixItems":[{"type":"integer","minimum":1,"maximum":600},{"type":"integer","minimum":1,"maximum":600}],"items":false,"minItems":2,"maxItems":2,"default":[30,120]},"max_run_minutes":{"type":"integer","minimum":1,"maximum":60,"default":60}}},
+    "extensions":{"$ref":"common.schema.json#/$defs/extensions"}
+  },
+  "description":"实施层先合并 config/defaults.json 缺省值再验证；并发固定为 1。"
+}
