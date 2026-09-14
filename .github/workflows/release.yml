@@ -36,24 +36,28 @@ jobs:
       - name: Check test boundaries
         run: npm run check:test-markdown
       - name: Run contract tests
-        if: runner.os != 'Windows'
+        if: ${{ !cancelled() && runner.os != 'Windows' }}
         run: npm run test:contract
       - name: Run unit tests
-        if: runner.os != 'Windows'
+        if: ${{ !cancelled() && runner.os != 'Windows' }}
         run: npm run test:unit
       - name: Run integration tests
+        if: ${{ !cancelled() }}
         run: npm run test:integration
       - name: Check Windows database and data transfer
-        if: runner.os == 'Windows'
+        if: ${{ !cancelled() && runner.os == 'Windows' }}
         run: node --test tests/unit/data-package/import.test.mjs tests/contract/issue-89-production-runtime-data.test.mjs
       - name: Run migration tests
-        if: runner.os != 'Windows'
+        if: ${{ !cancelled() && runner.os != 'Windows' }}
         run: node scripts/run-test-layer.mjs tests/migration/
       - name: Run native script tests
+        if: ${{ !cancelled() }}
         run: node scripts/run-test-layer.mjs tests/native/
       - name: Run browser tests
+        if: ${{ !cancelled() }}
         run: node scripts/run-e2e-tests.mjs
       - name: Export platform data package
+        if: ${{ !cancelled() }}
         run: node scripts/test-data-exchange.mjs export outputs/exchange
       - uses: actions/upload-artifact@v4
         with:

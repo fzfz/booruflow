@@ -142,7 +142,7 @@ test('Issue #177 resolves the default semantic OpenAPI beneath the supplied repo
     await copyFile(join(repositoryRoot, 'schema/api/openapi.yaml'), join(customRoot, 'schema/api/openapi.yaml'));
     const canonicalRoot = await realpath(customRoot);
     assert.equal(
-      resolveSemanticOpenapiPath({ repositoryRoot: customRoot }),
+      await realpath(resolveSemanticOpenapiPath({ repositoryRoot: customRoot })),
       resolve(canonicalRoot, 'schema/api/openapi.yaml')
     );
   } finally {
