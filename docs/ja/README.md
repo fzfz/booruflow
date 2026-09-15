@@ -17,3 +17,5 @@ BooruFlow は、作品、キャラクター、画風、Prompt Tag、モデル、
 - [変更履歴](CHANGELOG.md)と [MIT License](../../LICENSE)
 
 - [スクリプトの配置と保守コマンド](development/scripts.md)
+
+- [CI/CD ゲート](development/ci-cd.md)

@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
 
-const VERSION_TAG = /^v(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$/u;
+import { requireReleaseMetadata, VERSION_TAG } from './release-context.mjs';
 
 function fail(message) {
   throw new Error(message);
@@ -62,6 +62,7 @@ function main() {
   requireCleanMain();
   requireSynchronizedMain();
   requireUnusedTag(tag);
+  requireReleaseMetadata(tag);
   runGit(['tag', '--annotate', tag, '--message', `Release ${tag}`]);
   runGit(['push', 'origin', `refs/tags/${tag}:refs/tags/${tag}`]);
   process.stdout.write(`已创建并推送带注释标签 ${tag}\n`);

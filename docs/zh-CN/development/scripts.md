@@ -21,6 +21,7 @@
 | `scripts/testing/` | 测试运行、契约检查、隔离测试应用和跨平台数据互导验证。 |
 | `scripts/docs/capture-screenshots.mjs` | 使用隔离示例数据生成文档截图。 |
 | `scripts/release/tag.mjs` | 维护者通过 `npm run release:tag -- vX.Y.Z` 创建并推送发布标签。 |
+| `scripts/release/check-job-results.mjs`、`preflight.mjs`、`publish.mjs`、`release-context.mjs` | GitHub Actions 使用的任务结果检查、发布前检查、发布入口和共享发布验证；执行条件见 [CI/CD 门禁](ci-cd.md)。 |
 
 贡献者运行测试的方式见[测试](testing.md)，Catalog 命令见[Catalog/Source](catalog-source.md)，发布步骤见[发布](releases.md)。
 

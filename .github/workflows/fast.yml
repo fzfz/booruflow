@@ -86,3 +86,18 @@ jobs:
           path: outputs/incoming
       - name: Import packages from all three platforms
         run: node scripts/testing/test-data-exchange.mjs import outputs/incoming
+  ci-gate:
+    name: CI Gate
+    if: ${{ always() }}
+    needs: [verify, interchange]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.21.0
+      - name: Require every CI job to succeed
+        env:
+          VERIFY_RESULT: ${{ needs.verify.result }}
+          INTERCHANGE_RESULT: ${{ needs.interchange.result }}
+        run: node scripts/release/check-job-results.mjs "verify=${VERIFY_RESULT}" "interchange=${INTERCHANGE_RESULT}"

@@ -23,7 +23,14 @@ function createGitFixture({ branch = 'main', dirty = false, ahead = false, behin
   git(checkout, ['config', 'user.email', 'issue86@example.invalid']);
   git(checkout, ['config', 'user.name', 'Issue 86 Test']);
   writeFileSync(join(checkout, 'README.md'), 'fixture\n');
-  git(checkout, ['add', 'README.md']);
+  mkdirSync(join(checkout, 'config', 'release'), { recursive: true });
+  mkdirSync(join(checkout, 'schema', 'data-package'), { recursive: true });
+  mkdirSync(join(checkout, 'docs', 'releases'), { recursive: true });
+  writeFileSync(join(checkout, 'package.json'), '{"version":"1.2.3"}\n');
+  writeFileSync(join(checkout, 'config', 'release', 'release.json'), '{"default_tag":"v1.2.3"}\n');
+  writeFileSync(join(checkout, 'schema', 'data-package', 'definition.json'), '{"application_version":"1.2.3"}\n');
+  writeFileSync(join(checkout, 'docs', 'releases', 'v1.2.3.md'), 'fixture release notes\n');
+  git(checkout, ['add', '.']);
   git(checkout, ['commit', '-m', 'fixture']);
   git(root, ['init', '--bare', remote]);
   git(checkout, ['remote', 'add', 'origin', remote]);
