@@ -6,4 +6,6 @@ Main commands are `npm run test:unit`, `npm run test:contract`, `npm run test:in
 
 Contract tests cover Schema, OpenAPI, errors, migrations, and routes; unit tests cover business branches; integration tests cover module combinations and transactions; e2e checks rendered behavior. Test platform scripts on their Windows x64 and macOS arm64/x64 targets, including installation, lifecycle, update, restore, and data interchange. Cover normal, error, and boundary branches.
 
-The gate requires at least 85% line and 80% branch coverage, with 100% for critical transaction, media recovery, and query-client branches. On failure save the command, exit code, first relevant error, layer, and artifact path. Fix the identified cause and rerun affected checks. CI retains run results.
+Development acceptance requires at least 85% line and 80% branch coverage, with 100% for critical transaction, media recovery, and query-client branches. On failure save the command, exit code, first relevant error, layer, and artifact path. Fix the identified cause and rerun affected checks. CI retains run results.
+
+The coverage percentages above are development acceptance requirements. Current CI gates use the exit results of the workflow test jobs and do not automatically calculate those percentages; maintainers provide coverage evidence in the PR. See [CI/CD gates](ci-cd.md) for merge and release enforcement.

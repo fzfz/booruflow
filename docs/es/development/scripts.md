@@ -21,6 +21,7 @@ Usa el instalador adjunto a la versión de destino. El instalador del código ac
 | `scripts/testing/` | Ejecución de pruebas, comprobación de contratos, aplicaciones aisladas e intercambio de datos entre plataformas. |
 | `scripts/docs/capture-screenshots.mjs` | Capturas de documentación generadas con datos de ejemplo aislados. |
 | `scripts/release/tag.mjs` | Creación y envío de etiquetas mediante `npm run release:tag -- vX.Y.Z` por los mantenedores. |
+| `scripts/release/check-job-results.mjs`, `preflight.mjs`, `publish.mjs`, `release-context.mjs` | Comprobación de resultados, verificación previa, entrada de publicación y validación compartida que usa GitHub Actions; consulta los [controles de CI/CD](ci-cd.md) para las condiciones de ejecución. |
 
 Consulta [Pruebas](testing.md), [Catalog/Source](catalog-source.md) y [Publicaciones](releases.md) para los procedimientos correspondientes.
 

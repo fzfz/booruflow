@@ -21,6 +21,7 @@
 | `scripts/testing/` | テスト実行、契約検査、隔離テストアプリ、OS 間のデータ交換検証。 |
 | `scripts/docs/capture-screenshots.mjs` | 隔離したサンプルデータからドキュメント画像を生成。 |
 | `scripts/release/tag.mjs` | 管理者が `npm run release:tag -- vX.Y.Z` で公開タグを作成して送信。 |
+| `scripts/release/check-job-results.mjs`、`preflight.mjs`、`publish.mjs`、`release-context.mjs` | GitHub Actions が使うジョブ結果検査、公開前検査、公開の入口、共通の公開検証。実行条件は [CI/CD ゲート](ci-cd.md)を参照。 |
 
 開発時の検査は[テスト](testing.md)、検索コマンドは[Catalog/Source](catalog-source.md)、公開手順は[リリース](releases.md)を参照してください。
 

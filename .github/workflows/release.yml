@@ -6,7 +6,32 @@ on:
 permissions:
   contents: read
 jobs:
+  preflight:
+    name: Release preflight
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Record branch-only workflow dispatch
+        if: ${{ github.ref_type != 'tag' }}
+        run: echo 'Branch workflow dispatch runs release checks without publishing a release.'
+      - uses: actions/checkout@v4
+        if: ${{ github.ref_type == 'tag' }}
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        if: ${{ github.ref_type == 'tag' }}
+        with:
+          node-version: 24.21.0
+      - name: Fetch the protected main branch
+        if: ${{ github.ref_type == 'tag' }}
+        run: git fetch --no-tags --force origin refs/heads/main:refs/remotes/origin/main
+      - name: Validate release tag, commit, metadata, notes, and unused release
+        if: ${{ github.ref_type == 'tag' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release/preflight.mjs "$GITHUB_REF_NAME" "$GITHUB_SHA" "$GITHUB_REPOSITORY"
   verify:
+    needs: preflight
     strategy:
       fail-fast: false
       matrix:
@@ -142,3 +167,41 @@ jobs:
           path: outputs/incoming
       - name: Import packages from all three platforms
         run: node scripts/testing/test-data-exchange.mjs import outputs/incoming
+  release-gate:
+    name: Release Gate
+    if: ${{ always() }}
+    needs: [preflight, verify, interchange]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.21.0
+      - name: Require every release check to succeed
+        env:
+          PREFLIGHT_RESULT: ${{ needs.preflight.result }}
+          VERIFY_RESULT: ${{ needs.verify.result }}
+          INTERCHANGE_RESULT: ${{ needs.interchange.result }}
+        run: node scripts/release/check-job-results.mjs "preflight=${PREFLIGHT_RESULT}" "verify=${VERIFY_RESULT}" "interchange=${INTERCHANGE_RESULT}"
+  publish:
+    name: Publish GitHub Release
+    if: ${{ github.ref_type == 'tag' && needs.release-gate.result == 'success' }}
+    needs: release-gate
+    runs-on: ubuntu-24.04
+    environment: github-release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.21.0
+      - name: Fetch the protected main branch
+        run: git fetch --no-tags --force origin refs/heads/main:refs/remotes/origin/main
+      - name: Recheck release state and publish installers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release/publish.mjs "$GITHUB_REF_NAME" "$GITHUB_SHA" "$GITHUB_REPOSITORY"

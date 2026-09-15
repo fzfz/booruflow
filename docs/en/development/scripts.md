@@ -21,6 +21,7 @@ Use the installer attached to the target release. The installer in the current s
 | `scripts/testing/` | Test runners, contract checks, isolated test applications, and cross-platform data exchange verification. |
 | `scripts/docs/capture-screenshots.mjs` | Documentation screenshots generated from isolated sample data. |
 | `scripts/release/tag.mjs` | Maintainer tag creation and push through `npm run release:tag -- vX.Y.Z`. |
+| `scripts/release/check-job-results.mjs`, `preflight.mjs`, `publish.mjs`, `release-context.mjs` | Job-result checks, release preflight, publishing entry point, and shared release validation used by GitHub Actions; see [CI/CD gates](ci-cd.md) for execution conditions. |
 
 See [Testing](testing.md) for contributor checks, [Catalog/Source](catalog-source.md) for query commands, and [Releases](releases.md) for publication steps.
 

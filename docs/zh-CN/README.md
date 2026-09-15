@@ -17,3 +17,5 @@ BooruFlow 是本机运行的角色、画风、Prompt Tag、模型、LoRA、画�
 - [变更记录](CHANGELOG.md)与仓库根目录 [MIT License](../../LICENSE)
 
 - [脚本目录与维护命令](development/scripts.md)
+
+- [CI/CD 门禁](development/ci-cd.md)
