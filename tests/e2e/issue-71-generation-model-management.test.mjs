@@ -395,7 +395,9 @@ test('管理页面真实浏览器覆盖模型资源图片上传、非法文件�
 
     const coverButton = manager.getByRole('button', { name: '设为封面' }).first();
     const coverImageId = Number(await coverButton.getAttribute('data-image-id'));
+    const coverResponsePromise = page.waitForResponse((response) => response.url() === new URL(`/api/items/model/${modelId}/cover`, app.baseUrl).href && response.request().method() === 'PUT');
     await coverButton.click();
+    assert.equal((await coverResponsePromise).status(), 200);
     const covered = await requestJson(app, 'GET', `/api/items/model/${modelId}/images`);
     const coverImage = covered.body.data.images.find(({ id }) => id === coverImageId);
     assert.equal(covered.body.data.cover_media_path, coverImage.media_path);
